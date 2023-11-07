@@ -61,8 +61,9 @@ const Prove: React.FC<ProveProps> = (props) => {
   return (
     <>
       <button onClick={handleClick} disabled={isLoading || disabled}>
-        {isLoading ? "Loading..." : "Prove with Bonsai™"}
+        {isLoading ? "Proving..." : "Prove with Bonsai™"}
       </button>
+      {isLoading && <p>This will take a couple of minutes...</p>}
       <Account email={email} disabled={disabled} hideClaim={true} />
     </>
   );

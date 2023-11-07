@@ -36,6 +36,11 @@ h1 {
   line-height: 1.1;
 }
 
+h2 {
+  font-size: 2.2em;
+  line-height: 1.1;
+}
+
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -90,6 +95,7 @@ button:focus-visible {
   padding: 1em;
   background-color: #fff;
   box-shadow: 0 0 12px #d9d9d9aa;
+  min-width: 26em;
 }
 
 .logo-container {
@@ -115,7 +121,7 @@ button:focus-visible {
 }
 
 .subtitle {
-  padding: 1em;
+  padding-bottom: 1em;
 }
 
 @keyframes logo-spin {
@@ -136,7 +142,6 @@ button:focus-visible {
 @media (max-width: 600px) {
   .app-container,
   .deposit-container,
-  .claim-container,
   .balance-container {
     padding: 1em;
   }
@@ -161,6 +166,13 @@ button:focus-visible {
   .modal {
     width: calc(100% - 2rem); /* Full width minus some padding */
     max-width: calc(100% - 2rem); /* Override max-width for small screens */
+  }
+  .app-container {
+
+  }
+  .step-content {
+    padding: 0em;
+  
   }
 }
 
@@ -373,6 +385,16 @@ button:focus-visible {
   opacity: 0.5;
 }
 
+.modal-close {
+  border: none;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  color: #999;
+}
+
+
 .select-token-btn {
   position: absolute;
   font-size: small;
@@ -434,7 +456,7 @@ button:focus-visible {
   text-align: center; /* Center the text within each step */
   padding: 0.5em;
   border-radius: 1em; /* Optional: adds rounded corners */
-  margin: 0 0.1em; /* Optional: adds a bit of space between the steps */
+  margin: 0 0.1em; 
   font-size: small;
 }
 
@@ -443,17 +465,16 @@ button:focus-visible {
 }
 
 .step-content {
-  border: 1px solid #e3e3e3;
+  border: 1px solid #e3e3e34f;
   border-radius: 0.8em;
 }
 
-/* Optional: Add a bit of mobile responsiveness */
 @media (max-width: 600px) {
   .step-indicator {
-    flex-direction: column; /* Stack the steps vertically on small screens */
+    flex-direction: column; 
   }
   .step {
-    margin-bottom: 10px; /* Add space between vertically stacked steps */
+    margin-bottom: 10px;
   }
 }
 
@@ -493,4 +514,33 @@ input[type="number"] {
 .gsi-btn:hover {
   cursor: pointer;
   opacity: 0.7;
+}
+
+
+.footer-button {
+  background: none;
+  color: #646cff;
+  padding: 0;
+  border: none;
+  font: inherit;
+  cursor: pointer;
+  display: inline; 
+}
+
+.footer-button:hover,
+.footer-button:focus {
+  text-decoration: none; 
+  color: darkblue; 
+  border: none; 
+}
+
+
+.footer-link, .footer-button {
+  font-size: small;
+  font-weight: 500;
+  text-align: center;
+  padding: 1em;
+}
+
+.footer-button:focus {
 }

@@ -7,7 +7,7 @@ interface ModalProps {
   children: ReactNode;
 }
 
-const Modal: FC<ModalProps> = ({ isOpen, title, children }) => {
+const Modal: FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
   if (!isOpen) return null;
 
   return (
@@ -15,9 +15,11 @@ const Modal: FC<ModalProps> = ({ isOpen, title, children }) => {
       <div className="modal">
         {title && <h4 className="modal-title">{title}</h4>}
         <div className="modal-content">{children}</div>
+        <button className="modal-close" onClick={onClose}>Close</button>
       </div>
     </div>
   );
 };
+
 
 export default Modal;

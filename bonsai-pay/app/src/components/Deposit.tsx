@@ -114,7 +114,7 @@ const Deposit: React.FC<DepositProps> = () => {
           handleSend();
         }}
       >
-        <h5>Deposit</h5>
+        <h5>Send</h5>
         <input
           className="input-field"
           aria-label="Recipient"

@@ -9,6 +9,7 @@ import { ToastContainer } from "react-toastify";
 import Claim from "./components/Claim";
 import Deposit from "./components/Deposit";
 import { sepolia } from "wagmi/chains";
+import Modal from "./components/Modal";
 
 const { VITE_ALCHEMY_ID, VITE_WALLET_CONNECT_ID } = import.meta.env;
 
@@ -33,7 +34,10 @@ function App() {
               alt="R0 Logo"
             />
           </div>
-          <p className="subtitle">powered by Bonsai™</p>
+          <h2 className="title">Bonsai Pay</h2>
+          <p className="subtitle">
+            powered by Bonsai™
+          </p>
           <ConnectKitButton />
           <ViewSelection />
           <p className="read-the-docs">This is for demo purposes only.</p>
@@ -63,7 +67,7 @@ function ViewSelection() {
             checked={showComponent === "deposit"}
             onChange={handleRadioChange}
           />
-          Deposit
+          Send
         </label>
         <label>
           <input
@@ -86,12 +90,31 @@ function ViewSelection() {
 export default App;
 
 function Footer() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState({ title: "", text: "" });
+
+  const openModal = (title: string, text: string) => {
+    setModalContent({ title, text });
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <footer className="footer">
-      <a href="/about" className="footer-link">
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={modalContent.title}
+      >
+        <p>{modalContent.text}</p>
+      </Modal>
+      <button onClick={() => openModal('About', 'Dummy text for About')} className="footer-button">
         About
-      </a>
-      <a href="https://bonsai.xyz" className="footer-link">
+      </button>
+      {/* <a href="https://bonsai.xyz" className="footer-link">
         Bonsai
       </a>
       <a href="https://github.com" className="footer-link">
@@ -99,13 +122,13 @@ function Footer() {
       </a>
       <a href="https://risczero.com" className="footer-link">
         RISC Zero
-      </a>
-      <a href="/terms-of-service" className="footer-link">
+      </a> */}
+      <button onClick={() => openModal('Terms of Service', 'Dummy text for Terms of Service')} className="footer-button">
         Terms of Service
-      </a>
-      <a href="/privacy" className="footer-link">
+      </button>
+      <button onClick={() => openModal('Privacy Policy', 'Dummy text for Privacy Policy')} className="footer-button">
         Privacy Policy
-      </a>
+      </button>
     </footer>
   );
 }
