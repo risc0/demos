@@ -24,7 +24,7 @@ export const SignInWithGoogle = ({ disabled }) => {
 
         // Initialize the button
         window.google.accounts.id.initialize({
-          client_id: VITE_GOOGLE_CLIENT_ID, 
+          client_id: VITE_GOOGLE_CLIENT_ID,
           callback: handleCredentialResponse,
           nonce: address,
           scope: "email",
@@ -68,15 +68,13 @@ export const SignInWithGoogle = ({ disabled }) => {
         script.remove();
       }
       initGsi();
-
-    }
-  }, [VITE_GOOGLE_CLIENT_ID, address]); 
+    };
+  }, [VITE_GOOGLE_CLIENT_ID, address]);
 
   const handleCredentialResponse = async (response) => {
     const { credential } = response;
 
     document.cookie = `jwt=${credential}; path=/; samesite=Strict`;
-
   };
 
   return (

@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { Auth } from "aws-amplify";
 import { useAccount } from "wagmi";
 
 declare global {
   interface Window {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    AppleID?: any; 
+    AppleID?: any;
   }
 }
 
@@ -68,21 +67,7 @@ export const SignInWithApple = ({ disabled }) => {
 
   const handleAppleResponse = async (response) => {
     console.log("Apple sign in response received:", response);
-    const { authorization } = response;
-    const { id_token: idToken } = authorization;
-
-    try {
-      const awsUser = await Auth.federatedSignIn(
-        "appleid.apple.com",
-        { token: idToken, expires_at: authorization.expires_at },
-        {
-          name: `${response.user.name.firstName} ${response.user.name.lastName}`,
-        }
-      );
-      console.log("AWS Amplify user:", awsUser);
-    } catch (error) {
-      console.error("Error signing in with Apple:", error);
-    }
+    // TODO
   };
 
   useEffect(() => {
@@ -90,7 +75,7 @@ export const SignInWithApple = ({ disabled }) => {
       window.AppleID.auth.renderButton({
         element: "#appleid-signin",
         theme: "black", // or 'white'
-        type: "sign in", 
+        type: "sign in",
         border: true,
         disabled: disabled,
       });
@@ -103,4 +88,3 @@ export const SignInWithApple = ({ disabled }) => {
     </div>
   );
 };
-

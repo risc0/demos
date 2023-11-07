@@ -71,13 +71,12 @@ export const Balance: React.FC<BalanceProps> = ({
       setEncodedProof(dataEncoded);
     };
 
-    updateSnark(); 
+    updateSnark();
 
     const intervalId = setInterval(updateSnark, 1000); // Set an interval to update the snark every second
 
     return () => clearInterval(intervalId);
   });
-
 
   const { write: claim } = useZrpClaim({
     args: [

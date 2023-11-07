@@ -13,7 +13,7 @@ const Prove: React.FC<ProveProps> = (props) => {
   const { VITE_API_HOST } = import.meta.env;
 
   const handleClick = useCallback(async () => {
-    setIsLoading(true); 
+    setIsLoading(true);
 
     // Initialize a WebSocket connection
     const socket = new WebSocket(VITE_API_HOST);
@@ -29,8 +29,8 @@ const Prove: React.FC<ProveProps> = (props) => {
     };
 
     const messageHandler = (event: MessageEvent) => {
-      document.cookie = `snark=${event.data}`; 
-      setIsLoading(false); 
+      document.cookie = `snark=${event.data}`;
+      setIsLoading(false);
     };
 
     const errorHandler = (event: Event) => {
