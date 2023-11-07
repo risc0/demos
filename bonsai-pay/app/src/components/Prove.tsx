@@ -10,11 +10,13 @@ const Prove: React.FC<ProveProps> = (props) => {
   const { disabled, email } = props;
   const [isLoading, setIsLoading] = useState(false);
 
+  const { VITE_API_HOST } = import.meta.env;
+
   const handleClick = useCallback(async () => {
     setIsLoading(true); 
 
     // Initialize a WebSocket connection
-    const socket = new WebSocket("ws://localhost:8181");
+    const socket = new WebSocket(VITE_API_HOST);
     const jwtCookie = document.cookie
       .split("; ")
       .find((row) => row.startsWith("jwt="));
