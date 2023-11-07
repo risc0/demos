@@ -225,28 +225,6 @@ async fn handle_connection(ws: warp::ws::WebSocket, users: Users) {
                 }
             }
         };
-
-        // Wrap the proof in a custom wrapper
-        // let wrapped_proof = SnarkReceiptWrapper {
-        //     snark: &receipt.snark,
-        //     post_state_digest: &receipt.post_state_digest,
-        //     journal: &receipt.journal,
-        // };
-        //
-        // let proof_string = serde_json::to_string(&wrapped_proof).unwrap();
-        //
-        // info!("ID: {} | Sending proof back to user", id);
-        //
-        // let mut users = users.write().await;
-        //
-        // // Locate the sender associated with the originating user and send the proof back to that user
-        // if let Some(user_tx) = users.get_mut(&id) {
-        //     if let Err(_disconnected) = user_tx.send(Ok(Message::text(proof_string.clone()))) {
-        //         error!("ID: {} | Failed to send proof back to user", id);
-        //     }
-        // } else {
-        //     error!("ID: {} | Failed to locate user", id);
-        // }
     }
     // Handle user disconnection
     disconnect_user(id, &users).await;
