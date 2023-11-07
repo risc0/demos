@@ -1,0 +1,10 @@
+[package]
+name = "oidc_validate"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+jwt-compact = { version = "0.7", default-features = false, features = ["rsa"] }
+serde = "1.0"
+serde_json = "1.0"
+thiserror = "1.0"
