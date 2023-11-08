@@ -140,22 +140,24 @@ pub struct AppleClaims {
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct GoogleClaims {
-    pub iss: String,
-    pub nbf: Option<u64>,
     pub aud: String,
+    pub iss: String,
     pub sub: String,
-    pub nonce: String,
-    pub hd: Option<String>,
-    pub email: String,
-    pub email_verified: bool,
-    pub azp: String,
-    pub name: String,
-    pub picture: String,
-    pub given_name: String,
-    pub family_name: Option<String>,
-    pub iat: Option<u64>,
+    pub nonce: String, // I require this one.
+    pub email: String, // And this one too.
     pub exp: Option<u64>,
-    pub jti: String,
+    pub iat: Option<u64>,
+    pub at_hash: Option<String>,
+    pub azp: Option<String>,
+    pub email_verified: Option<bool>,
+    pub family_name: Option<String>,
+    pub given_name: Option<String>,
+    pub hd: Option<String>,
+    pub locale: Option<String>,
+    pub name: Option<String>,
+    pub picture: Option<String>,
+    pub nbf: Option<u64>,
+    pub jti: Option<String>,
 }
 
 impl CustomClaims {
