@@ -145,14 +145,14 @@ pub struct GoogleClaims {
     pub aud: String,
     pub sub: String,
     pub nonce: String,
-    pub hd: String,
+    pub hd: Option<String>,
     pub email: String,
     pub email_verified: bool,
     pub azp: String,
     pub name: String,
     pub picture: String,
     pub given_name: String,
-    pub family_name: String,
+    pub family_name: Option<String>,
     pub iat: Option<u64>,
     pub exp: Option<u64>,
     pub jti: String,
@@ -398,7 +398,7 @@ pub mod tests {
     //   "aud": "873787331262-7bflj4fhoup1enlb055ggipqcjiuq68u.apps.googleusercontent.com",
     //   "sub": "108378151968747898733",
     //   "nonce": "0xefdF9861F3eDc2404643B588378FE242FCadE658",
-    //   "hd": "risczero.com",
+    //   "hd": "risczero.com", // NOTE: THIS IS NOT THERE WHEN NOT USING A CUSTOM DOMAIN FOR GMAIL
     //   "email": "hans@risczero.com",
     //   "email_verified": true,
     //   "azp": "873787331262-7bflj4fhoup1enlb055ggipqcjiuq68u.apps.googleusercontent.com",
@@ -411,7 +411,7 @@ pub mod tests {
     //   "jti": "d4c3a453c373e20fe4f9683e6af7e3247617099f"
     // }
     //
-    const GOOGLE_JWT: &str = r#"eyJhbGciOiJSUzI1NiIsImtpZCI6ImY1ZjRiZjQ2ZTUyYjMxZDliNjI0OWY3MzA5YWQwMzM4NDAwNjgwY2QiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJuYmYiOjE2OTkyNTc0NDgsImF1ZCI6Ijg3Mzc4NzMzMTI2Mi03YmZsajRmaG91cDFlbmxiMDU1Z2dpcHFjaml1cTY4dS5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsInN1YiI6IjEwODM3ODE1MTk2ODc0Nzg5ODczMyIsIm5vbmNlIjoiMHhlZmRGOTg2MUYzZURjMjQwNDY0M0I1ODgzNzhGRTI0MkZDYWRFNjU4IiwiaGQiOiJyaXNjemVyby5jb20iLCJlbWFpbCI6ImhhbnNAcmlzY3plcm8uY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImF6cCI6Ijg3Mzc4NzMzMTI2Mi03YmZsajRmaG91cDFlbmxiMDU1Z2dpcHFjaml1cTY4dS5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsIm5hbWUiOiJIYW5zIE1hcnRpbiIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NJQ0tlRDRnY0g3bnJTaDdncVFUMXJrMG1aUlNTcHlMMjhhTDRyekRKMnA9czk2LWMiLCJnaXZlbl9uYW1lIjoiSGFucyIsImZhbWlseV9uYW1lIjoiTWFydGluIiwiaWF0IjoxNjk5MjU3NzQ4LCJleHAiOjE2OTkyNjEzNDgsImp0aSI6ImQ0YzNhNDUzYzM3M2UyMGZlNGY5NjgzZTZhZjdlMzI0NzYxNzA5OWYifQ.Su-su8VuGAT_kJY0tUZVuRjM37cLfP96qav0Ekk5xtZrSZmB8QaOjFTn-QkRYw17nTgxV_Zq_qv6uYOQ6IcfJUtN-BD_qT91BX7aQQFPYGNJ9rHcyzoh9yK_uz1cGVka4cCKRwW3wEZ1nwPKRxYguDFO_A3UrjwPeZFLj9ns82FBqbvD0AkEWqPm-gZwUzwzAPjz3017UbcjJkng5O_2-hlG0dLKoS-KIfXr6r8nkVjUXHoSxGx3RbTj16HLUDEklSr7qu-0cSSjDFVd1m3HxJeKnQBOctTEOzbQRovHPTNhDSBMXn6Bw47nd3-fmQ_wcnBEWuF92CNQp8cV0AhuSw"#;
+    const GOOGLE_JWT: &str = r#"eyJhbGciOiJSUzI1NiIsImtpZCI6ImY1ZjRiZjQ2ZTUyYjMxZDliNjI0OWY3MzA5YWQwMzM4NDAwNjgwY2QiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI4NzM3ODczMzEyNjItN2JmbGo0ZmhvdXAxZW5sYjA1NWdnaXBxY2ppdXE2OHUuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI4NzM3ODczMzEyNjItN2JmbGo0ZmhvdXAxZW5sYjA1NWdnaXBxY2ppdXE2OHUuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDgzNzgxNTE5Njg3NDc4OTg3MzMiLCJoZCI6InJpc2N6ZXJvLmNvbSIsImVtYWlsIjoiaGFuc0ByaXNjemVyby5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibm9uY2UiOiIweDE5YzgzY2QwOUYwZDJlNDc3ZjQwNEY0MUVBNGJlOTliMDUyZEMzNkIiLCJuYmYiOjE2OTk0MTcwMzEsIm5hbWUiOiJIYW5zIE1hcnRpbiIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NJQ0tlRDRnY0g3bnJTaDdncVFUMXJrMG1aUlNTcHlMMjhhTDRyekRKMnA9czk2LWMiLCJnaXZlbl9uYW1lIjoiSGFucyIsImZhbWlseV9uYW1lIjoiTWFydGluIiwibG9jYWxlIjoiZW4iLCJpYXQiOjE2OTk0MTczMzEsImV4cCI6MTY5OTQyMDkzMSwianRpIjoiZWUxOTg2ZjYwZjFiMWJmMDAzZmY1OGQ4YzYzNzdmOGUwZDE3YjU2MyJ9.Z_AVwFlM_xNvcDX_BslSO6fEbwcxfYByouKsL8H8LPqU9fokBj6Snpxs47M6KCNO1fQ_gLhttAFqNNdRqAdCFSK28p3-mt1Y9Q_1HeTXYmYXNBwXLihoCrkRzL6kIeQCAGNC1daHR10XgedSX7fjGI-vxdSCphk8UPSnqNTze7WJsXoCNcOAewKyeSmv3nM45Jchfkx6uqC4DDItxPQsoWt6nOOvkh6SiBzobc3fsAj1fU7To2vW8KN6CQ2kXb2pVXDlY1XBPGSO30oo5satHVe_a3mqT0npgIE5IRjVY9Ojd10dA3vaS1kX5YVgSTiLd8mXD0iqN95KoyzFATPeFw"#;
 
     // Payload from apple:
     // {
