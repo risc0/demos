@@ -4,7 +4,6 @@ import Prove from "./Prove";
 
 import { useAccount } from "wagmi";
 import { GoogleTokenPayload } from "../libs/types";
-import { SignInWithApple } from "./SignInWithApple";
 import { SignInWithGoogle } from "./SignInWithGoogle";
 
 interface ClaimProps {}
@@ -96,8 +95,8 @@ const Claim: React.FC<ClaimProps> = () => {
           <>
             <h4> Sign in to your account</h4>
             <SignInWithGoogle disabled={jwtExists} />
-            <p>or</p>
-            <SignInWithApple disabled={false} />
+            {/* <p>or</p>
+            <SignInWithApple disabled={false} /> */}
           </>
         );
       case 3:
