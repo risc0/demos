@@ -38,7 +38,7 @@ function App() {
           <p className="subtitle">
             powered by Bonsai™
           </p>
-          <ConnectKitButton />
+          <ConnectKitButton mode="light"/>
           <ViewSelection />
           <p className="read-the-docs">This is for demo purposes only.</p>
         </div>
