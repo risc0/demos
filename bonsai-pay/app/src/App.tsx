@@ -10,6 +10,7 @@ import Claim from "./components/Claim";
 import Deposit from "./components/Deposit";
 import { sepolia } from "wagmi/chains";
 import Modal from "./components/Modal";
+import "react-toastify/dist/ReactToastify.css";
 
 const { VITE_ALCHEMY_ID, VITE_WALLET_CONNECT_ID } = import.meta.env;
 
@@ -26,6 +27,7 @@ function App() {
   return (
     <WagmiConfig config={config}>
       <ConnectKitProvider>
+        <ToastContainer />
         <div className="app-container">
           <div className="logo-container">
             <img
@@ -35,10 +37,8 @@ function App() {
             />
           </div>
           <h2 className="title">Bonsai Pay</h2>
-          <p className="subtitle">
-            powered by Bonsai™
-          </p>
-          <ConnectKitButton mode="light"/>
+          <p className="subtitle">powered by Bonsai™</p>
+          <ConnectKitButton mode="light" />
           <ViewSelection />
           <p className="read-the-docs">This is for demo purposes only.</p>
         </div>
@@ -91,7 +91,10 @@ export default App;
 
 function Footer() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalContent, setModalContent] = useState<{ title: string, content: ReactNode }>({ title: "", content: "" });
+  const [modalContent, setModalContent] = useState<{
+    title: string;
+    content: ReactNode;
+  }>({ title: "", content: "" });
 
   const openModal = (title: string, content: ReactNode) => {
     setModalContent({ title, content });
@@ -112,16 +115,43 @@ function Footer() {
         {modalContent.content}
       </Modal>
       <a href="https://www.risczero.com/news/bonsai-pay">About</a>
-      <a href="https://github.com/risc0/demos/tree/main/bonsai-pay" className="footer-link">
+      <a
+        href="https://github.com/risc0/demos/tree/main/bonsai-pay"
+        className="footer-link"
+      >
         Github
       </a>
       <a href="https://bonsai.xyz" className="footer-link">
         Bonsai
       </a>
-      <button onClick={() => openModal('Terms of Service', <iframe className="tos-content" src="src/assets/BonsaiPayTermsofService2023.11.07.html" title="Terms of Service" />)} className="footer-button">
+      <button
+        onClick={() =>
+          openModal(
+            "Terms of Service",
+            <iframe
+              className="tos-content"
+              src="src/assets/BonsaiPayTermsofService2023.11.07.html"
+              title="Terms of Service"
+            />
+          )
+        }
+        className="footer-button"
+      >
         Terms of Service
       </button>
-      <button onClick={() => openModal('Privacy Policy', <iframe className="privacy-content" src="src/assets/RISCZeroBonsaiWebsitePrivacyPolicy2023.11.07.html" title="Privacy Policy" />)} className="footer-button">
+      <button
+        onClick={() =>
+          openModal(
+            "Privacy Policy",
+            <iframe
+              className="privacy-content"
+              src="src/assets/RISCZeroBonsaiWebsitePrivacyPolicy2023.11.07.html"
+              title="Privacy Policy"
+            />
+          )
+        }
+        className="footer-button"
+      >
         Privacy Policy
       </button>
     </footer>

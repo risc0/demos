@@ -98,7 +98,6 @@ button:focus-visible {
   min-width: 26em;
 }
 
-
 .logo-container {
   height: 1em;
   padding: 1.5em;
@@ -144,7 +143,7 @@ button:focus-visible {
   .app-container,
   .deposit-container,
   .balance-container {
-    min-width: 1em;  
+    min-width: 1em;
   }
 
   .card,
@@ -395,7 +394,6 @@ button:focus-visible {
   color: #999;
 }
 
-
 .select-token-btn {
   position: absolute;
   font-size: small;
@@ -457,7 +455,7 @@ button:focus-visible {
   text-align: center; /* Center the text within each step */
   padding: 0.5em;
   border-radius: 1em; /* Optional: adds rounded corners */
-  margin: 0 0.1em; 
+  margin: 0 0.1em;
   font-size: small;
 }
 
@@ -472,7 +470,7 @@ button:focus-visible {
 
 @media (max-width: 600px) {
   .step-indicator {
-    flex-direction: column; 
+    flex-direction: column;
   }
   .step {
     margin-bottom: 10px;
@@ -517,7 +515,6 @@ input[type="number"] {
   opacity: 0.7;
 }
 
-
 .footer-button {
   background: none;
   color: #646cff;
@@ -525,18 +522,18 @@ input[type="number"] {
   border: none;
   font: inherit;
   cursor: pointer;
-  display: inline; 
+  display: inline;
 }
 
 .footer-button:hover,
 .footer-button:focus {
-  text-decoration: none; 
-  color: darkblue; 
-  border: none; 
+  text-decoration: none;
+  color: darkblue;
+  border: none;
 }
 
-
-.footer-link, .footer-button {
+.footer-link,
+.footer-button {
   font-size: small;
   font-weight: 500;
   text-align: center;

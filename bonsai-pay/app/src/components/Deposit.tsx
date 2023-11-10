@@ -10,6 +10,7 @@ import Modal from "./Modal";
 import tokens from "../assets/tokens.json";
 import { Token } from "../libs/types";
 import { parseUnits, zeroAddress, parseEther, toHex } from "viem";
+import { toast } from "react-toastify";
 
 interface DepositProps {}
 
@@ -73,7 +74,6 @@ const Deposit: React.FC<DepositProps> = () => {
 
   const isTokenSelected = !!selectedToken;
   const isZeroAddress = selectedToken?.address === zeroAddress;
-  // const isAmountGreaterThanAllowance = allowance ? amountInUnits > allowance : false;
 
   useEffect(() => {
     const amountInUnits = parseUnits(
@@ -94,6 +94,23 @@ const Deposit: React.FC<DepositProps> = () => {
 
     sendTxn?.();
   };
+
+  useEffect(() => {
+    if (sentSuccessful) {
+      const Msg = () => (
+        <div>
+          Successfully sent {amount} {selectedToken?.name} to {to}
+          <div>
+            <a href={`https://sepolia.etherscan.io/tx/${txn?.hash}`}>
+              View on Etherscan
+            </a>
+          </div>
+        </div>
+      );
+      toast(Msg, { toastId: txn?.hash });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sentSuccessful]);
 
   return (
     <div className="deposit-container">
@@ -163,7 +180,7 @@ const Deposit: React.FC<DepositProps> = () => {
             {isApproving ? "Approving..." : "Approve"}
           </button>
         )}
-        {sentSuccessful && (
+        {/* {sentSuccessful && (
           <div>
             Successfully sent {amount} to {to}
             <div>
@@ -172,7 +189,7 @@ const Deposit: React.FC<DepositProps> = () => {
               </a>
             </div>
           </div>
-        )}
+        )} */}
       </form>
 
       <Modal isOpen={isModalOpen} onClose={toggleModal} title="Select Token">
