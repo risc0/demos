@@ -169,10 +169,10 @@ button:focus-visible {
   }
 
   .step-content {
-    padding: 0em;
+    padding: 0.5em;
   }
   .claim-container {
-    width: 1em;
+    width: 100%;
   }
 }
 

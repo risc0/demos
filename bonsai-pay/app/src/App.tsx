@@ -130,7 +130,7 @@ function Footer() {
             "Terms of Service",
             <iframe
               className="tos-content"
-              src="src/assets/BonsaiPayTermsofService2023.11.07.html"
+              src="./BonsaiPayTermsofService2023.11.07.html"
               title="Terms of Service"
             />
           )
@@ -145,7 +145,7 @@ function Footer() {
             "Privacy Policy",
             <iframe
               className="privacy-content"
-              src="src/assets/RISCZeroBonsaiWebsitePrivacyPolicy2023.11.07.html"
+              src="./RISCZeroBonsaiWebsitePrivacyPolicy2023.11.07.html"
               title="Privacy Policy"
             />
           )
