@@ -111,6 +111,7 @@ const Claim: React.FC<ClaimProps> = () => {
         return (
           <>
             <h4>Claim your tokens</h4>
+            {email && <h5>{`You have proven account ownership.`}</h5>}
             <Account email={email} disabled={false} />
           </>
         );

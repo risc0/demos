@@ -4,7 +4,7 @@ import {
   ConnectKitButton,
   getDefaultConfig,
 } from "connectkit";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import Claim from "./components/Claim";
 import Deposit from "./components/Deposit";
@@ -91,10 +91,10 @@ export default App;
 
 function Footer() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalContent, setModalContent] = useState({ title: "", text: "" });
+  const [modalContent, setModalContent] = useState<{ title: string, content: ReactNode }>({ title: "", content: "" });
 
-  const openModal = (title: string, text: string) => {
-    setModalContent({ title, text });
+  const openModal = (title: string, content: ReactNode) => {
+    setModalContent({ title, content });
     setIsModalOpen(true);
   };
 
@@ -109,24 +109,19 @@ function Footer() {
         onClose={closeModal}
         title={modalContent.title}
       >
-        <p>{modalContent.text}</p>
+        {modalContent.content}
       </Modal>
-      <button onClick={() => openModal('About', 'Dummy text for About')} className="footer-button">
-        About
-      </button>
-      {/* <a href="https://bonsai.xyz" className="footer-link">
-        Bonsai
-      </a>
-      <a href="https://github.com" className="footer-link">
+      <a href="https://www.risczero.com/news/bonsai-pay">About</a>
+      <a href="https://github.com/risc0/demos/tree/main/bonsai-pay" className="footer-link">
         Github
       </a>
-      <a href="https://risczero.com" className="footer-link">
-        RISC Zero
-      </a> */}
-      <button onClick={() => openModal('Terms of Service', 'Dummy text for Terms of Service')} className="footer-button">
+      <a href="https://bonsai.xyz" className="footer-link">
+        Bonsai
+      </a>
+      <button onClick={() => openModal('Terms of Service', <iframe className="tos-content" src="src/assets/BonsaiPayTermsofService2023.11.07.html" title="Terms of Service" />)} className="footer-button">
         Terms of Service
       </button>
-      <button onClick={() => openModal('Privacy Policy', 'Dummy text for Privacy Policy')} className="footer-button">
+      <button onClick={() => openModal('Privacy Policy', <iframe className="privacy-content" src="src/assets/RISCZeroBonsaiWebsitePrivacyPolicy2023.11.07.html" title="Privacy Policy" />)} className="footer-button">
         Privacy Policy
       </button>
     </footer>

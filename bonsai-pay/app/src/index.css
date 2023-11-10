@@ -441,7 +441,7 @@ button:focus-visible {
   padding: 2em;
 }
 .footer a {
-  padding: 0.5em;
+  padding: 1em;
   font-size: small;
 }
 
@@ -543,4 +543,11 @@ input[type="number"] {
 }
 
 .footer-button:focus {
+}
+.tos-content {
+  width: 54em;
+}
+
+.privacy-content {
+  width: 54em;
 }
