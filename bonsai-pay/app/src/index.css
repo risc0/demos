@@ -98,6 +98,7 @@ button:focus-visible {
   min-width: 26em;
 }
 
+
 .logo-container {
   height: 1em;
   padding: 1.5em;
@@ -143,7 +144,7 @@ button:focus-visible {
   .app-container,
   .deposit-container,
   .balance-container {
-    padding: 1em;
+    min-width: 1em;  
   }
 
   .card,
@@ -167,12 +168,12 @@ button:focus-visible {
     width: calc(100% - 2rem); /* Full width minus some padding */
     max-width: calc(100% - 2rem); /* Override max-width for small screens */
   }
-  .app-container {
 
-  }
   .step-content {
     padding: 0em;
-  
+  }
+  .claim-container {
+    width: 1em;
   }
 }
 
