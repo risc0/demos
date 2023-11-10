@@ -167,7 +167,7 @@ const Deposit: React.FC<DepositProps> = () => {
           <div>
             Successfully sent {amount} to {to}
             <div>
-              <a href={`https://etherscan.io/tx/${txn?.hash}`}>
+              <a href={`https://sepolia.etherscan.io/tx/${txn?.hash}`}>
                 View on Etherscan
               </a>
             </div>
