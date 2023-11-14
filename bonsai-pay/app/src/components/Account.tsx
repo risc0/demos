@@ -1,5 +1,5 @@
 import React from "react";
-import { zeroAddress } from "viem";
+import { zeroAddress, toHex } from "viem";
 
 import { useZrpGetClaimId } from "../generated";
 import tokens from "../assets/tokens.json";
@@ -25,11 +25,11 @@ const Account: React.FC<AccountProps> = (props) => {
 
   const digest = sha256.hex(email);
   const { data: ethClaimId } = useZrpGetClaimId({
-    args: [`0x${digest}`, tokens["sepolia"][0].address as `0x${string}`],
+    args: [toHex(digest), tokens["sepolia"][0].address as `0x${string}`],
   });
 
   const { data: usdcClaimId } = useZrpGetClaimId({
-    args: [`0x${digest}`, tokens["sepolia"][0].address as `0x${string}`],
+    args: [toHex(digest), tokens["sepolia"][1].address as `0x${string}`],
   });
 
   return (

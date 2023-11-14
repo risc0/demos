@@ -9,7 +9,7 @@ import {
 import Modal from "./Modal";
 import tokens from "../assets/tokens.json";
 import { Token } from "../libs/types";
-import { parseUnits, zeroAddress, parseEther } from "viem";
+import { parseUnits, zeroAddress, parseEther, toHex } from "viem";
 import { toast } from "react-toastify";
 import { sha256 } from 'js-sha256';
 
@@ -27,7 +27,7 @@ const Deposit: React.FC<DepositProps> = () => {
 
   const { data: txn, write: sendTxn } = useZrpDeposit({
     args: [
-      sha256.hex(debouncedTo), // hash of email
+      toHex(sha256.hex(debouncedTo)), 
       selectedToken?.address ?? zeroAddress,
       debouncedAmount
         ? parseUnits(debouncedAmount, selectedToken?.decimals ?? 18)
