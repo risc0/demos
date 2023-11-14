@@ -4,13 +4,14 @@ import {
   ConnectKitButton,
   getDefaultConfig,
 } from "connectkit";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import Claim from "./components/Claim";
 import Deposit from "./components/Deposit";
 import { sepolia } from "wagmi/chains";
 import Modal from "./components/Modal";
 import "react-toastify/dist/ReactToastify.css";
+import { clearCookies } from "./libs/utils";
 
 const { VITE_ALCHEMY_ID, VITE_WALLET_CONNECT_ID } = import.meta.env;
 
@@ -24,6 +25,10 @@ const config = createConfig(
 );
 
 function App() {
+  useEffect(() => {
+    clearCookies();
+  });
+
   return (
     <WagmiConfig config={config}>
       <ConnectKitProvider>
