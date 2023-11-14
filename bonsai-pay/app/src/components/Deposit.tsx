@@ -11,6 +11,7 @@ import tokens from "../assets/tokens.json";
 import { Token } from "../libs/types";
 import { parseUnits, zeroAddress, parseEther, toHex } from "viem";
 import { toast } from "react-toastify";
+import { sha256 } from 'js-sha256';
 
 interface DepositProps {}
 
@@ -23,9 +24,10 @@ const Deposit: React.FC<DepositProps> = () => {
   const [amount, setAmount] = useState<string>("");
   const [debouncedAmount] = useDebounce(amount, 500);
   const { data: blockNumber } = useBlockNumber();
+
   const { data: txn, write: sendTxn } = useZrpDeposit({
     args: [
-      toHex(debouncedTo),
+      toHex(sha256.hex(debouncedTo)), 
       selectedToken?.address ?? zeroAddress,
       debouncedAmount
         ? parseUnits(debouncedAmount, selectedToken?.decimals ?? 18)

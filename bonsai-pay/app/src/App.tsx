@@ -1,15 +1,17 @@
 import { WagmiConfig, createConfig } from "wagmi";
 import {
   ConnectKitProvider,
+  ConnectKitButton,
   getDefaultConfig,
 } from "connectkit";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
-// import Claim from "./components/Claim";
-// import Deposit from "./components/Deposit";
+import Claim from "./components/Claim";
+import Deposit from "./components/Deposit";
 import { sepolia } from "wagmi/chains";
 import Modal from "./components/Modal";
 import "react-toastify/dist/ReactToastify.css";
+import { clearCookies } from "./libs/utils";
 
 const { VITE_ALCHEMY_ID, VITE_WALLET_CONNECT_ID } = import.meta.env;
 
@@ -23,6 +25,10 @@ const config = createConfig(
 );
 
 function App() {
+  useEffect(() => {
+    clearCookies();
+  });
+
   return (
     <WagmiConfig config={config}>
       <ConnectKitProvider>
@@ -37,9 +43,8 @@ function App() {
           </div>
           <h2 className="title">Bonsai Pay</h2>
           <p className="subtitle">powered by Bonsai™</p>
-          <p>This application is paused for maintenance.</p>
-          {/* <ConnectKitButton mode="light" /> */}
-          {/* <ViewSelection /> */}
+          <ConnectKitButton mode="light" />
+          <ViewSelection />
           <p className="read-the-docs">This is for demo purposes only.</p>
         </div>
         <Footer />
@@ -49,43 +54,43 @@ function App() {
   );
 }
 
-// function ViewSelection() {
-//   const [showComponent, setShowComponent] = useState<"deposit" | "claim">(
-//     "claim"
-//   );
-//   const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     setShowComponent(e.target.value as "deposit" | "claim");
-//   };
-//   return (
-//     <div>
-//       <div className="radio-container">
-//         <label>
-//           <input
-//             className="radio-input"
-//             type="radio"
-//             value="deposit"
-//             checked={showComponent === "deposit"}
-//             onChange={handleRadioChange}
-//           />
-//           Send
-//         </label>
-//         <label>
-//           <input
-//             className="radio-input"
-//             type="radio"
-//             value="claim"
-//             checked={showComponent === "claim"}
-//             onChange={handleRadioChange}
-//           />
-//           Claim
-//         </label>
-//       </div>
-//       <div className="card">
-//         {showComponent === "deposit" ? <Deposit /> : <Claim />}
-//       </div>
-//     </div>
-//   );
-// }
+function ViewSelection() {
+  const [showComponent, setShowComponent] = useState<"deposit" | "claim">(
+    "claim"
+  );
+  const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setShowComponent(e.target.value as "deposit" | "claim");
+  };
+  return (
+    <div>
+      <div className="radio-container">
+        <label>
+          <input
+            className="radio-input"
+            type="radio"
+            value="deposit"
+            checked={showComponent === "deposit"}
+            onChange={handleRadioChange}
+          />
+          Send
+        </label>
+        <label>
+          <input
+            className="radio-input"
+            type="radio"
+            value="claim"
+            checked={showComponent === "claim"}
+            onChange={handleRadioChange}
+          />
+          Claim
+        </label>
+      </div>
+      <div className="card">
+        {showComponent === "deposit" ? <Deposit /> : <Claim />}
+      </div>
+    </div>
+  );
+}
 
 export default App;
 

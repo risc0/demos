@@ -83,10 +83,12 @@ async fn run_bonsai(id: usize, provider: IdentityProvider, jwt: String) -> Resul
                 }
                 _ => {
                     error!(
-                        "ID: {} | Session {} failed with status: {}",
-                        id, session.uuid, res.status
+                        "ID: {} | Session {} failed with status: {} | err: {}",
+                        id,
+                        session.uuid,
+                        res.status,
+                        res.error_msg.unwrap_or_default()
                     );
-                    // bail!("Failed to generate proof");
                     return Err(anyhow!("Failed to generate proof"));
                 }
             }
@@ -119,7 +121,6 @@ async fn run_bonsai(id: usize, provider: IdentityProvider, jwt: String) -> Resul
                         "ID: {} | Snark session {} failed with status: {}",
                         id, snark_session.uuid, res.status
                     );
-                    // e         bail!("Failed to generate SNARK");
                     return Err(anyhow!("Failed to generate SNARK"));
                 }
             }
@@ -244,7 +245,9 @@ async fn run_websocket_server(host: String, port: String) {
     let routes = warp::path::end()
         .and(warp::ws())
         .and(users)
-        .map(|ws: warp::ws::Ws, users| {
+        .and(warp::header::optional::<String>("X-Real-IP"))
+        .map(|ws: warp::ws::Ws, users, ip: Option<String>| {
+            info!("remote_ip: {}", ip.unwrap_or_default());
             ws.on_upgrade(move |socket| handle_connection(socket, users))
         });
 
