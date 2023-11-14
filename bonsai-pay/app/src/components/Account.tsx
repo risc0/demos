@@ -25,11 +25,11 @@ const Account: React.FC<AccountProps> = (props) => {
 
   const digest = sha256.hex(email);
   const { data: ethClaimId } = useZrpGetClaimId({
-    args: [`0x${digest}`, tokens["sepolia"][0].address],
+    args: [`0x${digest}`, tokens["sepolia"][0].address as `0x${string}`],
   });
 
   const { data: usdcClaimId } = useZrpGetClaimId({
-    args: [`0x${digest}`, tokens["sepolia"][0].address],
+    args: [`0x${digest}`, tokens["sepolia"][0].address as `0x${string}`],
   });
 
   return (
