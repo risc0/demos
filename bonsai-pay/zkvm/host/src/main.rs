@@ -83,10 +83,12 @@ async fn run_bonsai(id: usize, provider: IdentityProvider, jwt: String) -> Resul
                 }
                 _ => {
                     error!(
-                        "ID: {} | Session {} failed with status: {}",
-                        id, session.uuid, res.status
+                        "ID: {} | Session {} failed with status: {} | err: {}",
+                        id,
+                        session.uuid,
+                        res.status,
+                        res.error_msg.unwrap_or_default()
                     );
-                    // bail!("Failed to generate proof");
                     return Err(anyhow!("Failed to generate proof"));
                 }
             }
@@ -119,7 +121,6 @@ async fn run_bonsai(id: usize, provider: IdentityProvider, jwt: String) -> Resul
                         "ID: {} | Snark session {} failed with status: {}",
                         id, snark_session.uuid, res.status
                     );
-                    // e         bail!("Failed to generate SNARK");
                     return Err(anyhow!("Failed to generate SNARK"));
                 }
             }
