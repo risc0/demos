@@ -5,6 +5,7 @@ import { useZrpGetClaimId } from "../generated";
 import tokens from "../assets/tokens.json";
 import { Balance } from "./Balance";
 import { Token } from "../libs/types";
+import { sha256 } from "../libs/utils";
 
 export type TokenData = {
   name: string;
@@ -23,11 +24,11 @@ const Account: React.FC<AccountProps> = (props) => {
   const { email, disabled, hideClaim } = props;
 
   const { data: ethClaimId } = useZrpGetClaimId({
-    args: [toHex(email ?? ""), tokens["sepolia"][0].address as `0x${string}`],
+    args: [toHex(sha256(email) ?? ""), tokens["sepolia"][0].address as `0x${string}`],
   });
 
   const { data: usdcClaimId } = useZrpGetClaimId({
-    args: [toHex(email ?? ""), tokens["sepolia"][1].address as `0x${string}`],
+    args: [toHex(sha256(email) ?? ""), tokens["sepolia"][1].address as `0x${string}`],
   });
 
   return (

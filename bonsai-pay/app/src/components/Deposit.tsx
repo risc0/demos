@@ -9,8 +9,9 @@ import {
 import Modal from "./Modal";
 import tokens from "../assets/tokens.json";
 import { Token } from "../libs/types";
-import { parseUnits, zeroAddress, parseEther, toHex } from "viem";
+import { parseUnits, zeroAddress, parseEther, toHex, keccak256, toBytes, bytesToString } from "viem";
 import { toast } from "react-toastify";
+import { sha256 } from "../libs/utils";
 
 interface DepositProps {}
 
@@ -23,9 +24,10 @@ const Deposit: React.FC<DepositProps> = () => {
   const [amount, setAmount] = useState<string>("");
   const [debouncedAmount] = useDebounce(amount, 500);
   const { data: blockNumber } = useBlockNumber();
+
   const { data: txn, write: sendTxn } = useZrpDeposit({
     args: [
-      toHex(debouncedTo),
+      toHex(sha256(debouncedTo)), // hash of email
       selectedToken?.address ?? zeroAddress,
       debouncedAmount
         ? parseUnits(debouncedAmount, selectedToken?.decimals ?? 18)

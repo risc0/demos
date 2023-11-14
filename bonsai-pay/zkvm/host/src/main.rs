@@ -16,6 +16,7 @@ use std::{
 use tokio::sync::{mpsc, RwLock};
 use tokio_stream::wrappers::UnboundedReceiverStream;
 use warp::{filters::ws::Message, Filter};
+use std::net::SocketAddr;
 
 use dotenv::dotenv;
 
@@ -244,9 +245,12 @@ async fn run_websocket_server(host: String, port: String) {
     let routes = warp::path::end()
         .and(warp::ws())
         .and(users)
-        .map(|ws: warp::ws::Ws, users| {
+        .and(warp::header::<SocketAddr>("X-Real-IP"))
+        .map(|ws: warp::ws::Ws, users, ip: SocketAddr| {
+            info!("IP: {:?}", ip);
             ws.on_upgrade(move |socket| handle_connection(socket, users))
         });
+
 
     let host: Result<Vec<u8>, std::num::ParseIntError> = host
         .split('.')
