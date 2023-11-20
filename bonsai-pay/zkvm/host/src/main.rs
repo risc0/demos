@@ -167,8 +167,25 @@ async fn handle_connection(ws: warp::ws::WebSocket, users: Users) {
 
         info!("ID: {} | Received message from user", id);
 
-        // Deserialize the message into a JwtRequest
-        let jwt_req: JwtRequest = serde_json::from_str(msg.to_str().unwrap()).unwrap();
+        let msg = match msg.to_str() {
+            Ok(msg) => msg,
+            Err(e) => {
+                error!("ID: {} | Failed to convert message to string: {:?}", id, e);
+                continue;
+            }
+        };
+
+        let jwt_req = match serde_json::from_str::<JwtRequest>(msg) {
+            Ok(jwt_req) => jwt_req,
+            Err(e) => {
+                error!(
+                    "ID: {} | Failed to deserialize message to JWT Request: {}",
+                    id, e
+                );
+                continue;
+            }
+        };
+
         info!(
             "ID: {} | JWT: {}...{}",
             id,
@@ -183,7 +200,6 @@ async fn handle_connection(ws: warp::ws::WebSocket, users: Users) {
         info!("ID: {} | Running Bonsai", id);
 
         // Run the Bonsai function to generate a proof
-        // let receipt = run_bonsai(id, provider, jwt).await.unwrap();
         match run_bonsai(id, provider, jwt).await {
             Ok(res) => {
                 let wrapped_proof = SnarkReceiptWrapper {
