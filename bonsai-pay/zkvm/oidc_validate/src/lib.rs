@@ -247,6 +247,10 @@ pub enum OidcError {
     TokenGenerationError,
     #[error("Failed to validate token")]
     TokenValidationError,
+    #[error("Certificate not found")]
+    CertificateNotFoundError,
+    #[error("Key id missing")]
+    KeyIdMissingError,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -275,53 +279,59 @@ pub fn encode_token(
 
 pub fn decode_token(token: &str, provider: &IdentityProvider) -> Result<DecodedClaims, OidcError> {
     let token = UntrustedToken::new(token).map_err(|_| OidcError::TokenDecodeError)?;
+    let key_id = token
+        .header()
+        .key_id
+        .as_deref()
+        .ok_or(OidcError::KeyIdMissingError)?;
+
     let certs = provider.certs()?;
 
-    for key in certs.keys {
-        let key_type = key.key_type();
-        let (alg, vkey) = match key_type {
-            KeyType::Rsa => {
-                let vkey =
-                    RsaPublicKey::try_from(&key).map_err(|_| OidcError::CertificateParseError)?;
-                (Rsa::rs256(), vkey)
-            }
-            _ => return Err(OidcError::AlgorithmNotFoundError),
-        };
+    // Find the key with the matching key_id
+    let key = certs
+        .keys
+        .iter()
+        .find(|key| key.extra.key_id == key_id)
+        .ok_or(OidcError::CertificateNotFoundError)?;
 
-        match provider {
-            IdentityProvider::Apple => {
-                let res = alg.validate_integrity::<AppleClaims>(&token, &vkey);
-                if let Ok(validated_token) = res {
-                    return Ok(DecodedClaims::Apple(
-                        validated_token.claims().custom.clone(),
-                    ));
-                } else {
-                    println!("Failed to validate token: {res:?}");
-                }
+    let key_type = key.base.key_type();
+    let (alg, vkey) = match key_type {
+        KeyType::Rsa => RsaPublicKey::try_from(&key.base)
+            .map(|vkey| (Rsa::rs256(), vkey))
+            .map_err(|_| OidcError::CertificateParseError)?,
+        _ => return Err(OidcError::AlgorithmNotFoundError),
+    };
+
+    match provider {
+        IdentityProvider::Apple => {
+            let res = alg.validate_integrity::<AppleClaims>(&token, &vkey);
+            if let Ok(validated_token) = res {
+                return Ok(DecodedClaims::Apple(
+                    validated_token.claims().custom.clone(),
+                ));
+            } else {
+                return Err(OidcError::TokenValidationError);
             }
-            IdentityProvider::Google => {
-                let res = alg.validate_integrity::<GoogleClaims>(&token, &vkey);
-                if let Ok(validated_token) = res {
-                    return Ok(DecodedClaims::Google(
-                        validated_token.claims().custom.clone(),
-                    ));
-                } else {
-                    println!("Failed to validate token: {res:?}");
-                }
+        }
+        IdentityProvider::Google => {
+            let res = alg.validate_integrity::<GoogleClaims>(&token, &vkey);
+            if let Ok(validated_token) = res {
+                return Ok(DecodedClaims::Google(
+                    validated_token.claims().custom.clone(),
+                ));
+            } else {
+                return Err(OidcError::TokenValidationError);
             }
-            IdentityProvider::Test => {
-                let res = alg.validate_integrity::<CustomClaims>(&token, &vkey);
-                if let Ok(validated_token) = res {
-                    return Ok(DecodedClaims::Test(validated_token.claims().custom.clone()));
-                } else {
-                    println!("Failed to validate token: {res:?}");
-                }
+        }
+        IdentityProvider::Test => {
+            let res = alg.validate_integrity::<CustomClaims>(&token, &vkey);
+            if let Ok(validated_token) = res {
+                return Ok(DecodedClaims::Test(validated_token.claims().custom.clone()));
+            } else {
+                return Err(OidcError::TokenValidationError);
             }
         }
     }
-
-    // If none of the keys worked, then the token is invalid.
-    Err(OidcError::TokenValidationError)
 }
 
 impl<'a> IdentityProvider {
@@ -331,7 +341,6 @@ impl<'a> IdentityProvider {
                 .map_err(|_| OidcError::CertificateParseError),
             Self::Google => serde_json::from_str::<JwkKeys>(GOOGLE_PUB_CERTS)
                 .map_err(|_| OidcError::CertificateParseError),
-
             Self::Test => serde_json::from_str::<JwkKeys>(TEST_PUB_CERTS)
                 .map_err(|_| OidcError::CertificateParseError),
         }
@@ -353,7 +362,21 @@ impl<'a> IdentityProvider {
 
 #[derive(Deserialize, Serialize)]
 pub struct JwkKeys<'a> {
-    pub keys: Vec<JsonWebKey<'a>>,
+    keys: Vec<ExtendedJsonWebKey<'a, Extra>>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct ExtendedJsonWebKey<'a, T> {
+    #[serde(flatten)]
+    base: JsonWebKey<'a>,
+    #[serde(flatten)]
+    extra: T,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct Extra {
+    #[serde(rename = "kid")]
+    key_id: String,
 }
 
 #[cfg(test)]
