@@ -46,6 +46,19 @@ function App() {
           <ConnectKitButton mode="light" />
           <ViewSelection />
           <p className="read-the-docs">This is for demo purposes only.</p>
+          <p className="read-the-docs">
+            Please read our{" "}
+            <a
+              href="https://github.com/risc0/demos/blob/main/bonsai-pay/README.md"
+              target="_blank"
+              rel="noreferrer"
+            >
+              docs
+            </a>{" "}
+            for more information.
+          </p>
+
+        
         </div>
         <Footer />
         <ToastContainer />
