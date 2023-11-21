@@ -1,7 +1,7 @@
 use jwt_compact::{
-    alg::{Rsa, RsaPrivateKey, RsaPublicKey},
+    alg::{Rsa, RsaPublicKey},
     jwk::{JsonWebKey, KeyType},
-    AlgorithmExt, Claims, Header, UntrustedToken,
+    AlgorithmExt, UntrustedToken,
 };
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
@@ -77,6 +77,7 @@ static TEST_PUB_CERTS: &str = r#"
 "#;
 
 // Generated with https://www.scottbrady91.com/tools/jwt
+// Note: This is intended only for testing purposes.
 pub static TEST_PRIV_CERTS: &str = r#"
 {
     "keys": [
@@ -260,23 +261,6 @@ pub enum IdentityProvider {
     Test,
 }
 
-pub fn encode_token(
-    alg: &Rsa,
-    claims: &CustomClaims,
-    pkey: &RsaPrivateKey,
-) -> Result<String, OidcError> {
-    let header = Header::default();
-    let claims = Claims::new(claims);
-    let token = alg.token(header, &claims, pkey);
-    match token {
-        Ok(token) => Ok(token),
-        Err(err) => {
-            println!("Failed to generate token: {err:?}");
-            Err(OidcError::TokenGenerationError)
-        }
-    }
-}
-
 pub fn decode_token(token: &str, provider: &IdentityProvider) -> Result<DecodedClaims, OidcError> {
     let token = UntrustedToken::new(token).map_err(|_| OidcError::TokenDecodeError)?;
     let key_id = token
@@ -306,29 +290,29 @@ pub fn decode_token(token: &str, provider: &IdentityProvider) -> Result<DecodedC
         IdentityProvider::Apple => {
             let res = alg.validate_integrity::<AppleClaims>(&token, &vkey);
             if let Ok(validated_token) = res {
-                return Ok(DecodedClaims::Apple(
+                Ok(DecodedClaims::Apple(
                     validated_token.claims().custom.clone(),
-                ));
+                ))
             } else {
-                return Err(OidcError::TokenValidationError);
+                Err(OidcError::TokenValidationError)
             }
         }
         IdentityProvider::Google => {
             let res = alg.validate_integrity::<GoogleClaims>(&token, &vkey);
             if let Ok(validated_token) = res {
-                return Ok(DecodedClaims::Google(
+                Ok(DecodedClaims::Google(
                     validated_token.claims().custom.clone(),
-                ));
+                ))
             } else {
-                return Err(OidcError::TokenValidationError);
+                Err(OidcError::TokenValidationError)
             }
         }
         IdentityProvider::Test => {
             let res = alg.validate_integrity::<CustomClaims>(&token, &vkey);
             if let Ok(validated_token) = res {
-                return Ok(DecodedClaims::Test(validated_token.claims().custom.clone()));
+                Ok(DecodedClaims::Test(validated_token.claims().custom.clone()))
             } else {
-                return Err(OidcError::TokenValidationError);
+                Err(OidcError::TokenValidationError)
             }
         }
     }
@@ -352,9 +336,9 @@ impl<'a> IdentityProvider {
             .primary_id()
             .ok_or(OidcError::TokenValidationError)?;
         let nonce = match decoded_token {
-            DecodedClaims::Apple(claims) => claims.nonce.clone(),
-            DecodedClaims::Google(claims) => claims.nonce.clone(),
-            DecodedClaims::Test(claims) => claims.nonce.clone(),
+            DecodedClaims::Apple(claims) => claims.nonce,
+            DecodedClaims::Google(claims) => claims.nonce,
+            DecodedClaims::Test(claims) => claims.nonce,
         };
         Ok((identifier, nonce))
     }
@@ -512,7 +496,7 @@ pub mod tests {
 
         let result = identity_provider.validate(valid_token);
 
-        assert!(matches!(result, Err(OidcError::TokenValidationError)));
+        assert!(matches!(result, Err(OidcError::CertificateNotFoundError)));
     }
 
     #[test]
@@ -534,34 +518,6 @@ pub mod tests {
         let (ident, _addr) = identity_provider.validate(valid_token).unwrap();
 
         assert_eq!(ident, "tsfs5tj5vp@privaterelay.appleid.com");
-    }
-
-    #[test]
-    fn test_encode_jwt() {
-        // Replicate the payload from the test example
-        let claims = CustomClaims {
-            iss: "https://accounts.google.com".to_string(),
-            azp: "1234987819200.apps.googleusercontent.com".to_string(),
-            aud: "1234987819200.apps.googleusercontent.com".to_string(),
-            sub: "10769150350006150715113082367".to_string(),
-            email: "jsmith@example.com".to_string(),
-            email_verified: true,
-            at_hash: "HK6E_P6Dh8Y93mRNtsDB1Q".to_string(),
-            iat: Some(1353601026),
-            exp: Some(1853604926),
-            nonce: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266".to_string(),
-        };
-        let identity_provider = IdentityProvider::Test;
-        let result_a = identity_provider.validate(TEST_JWT).unwrap();
-
-        let key = serde_json::from_str::<JwkKeys>(TEST_PRIV_CERTS).unwrap();
-        let alg = Rsa::rs256();
-        let pkey = RsaPrivateKey::try_from(&key.keys[0]).unwrap();
-        let token = encode_token(&alg, &claims, &pkey).unwrap();
-
-        let result_b = identity_provider.validate(&token).unwrap();
-
-        assert_eq!(result_a, result_b);
     }
 
     #[test]
