@@ -5,7 +5,7 @@ use futures::StreamExt;
 use host::seal_serializer::SnarkReceiptWrapper;
 use log::{error, info};
 use methods::JWT_VALIDATE_ELF;
-use oidc_validate::IdentityProvider;
+use oidc_validator::IdentityProvider;
 use pretty_env_logger;
 use risc0_zkvm::{serde::to_vec, MemoryImage, Program, GUEST_MAX_MEM, PAGE_SIZE, VERSION};
 use serde::{Deserialize, Serialize};
