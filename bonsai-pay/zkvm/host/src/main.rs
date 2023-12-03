@@ -8,8 +8,8 @@ use methods::JWT_VALIDATE_ELF;
 use oidc_validator::IdentityProvider;
 use pretty_env_logger;
 use risc0_zkvm::{
-    default_executor, serde::to_vec, Executor, ExecutorEnv, MemoryImage, Program, GUEST_MAX_MEM,
-    PAGE_SIZE, VERSION,
+    default_executor, serde::to_vec, ExecutorEnv, MemoryImage, Program, GUEST_MAX_MEM, PAGE_SIZE,
+    VERSION,
 };
 use serde::{Deserialize, Serialize};
 use std::{
@@ -40,6 +40,14 @@ struct Args {
     /// Run local executor for testing and benchmarking
     #[arg(short = 'x', long, default_value_t = false)]
     executor: bool,
+
+    /// JWT token for authentication
+    #[arg(short, long)]
+    jwt: Option<String>,
+
+    /// Identity Provider (e.g., "Google")
+    #[arg(long, default_value = "Google")]
+    provider: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -145,7 +153,7 @@ async fn run_bonsai(id: usize, provider: IdentityProvider, jwt: String) -> Resul
     Ok(result)
 }
 
-fn run_local_exec(provider: IdentityProvider, jwt: String) -> Result<()> {
+fn run_local_exec(provider: IdentityProvider, jwt: String) {
     let program = Program::load_elf(JWT_VALIDATE_ELF, GUEST_MAX_MEM as u32).unwrap();
     let image = MemoryImage::new(&program, PAGE_SIZE as u32).unwrap();
     let image_id = hex::encode(image.compute_id());
@@ -156,18 +164,14 @@ fn run_local_exec(provider: IdentityProvider, jwt: String) -> Result<()> {
     let env = builder.build().unwrap();
 
     default_executor().execute(env, image).unwrap();
-
-    Ok(())
 }
 
-// Define an asynchronous function to handle new connections
 async fn handle_connection(ws: warp::ws::WebSocket, users: Users) {
     info!("New connection");
 
     let id = NEXT_USER_ID.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
     info!("ID: {} | Connection ID assigned", id);
 
-    // Split the WebSocket into a sender and receiver half
     let (user_ws_tx, mut user_ws_rx) = ws.split();
 
     // Create an unbounded channel for message passing
@@ -310,22 +314,30 @@ async fn main() -> Result<()> {
 
     let cli = Args::parse();
 
+    if cli.executor {
+        let jwt = cli
+            .jwt
+            .ok_or_else(|| anyhow!("JWT is required in local executor mode"))?;
+        let provider_str = cli
+            .provider
+            .ok_or_else(|| anyhow!("Identity provider is required in local executor mode"))?;
+
+        let provider = match provider_str.to_lowercase().as_str() {
+            "google" => IdentityProvider::Google,
+            _ => return Err(anyhow!("Unsupported identity provider")),
+        };
+
+        info!("Running Local Executor Mode with JWT and Provider");
+        run_local_exec(provider, jwt);
+        return Ok(());
+    }
+
     let host = cli
         .host
         .ok_or_else(|| anyhow!("Host is required when in server mode"))?;
     let port = cli
         .port
         .ok_or_else(|| anyhow!("Port is required when in server mode"))?;
-
-    let local_exec = cli.executor;
-
-    if local_exec {
-        const GOOGLE_JWT: &str = r#"eyJhbGciOiJSUzI1NiIsImtpZCI6IjViMzcwNjk2MGUzZTYwMDI0YTI2NTVlNzhjZmE2M2Y4N2M5N2QzMDkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJuYmYiOjE2OTk5NDU4NzMsImF1ZCI6Ijg3Mzc4NzMzMTI2Mi03YmZsajRmaG91cDFlbmxiMDU1Z2dpcHFjaml1cTY4dS5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsInN1YiI6IjEwODM3ODE1MTk2ODc0Nzg5ODczMyIsIm5vbmNlIjoiMHhlZmRGOTg2MUYzZURjMjQwNDY0M0I1ODgzNzhGRTI0MkZDYWRFNjU4IiwiaGQiOiJyaXNjemVyby5jb20iLCJlbWFpbCI6ImhhbnNAcmlzY3plcm8uY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImF6cCI6Ijg3Mzc4NzMzMTI2Mi03YmZsajRmaG91cDFlbmxiMDU1Z2dpcHFjaml1cTY4dS5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsIm5hbWUiOiJIYW5zIE1hcnRpbiIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NJQ0tlRDRnY0g3bnJTaDdncVFUMXJrMG1aUlNTcHlMMjhhTDRyekRKMnA9czk2LWMiLCJnaXZlbl9uYW1lIjoiSGFucyIsImZhbWlseV9uYW1lIjoiTWFydGluIiwiaWF0IjoxNjk5OTQ2MTczLCJleHAiOjE2OTk5NDk3NzMsImp0aSI6IjgxZjIzZTQwNDAwNmZkMmUzMTgxZTliYzkxNDMzZjA0NDNkNGI4MjIifQ.rNsLRtF22R6cvRbDksAAl5p3e1sAFii35xZWHUnVbLV_1ciQV7SpPIg-XkP_kBp7hqnYz1IGFm5Ce2L8Omm-5Z9onK8prsBKoJf5cGVJSwAy9NYtmRPQIcXOfGf6q1i04L_LBxnVnHx1VrL0ji8vJ7Tf99xO1qEjgy_VzhPBaoYJQlMkkundbCs84GUKrTnb7jPbRA8XalY4Wu-LHCl_f_degzRQZKqdRYiSBHUwYaDIX-X6wd3wdQZrlfTrzI1tZAQcwT5vG8rqz2XCx4ENFbnC_AX_2NCSlXAe3IRTH3nb37U38JPHj7d_DwJDhnjwrM4hVlZ9uY43EpoS8YGuvQ"#;
-
-        info!("Running Local Executor Mode");
-        run_local_exec(IdentityProvider::Google, GOOGLE_JWT.to_string());
-        return Ok(());
-    }
 
     info!("Running in server mode");
     run_websocket_server(host, port).await;
