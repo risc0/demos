@@ -7,7 +7,10 @@ use log::{error, info};
 use methods::JWT_VALIDATE_ELF;
 use oidc_validator::IdentityProvider;
 use pretty_env_logger;
-use risc0_zkvm::{serde::to_vec, MemoryImage, Program, GUEST_MAX_MEM, PAGE_SIZE, VERSION};
+use risc0_zkvm::{
+    default_executor, serde::to_vec, Executor, ExecutorEnv, MemoryImage, Program, GUEST_MAX_MEM,
+    PAGE_SIZE, VERSION,
+};
 use serde::{Deserialize, Serialize};
 use std::{
     collections::HashMap,
@@ -25,7 +28,7 @@ type Users = Arc<RwLock<HashMap<usize, mpsc::UnboundedSender<Result<Message, war
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
-struct Cli {
+struct Args {
     /// Host to bind to when using server mode
     #[arg(short = 'n', long, default_value = "127.0.0.1")]
     host: Option<String>,
@@ -33,6 +36,15 @@ struct Cli {
     /// Port to bind to when using server mode
     #[arg(short, long, default_value = "8181")]
     port: Option<String>,
+
+    /// Run local executor for testing and benchmarking
+    #[arg(short = 'x', long, default_value_t = false)]
+    executor: bool,
+}
+
+#[derive(Deserialize)]
+struct JwtRequest {
+    jwt: String,
 }
 
 #[derive(Clone, Deserialize, Serialize)]
@@ -133,9 +145,19 @@ async fn run_bonsai(id: usize, provider: IdentityProvider, jwt: String) -> Resul
     Ok(result)
 }
 
-#[derive(Deserialize)]
-struct JwtRequest {
-    jwt: String,
+fn run_local_exec(provider: IdentityProvider, jwt: String) -> Result<()> {
+    let program = Program::load_elf(JWT_VALIDATE_ELF, GUEST_MAX_MEM as u32).unwrap();
+    let image = MemoryImage::new(&program, PAGE_SIZE as u32).unwrap();
+    let image_id = hex::encode(image.compute_id());
+    info!("ImageId = {image_id}");
+    let mut builder = ExecutorEnv::builder();
+    builder.session_limit(None).write(&(provider, jwt)).unwrap();
+
+    let env = builder.build().unwrap();
+
+    default_executor().execute(env, image).unwrap();
+
+    Ok(())
 }
 
 // Define an asynchronous function to handle new connections
@@ -286,9 +308,7 @@ async fn run_websocket_server(host: String, port: String) {
 async fn main() -> Result<()> {
     pretty_env_logger::init();
 
-    let cli = Cli::parse();
-
-    info!("Running in server mode");
+    let cli = Args::parse();
 
     let host = cli
         .host
@@ -297,6 +317,17 @@ async fn main() -> Result<()> {
         .port
         .ok_or_else(|| anyhow!("Port is required when in server mode"))?;
 
+    let local_exec = cli.executor;
+
+    if local_exec {
+        const GOOGLE_JWT: &str = r#"eyJhbGciOiJSUzI1NiIsImtpZCI6IjViMzcwNjk2MGUzZTYwMDI0YTI2NTVlNzhjZmE2M2Y4N2M5N2QzMDkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJuYmYiOjE2OTk5NDU4NzMsImF1ZCI6Ijg3Mzc4NzMzMTI2Mi03YmZsajRmaG91cDFlbmxiMDU1Z2dpcHFjaml1cTY4dS5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsInN1YiI6IjEwODM3ODE1MTk2ODc0Nzg5ODczMyIsIm5vbmNlIjoiMHhlZmRGOTg2MUYzZURjMjQwNDY0M0I1ODgzNzhGRTI0MkZDYWRFNjU4IiwiaGQiOiJyaXNjemVyby5jb20iLCJlbWFpbCI6ImhhbnNAcmlzY3plcm8uY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImF6cCI6Ijg3Mzc4NzMzMTI2Mi03YmZsajRmaG91cDFlbmxiMDU1Z2dpcHFjaml1cTY4dS5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsIm5hbWUiOiJIYW5zIE1hcnRpbiIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NJQ0tlRDRnY0g3bnJTaDdncVFUMXJrMG1aUlNTcHlMMjhhTDRyekRKMnA9czk2LWMiLCJnaXZlbl9uYW1lIjoiSGFucyIsImZhbWlseV9uYW1lIjoiTWFydGluIiwiaWF0IjoxNjk5OTQ2MTczLCJleHAiOjE2OTk5NDk3NzMsImp0aSI6IjgxZjIzZTQwNDAwNmZkMmUzMTgxZTliYzkxNDMzZjA0NDNkNGI4MjIifQ.rNsLRtF22R6cvRbDksAAl5p3e1sAFii35xZWHUnVbLV_1ciQV7SpPIg-XkP_kBp7hqnYz1IGFm5Ce2L8Omm-5Z9onK8prsBKoJf5cGVJSwAy9NYtmRPQIcXOfGf6q1i04L_LBxnVnHx1VrL0ji8vJ7Tf99xO1qEjgy_VzhPBaoYJQlMkkundbCs84GUKrTnb7jPbRA8XalY4Wu-LHCl_f_degzRQZKqdRYiSBHUwYaDIX-X6wd3wdQZrlfTrzI1tZAQcwT5vG8rqz2XCx4ENFbnC_AX_2NCSlXAe3IRTH3nb37U38JPHj7d_DwJDhnjwrM4hVlZ9uY43EpoS8YGuvQ"#;
+
+        info!("Running Local Executor Mode");
+        run_local_exec(IdentityProvider::Google, GOOGLE_JWT.to_string());
+        return Ok(());
+    }
+
+    info!("Running in server mode");
     run_websocket_server(host, port).await;
 
     return Ok(());
