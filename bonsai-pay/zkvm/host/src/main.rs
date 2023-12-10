@@ -154,16 +154,20 @@ async fn run_bonsai(id: usize, provider: IdentityProvider, jwt: String) -> Resul
 }
 
 fn run_local_exec(provider: IdentityProvider, jwt: String) {
-    let program = Program::load_elf(JWT_VALIDATE_ELF, GUEST_MAX_MEM as u32).unwrap();
-    let image = MemoryImage::new(&program, PAGE_SIZE as u32).unwrap();
+    let program =
+        Program::load_elf(JWT_VALIDATE_ELF, GUEST_MAX_MEM as u32).expect("Failed to load ELF");
+    let image =
+        MemoryImage::new(&program, PAGE_SIZE as u32).expect("Failed to create Memory Image");
     let image_id = hex::encode(image.compute_id());
     info!("ImageId = {image_id}");
     let mut builder = ExecutorEnv::builder();
     builder.session_limit(None).write(&(provider, jwt)).unwrap();
 
-    let env = builder.build().unwrap();
+    let env = builder.build().expect("Failed to build Executor");
 
-    default_executor().execute(env, image).unwrap();
+    default_executor()
+        .execute(env, image)
+        .expect("Failed to execute");
 }
 
 async fn handle_connection(ws: warp::ws::WebSocket, users: Users) {
@@ -174,7 +178,6 @@ async fn handle_connection(ws: warp::ws::WebSocket, users: Users) {
 
     let (user_ws_tx, mut user_ws_rx) = ws.split();
 
-    // Create an unbounded channel for message passing
     let (tx, rx) = mpsc::unbounded_channel();
 
     let rx = UnboundedReceiverStream::new(rx);
@@ -183,92 +186,95 @@ async fn handle_connection(ws: warp::ws::WebSocket, users: Users) {
     users.write().await.insert(id, tx);
 
     while let Some(result) = user_ws_rx.next().await {
-        let msg = match result {
-            Ok(msg) => msg,
+        match result {
+            Ok(text) => {
+                if text.as_bytes().is_empty() {
+                    info!("ID: {} | Received empty text message, ignoring", id);
+                    continue;
+                }
+
+                info!("ID: {} | Received text message from user", id);
+                let msg = match text.to_str() {
+                    Ok(msg) => msg,
+                    Err(e) => {
+                        error!("ID: {} | Failed to convert message to string: {:?}", id, e);
+                        continue;
+                    }
+                };
+                let jwt_req = match serde_json::from_str::<JwtRequest>(msg) {
+                    Ok(jwt_req) => jwt_req,
+                    Err(e) => {
+                        error!(
+                            "ID: {} | Failed to deserialize message to JWT Request: {}",
+                            id, e
+                        );
+                        continue;
+                    }
+                };
+                info!(
+                    "ID: {} | JWT: {}...{}",
+                    id,
+                    &jwt_req.jwt[..8],
+                    &jwt_req.jwt[jwt_req.jwt.len() - 32..]
+                );
+
+                let provider = IdentityProvider::Google;
+                let jwt = jwt_req.jwt;
+
+                info!("ID: {} | Running Bonsai", id);
+
+                match run_bonsai(id, provider, jwt).await {
+                    Ok(res) => {
+                        let wrapped_proof = SnarkReceiptWrapper {
+                            snark: &res.snark,
+                            post_state_digest: &res.post_state_digest,
+                            journal: &res.journal,
+                        };
+
+                        let proof_string = serde_json::to_string(&wrapped_proof)
+                            .expect("Failed to convert proof to string");
+
+                        info!("ID: {} | Sending proof back to user", id);
+
+                        let mut users = users.write().await;
+
+                        // Locate the sender associated with the originating user and send the proof back to that user
+                        if let Some(user_tx) = users.get_mut(&id) {
+                            if let Err(_disconnected) =
+                                user_tx.send(Ok(Message::text(proof_string.clone())))
+                            {
+                                error!("ID: {} | Failed to send proof back to user", id);
+                            }
+                        } else {
+                            error!("ID: {} | Failed to locate user", id);
+                        }
+                    }
+                    Err(e) => {
+                        error!("ID: {} | Bonsai error: {}", id, e);
+
+                        let mut users = users.write().await;
+
+                        // Locate the sender associated with the originating user and send the proof back to that users
+                        if let Some(user_tx) = users.get_mut(&id) {
+                            if let Err(_disconnected) = user_tx.send(Ok(Message::text(
+                                serde_json::to_string(&e.to_string())
+                                    .expect("Failed to convert to string"),
+                            ))) {
+                                error!("ID: {} | Failed to send proof back to user", id);
+                            }
+                        } else {
+                            error!("ID: {} | Failed to locate user", id);
+                        }
+                    }
+                };
+            }
             Err(e) => {
                 error!("ID: {} | WebSocket error: {}", id, e);
                 break;
             }
-        };
-
-        info!("ID: {} | Received message from user", id);
-
-        let msg = match msg.to_str() {
-            Ok(msg) => msg,
-            Err(e) => {
-                error!("ID: {} | Failed to convert message to string: {:?}", id, e);
-                continue;
-            }
-        };
-
-        let jwt_req = match serde_json::from_str::<JwtRequest>(msg) {
-            Ok(jwt_req) => jwt_req,
-            Err(e) => {
-                error!(
-                    "ID: {} | Failed to deserialize message to JWT Request: {}",
-                    id, e
-                );
-                continue;
-            }
-        };
-
-        info!(
-            "ID: {} | JWT: {}...{}",
-            id,
-            &jwt_req.jwt[..8],
-            &jwt_req.jwt[jwt_req.jwt.len() - 32..]
-        );
-
-        // Define the identity provider and the jwt from the request
-        let provider = IdentityProvider::Google;
-        let jwt = jwt_req.jwt;
-
-        info!("ID: {} | Running Bonsai", id);
-
-        // Run the Bonsai function to generate a proof
-        match run_bonsai(id, provider, jwt).await {
-            Ok(res) => {
-                let wrapped_proof = SnarkReceiptWrapper {
-                    snark: &res.snark,
-                    post_state_digest: &res.post_state_digest,
-                    journal: &res.journal,
-                };
-
-                let proof_string = serde_json::to_string(&wrapped_proof).unwrap();
-
-                info!("ID: {} | Sending proof back to user", id);
-
-                let mut users = users.write().await;
-
-                // Locate the sender associated with the originating user and send the proof back to that Users
-                if let Some(user_tx) = users.get_mut(&id) {
-                    if let Err(_disconnected) =
-                        user_tx.send(Ok(Message::text(proof_string.clone())))
-                    {
-                        error!("ID: {} | Failed to send proof back to user", id);
-                    }
-                } else {
-                    error!("ID: {} | Failed to locate user", id);
-                }
-            }
-            Err(e) => {
-                error!("ID: {} | Bonsai error: {}", id, e);
-
-                let mut users = users.write().await;
-
-                // Locate the sender associated with the originating user and send the proof back to that users
-                if let Some(user_tx) = users.get_mut(&id) {
-                    if let Err(_disconnected) = user_tx.send(Ok(Message::text(
-                        serde_json::to_string(&e.to_string()).unwrap(),
-                    ))) {
-                        error!("ID: {} | Failed to send proof back to user", id);
-                    }
-                } else {
-                    error!("ID: {} | Failed to locate user", id);
-                }
-            }
-        };
+        }
     }
+
     // Handle user disconnection
     disconnect_user(id, &users).await;
 }

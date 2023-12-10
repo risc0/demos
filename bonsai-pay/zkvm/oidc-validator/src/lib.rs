@@ -7,17 +7,11 @@ use jwt_compact::{
 };
 use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use thiserror::Error;
 
 lazy_static! {
-    static ref GOOGLE_KEYS: HashMap<String, ExtendedJsonWebKey<'static, Extra>> = {
-        let jwks: JwkKeys = serde_json::from_str(GOOGLE_PUB_JWK).expect("Failed to parse JWK");
-        jwks.keys
-            .into_iter()
-            .map(|k| (k.extra.key_id.clone(), k))
-            .collect()
-    };
+    static ref GOOGLE_KEYS: JwkKeys =
+        serde_json::from_str(GOOGLE_PUB_JWK).expect("Failed to parse JWK");
 }
 
 #[derive(Deserialize, Serialize)]
@@ -95,10 +89,7 @@ pub enum OidcErr {
     KeyIdMissingError,
 }
 
-fn decode_token<T>(
-    token: &str,
-    keys: &HashMap<String, ExtendedJsonWebKey<'_, Extra>>,
-) -> Result<T, OidcErr>
+fn decode_token<T>(token: &str, keys: &JwkKeys) -> Result<T, OidcErr>
 where
     T: for<'de> Deserialize<'de> + Serialize + Clone,
 {
@@ -110,7 +101,11 @@ where
         .as_deref()
         .ok_or(OidcErr::KeyIdMissingError)?;
 
-    let key = keys.get(key_id).ok_or(OidcErr::CertificateNotFoundError)?;
+    let key = keys
+        .keys
+        .iter()
+        .find(|k| k.extra.key_id == key_id)
+        .ok_or(OidcErr::CertificateNotFoundError)?;
 
     let (alg, vkey) = match key.base.key_type() {
         KeyType::Rsa => RsaPublicKey::try_from(&key.base)
@@ -132,14 +127,15 @@ where
 pub mod test_oidc_validator {
 
     use crate::GOOGLE_KEYS;
+    use std::env;
 
     use super::{decode_token, GoogleClaims};
+    // NOTE: Test with the jwt env var
 
     #[test]
     fn test_validate_google_jwt_valid_token() {
-        const GOOGLE_JWT: &str = r#"eyJhbGciOiJSUzI1NiIsImtpZCI6ImU0YWRmYjQzNmI5ZTE5N2UyZTExMDZhZjJjODQyMjg0ZTQ5ODZhZmYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI4NzM3ODczMzEyNjItN2JmbGo0ZmhvdXAxZW5sYjA1NWdnaXBxY2ppdXE2OHUuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI4NzM3ODczMzEyNjItN2JmbGo0ZmhvdXAxZW5sYjA1NWdnaXBxY2ppdXE2OHUuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDgzNzgxNTE5Njg3NDc4OTg3MzMiLCJoZCI6InJpc2N6ZXJvLmNvbSIsImVtYWlsIjoiaGFuc0ByaXNjemVyby5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibm9uY2UiOiIweGVmZEY5ODYxRjNlRGMyNDA0NjQzQjU4ODM3OEZFMjQyRkNhZEU2NTgiLCJuYmYiOjE3MDE1NzE3MDIsIm5hbWUiOiJIYW5zIE1hcnRpbiIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NJQ0tlRDRnY0g3bnJTaDdncVFUMXJrMG1aUlNTcHlMMjhhTDRyekRKMnA9czk2LWMiLCJnaXZlbl9uYW1lIjoiSGFucyIsImZhbWlseV9uYW1lIjoiTWFydGluIiwibG9jYWxlIjoiZW4iLCJpYXQiOjE3MDE1NzIwMDIsImV4cCI6MTcwMTU3NTYwMiwianRpIjoiMDhkODAxZTdiYTk1MmJmNTAxY2I2ODFjMzg4YTk1MjVmOWIwZTM4MyJ9.nT9dBznua9nrGB1LWv94DAR_xEEi7wNDanqM8TIN0Ri-hYdCdPo1KyQO98ePsrH8UpRbzD10hP-0VMWIXkkxkNafqNBvkpt4y1CArwa9u7SXZr2WXPvs7Ou48XDYLNR3hnL3nB3lRw9FgKzRFjh_qMgA45FgTSx69vaYs8LMKUeZ-EY1QalXGRZPrYhLmykuiKdfntaRcXF8TYAQv7SuVXCPoATWJAkbDAVLpUiNVzxEvgyPGf01J7E3HC2T9Q0gmhHUryWqoLT3pbU-re2mWrmmGjX0SZEa7MjYRvlXPuI58Xvso9J1NQ6TlsK7YSHLlx5IxcZA3E0zVc5-HAoTLQ"#;
-
-        let decoded = decode_token::<GoogleClaims>(GOOGLE_JWT, &GOOGLE_KEYS).unwrap();
+        let jwt = env::var("jwt").expect("jwt not set");
+        let decoded = decode_token::<GoogleClaims>(&jwt, &GOOGLE_KEYS).unwrap();
 
         assert_eq!(&decoded.email, "hans@risczero.com");
         assert_eq!(&decoded.nonce, "0xefdF9861F3eDc2404643B588378FE242FCadE658");
@@ -147,7 +143,7 @@ pub mod test_oidc_validator {
     #[test]
     #[should_panic]
     fn test_fail_invalid_token() {
-        const GOOGLE_JWT: &str = r#"xxxx"#;
-        decode_token::<GoogleClaims>(GOOGLE_JWT, &GOOGLE_KEYS).unwrap();
+        let jwt = env::var("jwt").expect("jwt not set");
+        decode_token::<GoogleClaims>(&jwt, &GOOGLE_KEYS).unwrap();
     }
 }
