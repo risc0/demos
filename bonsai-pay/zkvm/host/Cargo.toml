@@ -16,9 +16,9 @@ hex = "0.4.3"
 jwt-compact = { version = "0.7.0", features = ["rsa"] }
 log = "0.4.20"
 methods = { path = "../methods" }
-oidc_validate = { path = "../oidc_validate/" }
+oidc-validator = { path = "../oidc-validator/" }
 pretty_env_logger = "0.5.0"
-risc0-zkvm = { version = "0.19.0" }
+risc0-zkvm = { version = "0.19.1" }
 serde = "1.0"
 serde_json = "1.0"
 serde_with = "3.3.0"

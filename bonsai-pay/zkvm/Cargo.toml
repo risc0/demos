@@ -2,7 +2,7 @@
 members = [
     "host",
     "methods",
-    "oidc_validate"
+    "oidc-validator"
 ]
 resolver = "2"
 

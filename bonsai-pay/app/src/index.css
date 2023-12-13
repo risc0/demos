@@ -185,6 +185,9 @@ button:focus-visible {
   color: #888;
 }
 
+.read-the-notice {
+}
+
 .input-field {
   padding: 0.8em;
   border: 1px solid #ccc;
