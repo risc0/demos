@@ -2,7 +2,7 @@
 
 This repository contains the source code for RISC Zero demo applications. The projects are designed for demonstration purposes only and should not be used in production.
 
-To learn more about RISC Zero visit our [website] and developer docs [docs]. 
+To learn more about RISC Zero visit our [website] and developer [docs]. 
 
 ### Warning / Security Notice
 Demo applications are provided as-is and have NOT BEEN AUDITED and the following demos contain KNOWN security findings:
