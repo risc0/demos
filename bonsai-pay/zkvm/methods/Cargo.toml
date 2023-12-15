@@ -9,8 +9,8 @@ methods = ["guest"]
 [dev-dependencies]
 alloy-primitives = "0.3.3"
 alloy-sol-types = "0.3.2"
-oidc_validate = { path = "../oidc_validate/" }
-risc0-zkvm = { version = "0.19.0" }
+oidc-validator = { path = "../oidc-validator/" }
+risc0-zkvm = { version = "0.19.1" }
 
 [build-dependencies]
-risc0-build = { version = "0.19.0" }
+risc0-build = { version = "0.19.1" }
