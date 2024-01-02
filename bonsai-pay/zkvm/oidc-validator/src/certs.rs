@@ -2,20 +2,20 @@ pub static GOOGLE_PUB_JWK: &str = r#"
 {
   "keys": [
     {
-      "kid": "0ad1fec78504f447bae65bcf5afaedb65eec9e81",
-      "kty": "RSA",
-      "n": "sm72oBH-R2Rqt4hkjp66tz5qCtq42TMnVgZg2Pdm_zs7_-EoFyNs9sD1MKsZAFaBPXBHDiWywyaHhLgwETLN9hlJIZPzGCEtV3mXJFSYG-8L6t3kyKi9X1lUTZzbmNpE0tf-eMW-3gs3VQSBJQOcQnuiANxbSXwS3PFmi173C_5fDSuC1RoYGT6X3JqLc3DWUmBGucuQjPaUF0w6LMqEIy0W_WYbW7HImwANT6dT52T72md0JWZuAKsRRnRr_bvaUX8_e3K8Pb1K_t3dD6WSLvtmEfUnGQgLynVl3aV5sRYC0Hy_IkRgoxl2fd8AaZT1X_rdPexYpx152Pl_CHJ79Q",
+      "n": "1yFBscIm7d2VYYx8dSK4R4b5EOLKoFXPdr-B9RVYaFS_XHso47Mdc5_oj8DwYGeeJgvJN6kKrDqRd3W3JmEkA-woKe6e0Vd56sMWvc2s94utfI8AiXBNwXAYnCQWGHnu9faF903JaRDJTeaRTSmbrSMibpshpK2PcOtOk0Fb9CyZm9E8jSMblMa3jhW8vlTnln3r4qgr1nwddbOj0WEmAjwA7G32EdlF5Oz30_HeTiEKpMtLumf0GbmCP23dyc8Ibrl8ahhEdGtBBb8tDCIroB2C_O_QBdYVE8GZW2ZUBSEx7-riMZ5h--2bweM94I6dMSBke9IZ2582Sn8j3lFEWw",
       "e": "AQAB",
+      "use": "sig",
       "alg": "RS256",
-      "use": "sig"
+      "kid": "456b52c81e36fead259231a6947e040e03ea1262",
+      "kty": "RSA"
     },
     {
       "e": "AQAB",
-      "kid": "9b0285c31bfd8b040e03157b19c4e960bdc10c6f",
+      "alg": "RS256",
+      "kid": "91413cf4fa0cb92a3c3f5a054509132c47660937",
       "kty": "RSA",
       "use": "sig",
-      "n": "uCYe4j3rIDaC9U8jCloiD5UP5cQCndcKr570LSxEznqNB0qpmtqDJBU-RuSJbMEYZ853AlezSWca8uqDBAgdIWPod-scaQTOTg049m9hFwQuP7FzXsAjtxiOHub0nrD60Dy7vI1dPoiyiFdox25JUdW6OSPyq2OlFxCPIQy4SpKvebXduA2ZeIY5TWE2wt0mVPo__s9NACn4Ni9GwsPCcgG6yn8oAJ-JW6xCLnz5_CycNlg178Sxj8LWVEisPbdEK9LhSwQ7V3YU7pfLpEAtGWHYrIcH3-Tfz6IkS9-UmAzbdjaGk2W-AXkZW8jiIbfNER7e4ZKLntC4Am4InHkJzw",
-      "alg": "RS256"
+      "n": "jb1Ps3fdt0oPYPbQlfZqKkCXrM1qJ5EkfBHSMrPXPzh9QLwa43WCLEdrTcf5vI8cNwbgSxDlCDS2BzHQC0hYPwFkJaD6y6NIIcwdSMcKlQPwk4-sqJbz55_gyUWjifcpXXKbXDdnd2QzSE2YipareOPJaBs3Ybuvf_EePnYoKEhXNeGm_T3546A56uOV2mNEe6e-RaIa76i8kcx_8JP3FjqxZSWRrmGYwZJhTGbeY5pfOS6v_EYpA4Up1kZANWReeC3mgh3O78f5nKEDxwPf99bIQ22fIC2779HbfzO-ybqR_EJ0zv8LlqfT7dMjZs25LH8Jw5wGWjP_9efP8emTOw"
     }
   ]
 }
