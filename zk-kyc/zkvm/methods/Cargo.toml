@@ -1,0 +1,16 @@
+[package]
+name = "methods"
+version = "0.1.0"
+edition = "2021"
+
+[package.metadata.risc0]
+methods = ["guest"]
+
+[dev-dependencies]
+alloy-primitives = "0.3.3"
+alloy-sol-types = "0.3.2"
+oidc-validator = { path = "../oidc-validator/" }
+risc0-zkvm = { version = "0.19.1" }
+
+[build-dependencies]
+risc0-build = { version = "0.19.1" }

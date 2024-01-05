@@ -1,0 +1,28 @@
+[package]
+name = "host"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+alloy-sol-types = "0.3.2"
+anyhow = "1.0"
+bincode = "1.3.3"
+bonsai-sdk = { version = "0.5.0" }
+bytemuck = "1.14.0"
+clap = { version = "=4.3.23", features = ["derive"] }
+dotenv = "0.15.0"
+futures = "0.3.28"
+hex = "0.4.3"
+jwt-compact = { version = "0.7.0", features = ["rsa"] }
+log = "0.4.20"
+methods = { path = "../methods" }
+oidc-validator = { path = "../oidc-validator/" }
+pretty_env_logger = "0.5.0"
+risc0-zkvm = { version = "0.19.1" }
+serde = "1.0"
+serde_json = "1.0"
+serde_with = "3.3.0"
+tokio = { version = "1.32.0", features = ["full"] }
+tokio-stream = "0.1.14"
+typetag = "0.2"
+warp = "0.3.6"
