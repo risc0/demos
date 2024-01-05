@@ -54,7 +54,7 @@ const Claim: React.FC<ClaimProps> = () => {
 
   const stepDescriptions = [
     "Connect Wallet",
-    "Sign In",
+    "Verify",
     "Generate Proof",
     "Mint",
   ];

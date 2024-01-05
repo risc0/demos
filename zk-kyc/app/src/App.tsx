@@ -19,7 +19,7 @@ const config = createConfig(
   getDefaultConfig({
     alchemyId: VITE_ALCHEMY_ID,
     walletConnectProjectId: VITE_WALLET_CONNECT_ID,
-    appName: "Bonsai Pay",
+    appName: "zk KYC",
     chains: [sepolia],
   })
 );
@@ -41,8 +41,8 @@ function App() {
               alt="R0 Logo"
             />
           </div>
-          <h2 className="title">zkID</h2>
-          <p className="subtitle">powered by Bonsai™</p>
+          <h2 className="title">zk KYC</h2>
+          <p className="subtitle">Verify your identity onchain.™</p>
           <ConnectKitButton mode="light" />
           <ViewSelection />
           <p className="read-the-docs">This is for demo purposes only.</p>
@@ -68,12 +68,6 @@ function App() {
 }
 
 function ViewSelection() {
-  const [showComponent, setShowComponent] = useState<"deposit" | "claim">(
-    "claim"
-  );
-  const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setShowComponent(e.target.value as "deposit" | "claim");
-  };
   return (
     <div>
       <div className="card">
@@ -120,36 +114,6 @@ function Footer() {
       <a href="https://bonsai.xyz" className="footer-link">
         Bonsai
       </a>
-      <button
-        onClick={() =>
-          openModal(
-            "Terms of Service",
-            <iframe
-              className="tos-content"
-              src="./BonsaiPayTermsofService2023.11.07.html"
-              title="Terms of Service"
-            />
-          )
-        }
-        className="footer-button"
-      >
-        Terms of Service
-      </button>
-      <button
-        onClick={() =>
-          openModal(
-            "Privacy Policy",
-            <iframe
-              className="privacy-content"
-              src="./RISCZeroBonsaiWebsitePrivacyPolicy2023.11.07.html"
-              title="Privacy Policy"
-            />
-          )
-        }
-        className="footer-button"
-      >
-        Privacy Policy
-      </button>
     </footer>
   );
 }

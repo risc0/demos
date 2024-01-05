@@ -568,7 +568,6 @@ input[type="number"] {
   padding: 1em;
 }
 
-.footer-button:focus {}
 
 .tos-content {
   width: 54em;
@@ -581,4 +580,9 @@ input[type="number"] {
 .idmebutton {
   width: 100%;
   height: auto;
+}
+
+.idmebutton:hover {
+  opacity: 0.8;
+  transition: 0.2s;
 }
