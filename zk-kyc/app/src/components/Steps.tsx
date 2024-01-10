@@ -5,7 +5,7 @@ import Mint from "./Mint";
 
 import { useAccount } from "wagmi";
 import { GoogleTokenPayload } from "../libs/types";
-import { SignInWithIDme } from "./SignInWithIDme";
+import SignInWithIDme from "./SignInWithIDme";
 import Cookies from "js-cookie";
 
 interface ClaimProps {}

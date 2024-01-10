@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import { useAccount } from "wagmi";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
-export const SignInWithIDme = function({disabled, onNext, onUserData}) {
+const SignInWithIDme = function ({ disabled, onNext, onUserData }) {
   const { VITE_IDME_CLIENT_ID, VITE_REDIRECT_URI } = import.meta.env;
   const { address } = useAccount();
   const [userData, setUserData] = useState(null);
@@ -13,49 +13,49 @@ export const SignInWithIDme = function({disabled, onNext, onUserData}) {
     return urlParams.get(param);
   };
 
- const hasRun = useRef(false);
+  const hasRun = useRef(false);
 
   useEffect(() => {
-        if (hasRun.current) return;
+    if (hasRun.current) return;
     hasRun.current = true;
-    const code = getQueryParam('code');
+    const code = getQueryParam("code");
     if (code) {
-      const postUrl = '/api/auth'; // Proxy endpoint to exchange code for token
+      const postUrl = "/api/auth"; // Proxy endpoint to exchange code for token
 
       fetch(postUrl, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ code }),
       })
-      .then(() => {
-        const accessToken = Cookies.get('session');
-        if (!accessToken) {
-          throw new Error('Session cookie not found');
-        }
-        // Use the session cookie as the access token
-        return fetch('/api/attributes', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-          },
+        .then(() => {
+          const accessToken = Cookies.get("session");
+          if (!accessToken) {
+            throw new Error("Session cookie not found");
+          }
+          // Use the session cookie as the access token
+          return fetch("/api/attributes", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+        })
+        .then((response) => response.json())
+        .then((userData) => {
+          const dataObject = userData.attributes.reduce((obj, item) => {
+            obj[item.handle] = item.value;
+            return obj;
+          }, {});
+          setUserData(userData);
+          onUserData(dataObject);
+          onNext();
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          setError(error);
         });
-      })
-      .then(response => response.json())
-      .then(userData => {
-        const dataObject = userData.attributes.reduce((obj, item) => {
-        obj[item.handle] = item.value;
-        return obj;
-      }, {});
-        setUserData(userData);
-        onUserData(dataObject);
-        onNext();
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        setError(error);
-      });
     }
   }, []);
 
@@ -64,7 +64,7 @@ export const SignInWithIDme = function({disabled, onNext, onUserData}) {
   return (
     <div className="sign-in-container">
       <div className="idmebutton">
-        {error && <div className='errorMessage'>{error.message}</div>}
+        {error && <div className="errorMessage">{error.message}</div>}
         {userData ? (
           <div>
             <p>User Data: {JSON.stringify(userData)}</p>
@@ -77,5 +77,6 @@ export const SignInWithIDme = function({disabled, onNext, onUserData}) {
       </div>
     </div>
   );
-}
+};
 
+export default SignInWithIDme;
