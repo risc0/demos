@@ -18,7 +18,7 @@ use std::{
 };
 use tokio::sync::{mpsc, RwLock};
 use tokio_stream::wrappers::UnboundedReceiverStream;
-use warp::{filters::ws::Message, Filter};
+use warp::{filters::ws::Message, http::StatusCode, Filter};
 
 use dotenv::dotenv;
 
@@ -65,6 +65,23 @@ alloy_sol_types::sol! {
         address addr;
         bytes ident;
     }
+}
+
+#[derive(Deserialize)]
+struct AuthRequest {
+    code: String,
+}
+
+async fn auth_handler(
+    auth_request: AuthRequest,
+    users: Users,
+) -> Result<impl warp::Reply, warp::Rejection> {
+    info!("handle auth");
+
+    Ok(warp::reply::with_status(
+        "Authenticated successfully",
+        StatusCode::OK,
+    ))
 }
 
 async fn run_bonsai(id: usize, provider: IdentityProvider, jwt: String) -> Result<SnarkReceipt> {
@@ -284,20 +301,27 @@ async fn disconnect_user(id: usize, users: &Users) {
     users.write().await.remove(&id);
 }
 
-async fn run_websocket_server(host: String, port: String) {
+async fn run_server(host: String, port: String) {
     dotenv().ok();
 
     let users = Users::default();
     let users = warp::any().map(move || users.clone());
 
-    let routes = warp::path::end()
+    // Add a route for /auth
+    let auth_route = warp::post()
+        .and(warp::path::end())
+        .and(warp::body::json())
+        .and(users.clone())
+        .and_then(auth_handler);
+
+    let routes = auth_route.or(warp::path::end()
         .and(warp::ws())
         .and(users)
         .and(warp::header::optional::<String>("X-Real-IP"))
         .map(|ws: warp::ws::Ws, users, ip: Option<String>| {
             info!("remote_ip: {}", ip.unwrap_or_default());
             ws.on_upgrade(move |socket| handle_connection(socket, users))
-        });
+        }));
 
     let host: Result<Vec<u8>, std::num::ParseIntError> = host
         .split('.')
@@ -346,7 +370,7 @@ async fn main() -> Result<()> {
         .ok_or_else(|| anyhow!("Port is required when in server mode"))?;
 
     info!("Running in server mode");
-    run_websocket_server(host, port).await;
+    run_server(host, port).await;
 
     return Ok(());
 }

@@ -9,10 +9,14 @@ export default defineConfig({
     target: "es2020",
   },
   plugins: [react(), nodePolyfills()],
-  // server: {
-  //       https: {
-  //     key: fs.readFileSync('key.pem'),
-  //     cert: fs.readFileSync('cert.pem'),
-  //   }
-  // }
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://0.0.0.0:8181',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+  }
+
 });
