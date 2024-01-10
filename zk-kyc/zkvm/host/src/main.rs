@@ -75,6 +75,12 @@ struct AuthRequest {
 #[derive(Deserialize)]
 struct TokenResponse {
     access_token: String,
+    token_type: String,
+    expires_in: u32,
+    scope: String,
+    refresh_token: String,
+    refresh_expires_in: u32,
+    id_token: String,
 }
 
 async fn auth_handler(
@@ -98,7 +104,7 @@ async fn auth_handler(
 
     let client = reqwest::Client::new();
     let res = client
-        .post("https://api.id.me/oauth/token")
+        .post("https://api.idmelabs.com/oauth/token")
         .form(&params)
         .send()
         .await
@@ -110,14 +116,15 @@ async fn auth_handler(
     let token_response: TokenResponse =
         serde_json::from_str(&body).map_err(|e| warp::reject::not_found())?;
 
-    let jwt_token = token_response.access_token;
+    let id_token = token_response.id_token; // Assuming you have this from your token response
+    info!("ID TOKEN: {}", id_token);
 
-    let cookie_value = format!("session={}; Path=/; Max-Age=3600", jwt_token);
+    let id_token_cookie = format!("id_token={}; Path=/; Max-Age=3600; ", id_token);
 
     Ok(with_header(
         "Authenticated successfully",
         "Set-Cookie",
-        cookie_value,
+        id_token_cookie,
     ))
 }
 async fn run_bonsai(id: usize, provider: IdentityProvider, jwt: String) -> Result<SnarkReceipt> {
