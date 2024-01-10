@@ -3,7 +3,7 @@ import { zeroAddress, toHex } from "viem";
 
 import { useZrpGetClaimId } from "../generated";
 import tokens from "../assets/tokens.json";
-import { Balance } from "./Balance";
+import { Mint } from "./Mint";
 import { Token } from "../libs/types";
 import { sha256 } from 'js-sha256';
 
@@ -35,13 +35,13 @@ const Account: React.FC<AccountProps> = (props) => {
   return (
     <>
       <div className="balance-container">
-        <Balance
+        <Mint
           identity={ethClaimId ?? zeroAddress}
           token={tokens["sepolia"][0] as Token}
           disabled={disabled}
           hideClaim={hideClaim}
         />
-        <Balance
+        <Mint
           identity={usdcClaimId ?? zeroAddress}
           token={tokens["sepolia"][1] as Token}
           disabled={disabled}

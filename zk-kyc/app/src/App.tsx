@@ -6,7 +6,7 @@ import {
 } from "connectkit";
 import { ReactNode, useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
-import Claim from "./components/Claim";
+import Steps from "./components/Steps";
 import Deposit from "./components/Deposit";
 import { sepolia } from "wagmi/chains";
 import Modal from "./components/Modal";
@@ -71,7 +71,7 @@ function ViewSelection() {
   return (
     <div>
       <div className="card">
-        <Claim />
+        <Steps />
       </div>
     </div>
   );

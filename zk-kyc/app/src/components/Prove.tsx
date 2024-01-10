@@ -4,15 +4,16 @@ import Account from "./Account";
 interface ProveProps {
   disabled: boolean;
   email: string | null;
+  onNext: any;
 }
 
-const Prove: React.FC<ProveProps> = (props) => {
-  const { disabled, email } = props;
+const Prove: React.FC<ProveProps> = ({ disabled, email, onNext }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { VITE_API_HOST } = import.meta.env;
 
   const handleClick = useCallback(async () => {
+    ///
     setIsLoading(true);
 
     // Initialize a WebSocket connection
@@ -61,7 +62,7 @@ const Prove: React.FC<ProveProps> = (props) => {
 
   return (
     <>
-      <button onClick={handleClick} disabled={isLoading || disabled}>
+      <button onClick={onNext} disabled={isLoading || disabled}>
         {isLoading ? "Proving..." : "Prove with Bonsai™"}
       </button>
       {isLoading && <p>This will take a couple of minutes...</p>}
