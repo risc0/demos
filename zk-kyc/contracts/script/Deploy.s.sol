@@ -4,12 +4,12 @@ pragma solidity ^0.8.21;
 import {Script} from "forge-std/Script.sol";
 import {MockVerifier} from "./../src/risczero/MockVerifier.sol";
 import {RiscZeroGroth16Verifier} from "./../src/risczero/RiscZeroGroth16Verifier.sol";
-import {ZRP} from "./../src/ZRP.sol";
+import {ZID} from "./../src/ZID.sol";
 import "forge-std/console2.sol";
 
 contract Deploy is Script {
     RiscZeroGroth16Verifier public verifier;
-    ZRP public custody;
+    ZID public custody;
     bytes32 public imageId;
     uint256 public controlId0;
     uint256 public controlId1;
@@ -25,7 +25,7 @@ contract Deploy is Script {
         vm.startBroadcast(deployerPrivateKey);
 
         verifier = new RiscZeroGroth16Verifier(controlId0, controlId1);
-        custody = new ZRP(verifier, imageId);
+        custody = new ZID(verifier, imageId);
 
         console2.log("verifier: %s", address(verifier));
         console2.log("custody: %s", address(custody));
