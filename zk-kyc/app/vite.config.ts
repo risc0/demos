@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
-import fs from 'fs';
+import fs from "fs";
 
 export default defineConfig({
   build: {
@@ -10,18 +10,17 @@ export default defineConfig({
   plugins: [react(), nodePolyfills()],
   server: {
     proxy: {
-      '/api/auth': {
-        target: 'http://0.0.0.0:8181',
+      "/api/auth": {
+        target: "http://0.0.0.0:8181",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/auth/, ''),
+        rewrite: (path) => path.replace(/^\/api\/auth/, ""),
       },
-      '/api/attributes': {
-        target: 'https://api.id.me/api/public/v3/attributes.json',
+      "/api/attributes": {
+        target: "https://api.id.me/api/public/v3/userinfo.json",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/attributes/,''), 
-          secure: true,
+        rewrite: (path) => path.replace(/^\/api\/attributes/, ""),
+        secure: true,
       },
     },
-  }
-
+  },
 });

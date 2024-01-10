@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from "react";
 import Account from "./Account";
+import Cookies from "js-cookie";
 
 interface ProveProps {
   disabled: boolean;
@@ -18,11 +19,9 @@ const Prove: React.FC<ProveProps> = ({ disabled, email, onNext }) => {
 
     // Initialize a WebSocket connection
     const socket = new WebSocket(VITE_API_HOST);
-    const jwtCookie = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("jwt="));
-    const jwt = jwtCookie?.split("=")[1];
+    const idToken = Cookies.get("id_token");
 
+    const jwt = idToken;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const openHandler = (_event: Event) => {
       const message = JSON.stringify({ jwt });
@@ -62,7 +61,7 @@ const Prove: React.FC<ProveProps> = ({ disabled, email, onNext }) => {
 
   return (
     <>
-      <button onClick={onNext} disabled={isLoading || disabled}>
+      <button onClick={handleClick} disabled={isLoading || disabled}>
         {isLoading ? "Proving..." : "Prove with Bonsai™"}
       </button>
       {isLoading && <p>This will take a couple of minutes...</p>}

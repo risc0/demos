@@ -66,12 +66,12 @@ export const Mint: React.FC<MintProps> = ({}) => {
     return () => clearInterval(intervalId);
   });
 
-  const { write: claim } = useZrpClaim({
-    args: [
-      encodedProof as `0x${string}`,
-      token.address as `0x${string}`,
-    ] as never,
-  });
+  // const { write: claim } = useZrpClaim({
+  //   args: [
+  //     encodedProof as `0x${string}`,
+  //     token.address as `0x${string}`,
+  //   ] as never,
+  // });
 
   // Function to handle minting
   const handleClaim = () => claim();
@@ -82,3 +82,5 @@ export const Mint: React.FC<MintProps> = ({}) => {
     </>
   );
 };
+
+export default Mint;

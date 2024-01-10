@@ -9,7 +9,7 @@ if (!process.env.ETHERSCAN_APIKEY) {
 }
 
 if (!process.env.VITE_CUSTODY_ADDRESS) {
-  throw new Error("Missing ZRP_ADDRESS");
+  throw new Error("Missing ZID_ADDRESS");
 }
 
 export default defineConfig({
@@ -26,7 +26,7 @@ export default defineConfig({
       chainId: sepolia.id,
       contracts: [
         {
-          name: "ZRP",
+          name: "ZID",
           address: {
             [sepolia.id]: process.env.VITE_CUSTODY_ADDRESS as `0x${string}`,
           },
