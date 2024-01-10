@@ -18,7 +18,7 @@ use std::{
 };
 use tokio::sync::{mpsc, RwLock};
 use tokio_stream::wrappers::UnboundedReceiverStream;
-use warp::{filters::ws::Message, http::StatusCode, Filter};
+use warp::{filters::ws::Message, http::StatusCode, reply::with_header, Filter};
 
 use dotenv::dotenv;
 
@@ -72,18 +72,54 @@ struct AuthRequest {
     code: String,
 }
 
+#[derive(Deserialize)]
+struct TokenResponse {
+    access_token: String,
+}
+
 async fn auth_handler(
     auth_request: AuthRequest,
     users: Users,
 ) -> Result<impl warp::Reply, warp::Rejection> {
-    info!("handle auth");
+    info!("auth");
+    let client_id = dotenv::var("CLIENT_ID").expect("CLIENT_ID not found in .env file");
+    let client_secret = dotenv::var("CLIENT_SECRET").expect("CLIENT_SECRET not found in .env file");
+    let redirect_uri = dotenv::var("REDIRECT_URI").expect("REDIRECT_URI not found in .env file");
 
-    Ok(warp::reply::with_status(
+    info!("Request: {:?}", &client_id);
+
+    let params = [
+        ("client_id", client_id.as_str()),
+        ("client_secret", client_secret.as_str()),
+        ("code", auth_request.code.as_str()),
+        ("redirect_uri", redirect_uri.as_str()),
+        ("grant_type", "authorization_code"),
+    ];
+
+    let client = reqwest::Client::new();
+    let res = client
+        .post("https://api.id.me/oauth/token")
+        .form(&params)
+        .send()
+        .await
+        .map_err(|e| warp::reject::not_found())?;
+
+    let body = res.text().await.map_err(|e| warp::reject::not_found())?;
+    info!("ID.me token endpoint response: {}", body);
+
+    let token_response: TokenResponse =
+        serde_json::from_str(&body).map_err(|e| warp::reject::not_found())?;
+
+    let jwt_token = token_response.access_token;
+
+    let cookie_value = format!("session={}; Path=/; Max-Age=3600", jwt_token);
+
+    Ok(with_header(
         "Authenticated successfully",
-        StatusCode::OK,
+        "Set-Cookie",
+        cookie_value,
     ))
 }
-
 async fn run_bonsai(id: usize, provider: IdentityProvider, jwt: String) -> Result<SnarkReceipt> {
     let result = tokio::task::spawn_blocking(move || -> Result<SnarkReceipt> {
         let client = bonsai_sdk::alpha::Client::from_env(VERSION)?;
@@ -341,6 +377,7 @@ async fn run_server(host: String, port: String) {
 #[tokio::main]
 async fn main() -> Result<()> {
     pretty_env_logger::init();
+    dotenv().ok();
 
     let cli = Args::parse();
 
