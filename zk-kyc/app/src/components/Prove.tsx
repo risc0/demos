@@ -65,7 +65,6 @@ const Prove: React.FC<ProveProps> = (props) => {
         {isLoading ? "Proving..." : "Prove with Bonsai™"}
       </button>
       {isLoading && <p>This will take a couple of minutes...</p>}
-      <Account email={email} disabled={disabled} hideClaim={true} />
     </>
   );
 };

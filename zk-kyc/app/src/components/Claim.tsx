@@ -5,6 +5,7 @@ import Prove from "./Prove";
 import { useAccount } from "wagmi";
 import { GoogleTokenPayload } from "../libs/types";
 import { SignInWithIDme } from "./SignInWithIDme";
+import Cookies from 'js-cookie'; 
 
 interface ClaimProps {}
 
@@ -14,43 +15,11 @@ const Claim: React.FC<ClaimProps> = () => {
   const [snarkExists, setSnarkExists] = useState<boolean>(false);
   const [email, setEmail] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState<number>(1);
+  const [userData, setUserData] = useState(null);
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      // Check for JWT cookie
-      const jwt = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("jwt="));
-      const jwtValue = jwt && jwt.split("=")[1];
-      let newJwtExists = false;
-
-      if (jwtValue && jwtValue !== "") {
-        newJwtExists = true;
-        const payload: GoogleTokenPayload = JSON.parse(
-          atob(jwtValue.split(".")[1])
-        );
-        setEmail(payload.email);
-      } else {
-        setEmail(null);
-      }
-
-      setJwtExists(newJwtExists);
-
-      // Check for snark cookie
-      const snark = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("snark="));
-      const snarkValue = snark && snark.split("=")[1];
-
-      if (snarkValue && snarkValue !== "") {
-        setSnarkExists(true);
-      } else {
-        setSnarkExists(false);
-      }
-    }, 1000);
-
-    return () => clearInterval(intervalId);
-  }, []);
+const next = () => {
+  setCurrentStep((prevStep) => prevStep + 1);
+};
 
   const stepDescriptions = [
     "Connect Wallet",
@@ -77,13 +46,8 @@ const Claim: React.FC<ClaimProps> = () => {
   useEffect(() => {
     if (!isConnected) {
       setCurrentStep(1);
-    } else if (isConnected && !jwtExists) {
-      setCurrentStep(2);
-    } else if (jwtExists && !snarkExists) {
-      setCurrentStep(3);
-    } else if (jwtExists && snarkExists) {
-      setCurrentStep(4);
-    }
+    } 
+    setCurrentStep(2);
   }, [isConnected, jwtExists, snarkExists]);
 
   const renderCurrentStep = () => {
@@ -94,18 +58,16 @@ const Claim: React.FC<ClaimProps> = () => {
         return (
           <>
             <h4> Sign in to your account</h4>
-             {/* <<SignInWithGoogle disabled={jwtExists} />
-            p>or</p>
-            <SignInWithApple disabled={false} /> */}
-            <SignInWithIDme disabled={jwtExists}  />
+            <SignInWithIDme disabled={jwtExists} onNext={next} onUserData={setUserData} />
           </>
         );
       case 3:
+        console.log(userData);
         return (
           <>
-            <h4>Prove account ownership</h4>
-            {email && <h5>{`Welcome, ${email}`}</h5>}
-            <Prove disabled={snarkExists} email={email} />
+            <h4>Prove Identity</h4>
+            {userData.fname && <h5>{`Welcome, ${userData.fname}`}</h5>}
+            <Prove disabled={false} email={userData.email} />
           </>
         );
       case 4:
@@ -113,7 +75,6 @@ const Claim: React.FC<ClaimProps> = () => {
           <>
             <h4>Mint your Identity Token</h4>
             {email && <h5>{`You have proven account ownership.`}</h5>}
-            <Account email={email} disabled={false} />
           </>
         );
       default:

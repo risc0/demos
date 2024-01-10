@@ -2,13 +2,13 @@ import { useEffect, useState, useRef } from "react";
 import { useAccount } from "wagmi";
 import Cookies from 'js-cookie';
 
-export const SignInWithIDme = function(disabled) {
+export const SignInWithIDme = function({disabled, onNext, onUserData}) {
   const { VITE_IDME_CLIENT_ID, VITE_REDIRECT_URI } = import.meta.env;
   const { address } = useAccount();
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState(null);
 
-  const getQueryParam = (param: any) => {
+  const getQueryParam = (param) => {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(param);
   };
@@ -44,7 +44,13 @@ export const SignInWithIDme = function(disabled) {
       })
       .then(response => response.json())
       .then(userData => {
+        const dataObject = userData.attributes.reduce((obj, item) => {
+        obj[item.handle] = item.value;
+        return obj;
+      }, {});
         setUserData(userData);
+        onUserData(dataObject);
+        onNext();
       })
       .catch(error => {
         console.error('Error:', error);
