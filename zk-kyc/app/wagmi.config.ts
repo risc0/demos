@@ -1,7 +1,7 @@
 import { defineConfig } from "@wagmi/cli";
 import { etherscan, react } from "@wagmi/cli/plugins";
 import { erc20ABI } from "wagmi";
-import { sepolia } from "wagmi/chains";
+import { goerli } from "wagmi/chains";
 import "dotenv/config";
 
 if (!process.env.ETHERSCAN_APIKEY) {
@@ -23,12 +23,12 @@ export default defineConfig({
   plugins: [
     etherscan({
       apiKey: process.env.ETHERSCAN_APIKEY,
-      chainId: sepolia.id,
+      chainId: goerli.id,
       contracts: [
         {
           name: "ZID",
           address: {
-            [sepolia.id]: process.env.VITE_CUSTODY_ADDRESS as `0x${string}`,
+            [goerli.id]: process.env.VITE_CUSTODY_ADDRESS as `0x${string}`,
           },
         },
       ],

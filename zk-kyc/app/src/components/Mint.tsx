@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { formatUnits } from "viem";
-import { useZrpClaimBalance, useZrpClaim } from "../generated";
+import { useZidMint } from "../generated";
 import { Token, SnarkReceipt } from "../libs/types";
 import { encodeAbiParameters, parseAbiParameters } from "viem";
+import Cookies from "js-cookie";
 
 interface MintProps {}
 
@@ -18,10 +19,10 @@ export const Mint: React.FC<MintProps> = ({}) => {
   useEffect(() => {
     const updateSnark = async () => {
       // Find the snark cookie and parse its value
-      const snarkCookie = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("snark="));
-      const snarkValue = snarkCookie?.split("=")[1];
+      // const snarkCookie = document.cookie
+      //   .split("; ")
+      //   .find((row) => row.startsWith("snark="));
+      const snarkValue = Cookies.get("snark");
       if (!snarkValue) return;
 
       const receipt: SnarkReceipt = JSON.parse(snarkValue);
@@ -66,19 +67,16 @@ export const Mint: React.FC<MintProps> = ({}) => {
     return () => clearInterval(intervalId);
   });
 
-  // const { write: claim } = useZrpClaim({
-  //   args: [
-  //     encodedProof as `0x${string}`,
-  //     token.address as `0x${string}`,
-  //   ] as never,
-  // });
+  const { write: mint } = useZidMint({
+    args: [encodedProof as `0x${string}`, `TEST`] as never,
+  });
 
   // Function to handle minting
-  const handleClaim = () => claim();
+  const handleClaim = () => mint();
 
   return (
     <>
-      <button>{`Mint`}</button>
+      <button onClick={handleClaim}>{`Mint`}</button>
     </>
   );
 };

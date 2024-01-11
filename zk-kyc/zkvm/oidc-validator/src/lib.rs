@@ -1,5 +1,5 @@
 mod certs;
-use certs::GOOGLE_PUB_JWK;
+use certs::IDME_JWKS;
 use jwt_compact::{
     alg::{Rsa, RsaPublicKey},
     jwk::{JsonWebKey, KeyType},
@@ -10,8 +10,7 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 lazy_static! {
-    static ref GOOGLE_KEYS: JwkKeys =
-        serde_json::from_str(GOOGLE_PUB_JWK).expect("Failed to parse JWK");
+    static ref IDME_KEYS: JwkKeys = serde_json::from_str(IDME_JWKS).expect("Failed to parse JWK");
 }
 
 #[derive(Deserialize, Serialize)]
@@ -42,7 +41,7 @@ impl IdentityProvider {
     pub fn validate(&self, token: &str) -> Result<String, OidcErr> {
         match self {
             Self::Google => {
-                let decoded = decode_token::<GoogleClaims>(token, &GOOGLE_KEYS).unwrap();
+                let decoded = decode_token::<IDMeClaims>(token, &IDME_KEYS).unwrap();
                 Ok(decoded.nonce)
             }
         }
@@ -50,25 +49,17 @@ impl IdentityProvider {
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
-pub struct GoogleClaims {
-    pub aud: String,
+pub struct IDMeClaims {
     pub iss: String,
     pub sub: String,
-    pub nonce: String, // I require this one.
-    pub email: String, // And this one too.
+    pub aud: String,
     pub exp: Option<u64>,
     pub iat: Option<u64>,
-    pub at_hash: Option<String>,
-    pub azp: Option<String>,
-    pub email_verified: Option<bool>,
-    pub family_name: Option<String>,
-    pub given_name: Option<String>,
-    pub hd: Option<String>,
-    pub locale: Option<String>,
-    pub name: Option<String>,
-    pub picture: Option<String>,
-    pub nbf: Option<u64>,
-    pub jti: Option<String>,
+    pub nonce: String,
+    pub email: String,
+    pub fname: String, // New field for first name
+    pub lname: String, // New field for last name
+    pub uuid: String,  // New field for UUID
 }
 
 #[derive(Error, Debug)]
@@ -126,24 +117,20 @@ where
 #[cfg(test)]
 pub mod test_oidc_validator {
 
-    use crate::GOOGLE_KEYS;
+    use crate::IDME_KEYS;
     use std::env;
 
-    use super::{decode_token, GoogleClaims};
-    // NOTE: Test with the jwt env var
+    use super::{decode_token, IDMeClaims};
 
     #[test]
-    fn test_validate_google_jwt_valid_token() {
+    fn test_validate_idme_jwt_valid_token() {
         let jwt = env::var("jwt").expect("jwt not set");
-        let decoded = decode_token::<GoogleClaims>(&jwt, &GOOGLE_KEYS).unwrap();
+        let decoded = decode_token::<IDMeClaims>(&jwt, &IDME_KEYS).unwrap();
 
         assert_eq!(&decoded.email, "hans@risczero.com");
-        assert_eq!(&decoded.nonce, "0xefdF9861F3eDc2404643B588378FE242FCadE658");
-    }
-    #[test]
-    #[should_panic]
-    fn test_fail_invalid_token() {
-        let jwt = env::var("jwt").expect("jwt not set");
-        decode_token::<GoogleClaims>(&jwt, &GOOGLE_KEYS).unwrap();
+        assert_eq!(&decoded.nonce, "undefined");
+        assert_eq!(&decoded.fname, "JACK");
+        assert_eq!(&decoded.lname, "FROST");
+        assert_eq!(&decoded.uuid, "d4483f6af48d4431b7ae100c0db434cc");
     }
 }

@@ -8,7 +8,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import Steps from "./components/Steps";
 import Deposit from "./components/Deposit";
-import { sepolia } from "wagmi/chains";
+import { goerli } from "wagmi/chains";
 import Modal from "./components/Modal";
 import "react-toastify/dist/ReactToastify.css";
 import { clearCookies } from "./libs/utils";
@@ -20,7 +20,7 @@ const config = createConfig(
     alchemyId: VITE_ALCHEMY_ID,
     walletConnectProjectId: VITE_WALLET_CONNECT_ID,
     appName: "zk KYC",
-    chains: [sepolia],
+    chains: [goerli],
   })
 );
 
@@ -57,8 +57,6 @@ function App() {
             </a>{" "}
             for more information.
           </p>
-
-        
         </div>
         <Footer />
         <ToastContainer />

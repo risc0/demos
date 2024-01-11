@@ -30,6 +30,7 @@ const Prove: React.FC<ProveProps> = ({ disabled, email, onNext }) => {
 
     const messageHandler = (event: MessageEvent) => {
       document.cookie = `snark=${event.data}`;
+      onNext();
       setIsLoading(false);
     };
 
