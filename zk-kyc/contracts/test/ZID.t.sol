@@ -53,9 +53,121 @@ contract ZIDTest is Test {
         vm.prank(alice);
         zid.mint(abi.encode(proof), "TEST");
 
-        uint256 tokenId = 0; // Assuming the first minted token has ID 0
+        uint256 tokenId = 1; // Assuming the first minted token has ID 0
         assertEq(zid.ownerOf(tokenId), alice, "Alice should own the minted token");
 
         assertEq(zid.tokenURI(tokenId), "TEST", "Token URI should be 'TEST'");
+    }
+
+    function test_Burn() public {
+        Types.Proof memory proof =
+            Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(alice)});
+
+        vm.prank(alice);
+        zid.mint(abi.encode(proof), "TEST");
+
+        uint256 tokenId = 1; // Assuming the first minted token has ID 0
+        assertEq(zid.ownerOf(tokenId), alice, "Alice should own the minted token");
+
+        vm.prank(alice);
+        zid.burn(tokenId);
+
+        assertEq(zid.balanceOf(alice), 0, "Alice should not own any tokens");
+    }
+
+    function testFail_tokenTransfer() public {
+        // should fail to transfer token to any address
+        Types.Proof memory proof =
+            Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(alice)});
+        vm.prank(alice);
+        zid.mint(abi.encode(proof), "TEST");
+
+        uint256 tokenId = 1; // Assuming the first minted token has ID 0
+        assertEq(zid.ownerOf(tokenId), alice, "Alice should own the minted token");
+
+        vm.prank(alice);
+        zid.transferFrom(alice, bob, tokenId);
+    }
+
+    function testFail_safeTransferFrom() public {
+        // should fail to transfer token to any address
+        Types.Proof memory proof =
+            Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(alice)});
+        vm.prank(alice);
+        zid.mint(abi.encode(proof), "TEST");
+
+        uint256 tokenId = 0; // Assuming the first minted token has ID 0
+        assertEq(zid.ownerOf(tokenId), alice, "Alice should own the minted token");
+
+        vm.prank(alice);
+        zid.safeTransferFrom(alice, bob, tokenId);
+    }
+
+    function testFail_doubleMint() public {
+        Types.Proof memory proof =
+            Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(alice)});
+        vm.prank(alice);
+        zid.mint(abi.encode(proof), "TEST");
+
+        uint256 tokenId = 0; // Assuming the first minted token has ID 0
+        assertEq(zid.ownerOf(tokenId), alice, "Alice should own the minted token");
+
+        vm.prank(alice);
+        zid.mint(abi.encode(proof), "TEST");
+    }
+
+    function test_mintBurnMint() public {
+        Types.Proof memory proof =
+            Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(alice)});
+        vm.prank(alice);
+        zid.mint(abi.encode(proof), "TEST");
+
+        uint256 tokenId = 1; // Assuming the first minted token has ID 0
+        assertEq(zid.ownerOf(tokenId), alice, "Alice should own the minted token");
+
+        vm.prank(alice);
+        zid.burn(tokenId);
+
+        assertEq(zid.balanceOf(alice), 0, "Alice should not own any tokens");
+
+        vm.prank(alice);
+        zid.mint(abi.encode(proof), "TEST");
+        assertEq(zid.ownerOf(2), alice, "Alice should own the minted token");
+    }
+
+    function testFail_burnNonExistentToken() public {
+        zid.burn(1);
+    }
+
+    function testFail_burnNonOwnedToken() public {
+        Types.Proof memory proof =
+            Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(alice)});
+        vm.prank(alice);
+        zid.mint(abi.encode(proof), "TEST");
+
+        uint256 tokenId = 1; // Assuming the first minted token has ID 0
+        assertEq(zid.ownerOf(tokenId), alice, "Alice should own the minted token");
+
+        vm.prank(bob);
+        zid.burn(tokenId);
+    }
+
+    function testFail_mintNotProofOwner() public {
+        Types.Proof memory proof =
+            Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(alice)});
+        vm.prank(bob);
+        zid.mint(abi.encode(proof), "TEST");
+    }
+
+    function test_getProof() public {
+        Types.Proof memory proof =
+            Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(alice)});
+        vm.prank(alice);
+        zid.mint(abi.encode(proof), "TEST");
+
+        Types.Proof memory proof2 = zid.getProof(1);
+        assertEq(proof2.seal, proof.seal, "Seal should be equal");
+        assertEq(proof2.postStateDigest, proof.postStateDigest, "Post state digest should be equal");
+        assertEq(proof2.journal, proof.journal, "Journal should be equal");
     }
 }

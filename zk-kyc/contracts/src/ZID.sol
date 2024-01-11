@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.21;
 
-import {IERC20} from "openzeppelin/token/ERC20/IERC20.sol";
 import {ERC721URIStorage} from "openzeppelin/token/ERC721/extensions/ERC721URIStorage.sol";
 import {ERC721} from "openzeppelin/token/ERC721/ERC721.sol";
 import {Ownable} from "openzeppelin/access/Ownable.sol";
@@ -16,9 +15,20 @@ contract ZID is Ownable, Pausable, ERC721URIStorage {
 
     mapping(uint256 => Types.Proof) private _identityProofs;
 
-    constructor(IRiscZeroVerifier initVerifier, bytes32 initImgId) ERC721("zkID", "KYC") {
+    constructor(IRiscZeroVerifier initVerifier, bytes32 initImgId) ERC721("zk-KYC", "KYC") {
         _verifier = initVerifier;
         imageId = initImgId;
+    }
+
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId, uint256 batchSize)
+        internal
+        virtual
+        override
+    {
+        super._beforeTokenTransfer(from, to, tokenId, batchSize);
+        if (to != address(0) && from != address(0)) {
+            revert Errors.TokenNotTransferable();
+        }
     }
 
     function mint(bytes calldata data, string calldata tokenURI) external whenNotPaused {
@@ -28,32 +38,46 @@ contract ZID is Ownable, Pausable, ERC721URIStorage {
             revert Errors.InvalidProof(proof);
         }
 
+        address beneficiary = abi.decode(proof.journal, (address));
+
+        if (beneficiary != msg.sender) {
+            revert Errors.NotProofOwner();
+        }
+
         if (_exists(_nextTokenId)) {
             revert Errors.TokenAlreadyMinted();
         }
 
-        _mint(msg.sender, _nextTokenId);
+        if (balanceOf(beneficiary) > 0) {
+            revert Errors.TokenAlreadyMinted();
+        }
+
+        ++_nextTokenId;
+        _mint(beneficiary, _nextTokenId);
         _setTokenURI(_nextTokenId, tokenURI);
         _identityProofs[_nextTokenId] = proof;
 
         emit Events.Minted(_nextTokenId, msg.sender, tokenURI);
-
-        ++_nextTokenId;
     }
 
-    function getProof(uint256 tokenId) public view returns (Types.Proof memory) {
+    function burn(uint256 tokenId) external whenNotPaused {
+        if (msg.sender != ownerOf(tokenId)) {
+            revert Errors.NotTokenOwner(msg.sender, tokenId);
+        }
+
+        if (!_exists(tokenId)) {
+            revert Errors.TokenNotFound(tokenId);
+        }
+        _burn(tokenId);
+        delete _identityProofs[tokenId];
+        emit Events.Burned(tokenId, msg.sender);
+    }
+
+    function getProof(uint256 tokenId) external view returns (Types.Proof memory) {
         if (!_exists(tokenId)) {
             revert Errors.TokenNotFound(tokenId);
         }
         return _identityProofs[tokenId];
-    }
-
-    function pause() external onlyOwner {
-        _pause();
-    }
-
-    function unpause() external onlyOwner {
-        _unpause();
     }
 
     function setVerifier(IRiscZeroVerifier newVerifier) external onlyOwner {
@@ -64,17 +88,11 @@ contract ZID is Ownable, Pausable, ERC721URIStorage {
         imageId = newImageId;
     }
 
-    function withdrawContract(address payable to, address token) external onlyOwner {
-        uint256 balance;
-        if (token == address(0)) {
-            balance = address(this).balance;
-            to.transfer(balance);
-        } else {
-            balance = IERC20(token).balanceOf(address(this));
-            if (!IERC20(token).transfer(to, balance)) {
-                revert Errors.WithdrawFailed(bytes32("contract"));
-            }
-        }
-        emit Events.Withdrawn("contract", to, balance);
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
     }
 }

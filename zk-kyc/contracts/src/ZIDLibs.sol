@@ -14,9 +14,13 @@ library Errors {
     error InvalidProof(Types.Proof proof);
     error TokenAlreadyMinted();
     error TokenNotFound(uint256 id);
+    error TokenNotTransferable();
+    error NotTokenOwner(address account, uint256 id);
+    error NotProofOwner();
 }
 
 library Events {
     event Withdrawn(bytes indexed id, address indexed account, uint256 amount);
     event Minted(uint256 indexed id, address indexed minter, string tokenURI);
+    event Burned(uint256 indexed id, address indexed burner);
 }
