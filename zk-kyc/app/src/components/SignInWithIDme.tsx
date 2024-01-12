@@ -17,32 +17,46 @@ const SignInWithIDme = function ({ disabled, onNext, onUserData }) {
   const hasRun = useRef(false);
 
   useEffect(() => {
-    if (hasRun.current) return;
-    hasRun.current = true;
-    const code = getQueryParam("code");
-    if (code) {
-      const postUrl = "/api/auth"; // Proxy endpoint to exchange code for token
+    const authenticateUser = async () => {
+      try {
+        if (hasRun.current) return;
+        hasRun.current = true;
 
-      fetch(postUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ code }),
-      })
-        .then((res) => {
-          const token = Cookies.get("id_token");
-          const decoded = jwtDecode(token);
+        const code = getQueryParam("code");
+        if (!code) return;
 
-          setUserData(decoded);
-          onUserData(decoded);
-        })
-        .finally(() => onNext())
-        .catch((error) => {
-          console.error("Error:", error);
-          setError(error);
+        const postUrl = "/api/auth"; // Proxy endpoint to exchange code for token
+        const response = await fetch(postUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ code }),
         });
-    }
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const token = Cookies.get("id_token");
+        if (!token) {
+          throw new Error("Token not found");
+        }
+
+        const decoded = jwtDecode(token);
+        setUserData(decoded);
+        onUserData(decoded);
+
+        if (token) {
+          onNext();
+        }
+      } catch (error) {
+        console.error("Authentication Error:", error);
+        setError(error);
+      }
+    };
+
+    authenticateUser();
   }, []);
 
   const authEndpoint = `https://api.idmelabs.com/oauth/authorize?client_id=${VITE_IDME_CLIENT_ID}&redirect_uri=${VITE_REDIRECT_URI}&response_type=code&scope=openid%20identity&nonce=${address}`;
