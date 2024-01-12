@@ -493,6 +493,7 @@ button:focus-visible {
 .step-content {
   border: 1px solid #e3e3e34f;
   border-radius: 0.8em;
+  padding-bottom: 1em;
 }
 
 @media (max-width: 600px) {

@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
-import Account from "./Account";
 import Prove from "./Prove";
 import Mint from "./Mint";
 
 import { useAccount } from "wagmi";
-import { GoogleTokenPayload } from "../libs/types";
 import SignInWithIDme from "./SignInWithIDme";
-import Cookies from "js-cookie";
 
 interface ClaimProps {}
 
@@ -47,9 +44,12 @@ const Steps: React.FC<ClaimProps> = () => {
   useEffect(() => {
     if (!isConnected) {
       setCurrentStep(1);
+    } 
+    if (isConnected) {
+      setCurrentStep(2);
     }
-    setCurrentStep(2);
-  }, [isConnected, jwtExists, snarkExists]);
+  }, [isConnected]);
+
 
   const renderCurrentStep = () => {
     switch (currentStep) {

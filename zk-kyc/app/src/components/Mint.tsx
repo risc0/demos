@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { formatUnits } from "viem";
-import { useZidMint } from "../generated";
-import { Token, SnarkReceipt } from "../libs/types";
+import { useZidBurn, useZidMint } from "../generated";
+import { SnarkReceipt } from "../libs/types";
 import { encodeAbiParameters, parseAbiParameters } from "viem";
 import Cookies from "js-cookie";
 
@@ -18,10 +17,6 @@ export const Mint: React.FC<MintProps> = ({}) => {
 
   useEffect(() => {
     const updateSnark = async () => {
-      // Find the snark cookie and parse its value
-      // const snarkCookie = document.cookie
-      //   .split("; ")
-      //   .find((row) => row.startsWith("snark="));
       const snarkValue = Cookies.get("snark");
       if (!snarkValue) return;
 

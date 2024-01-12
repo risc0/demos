@@ -19,7 +19,7 @@ const config = createConfig(
   getDefaultConfig({
     alchemyId: VITE_ALCHEMY_ID,
     walletConnectProjectId: VITE_WALLET_CONNECT_ID,
-    appName: "zk KYC",
+    appName: "zk-KYC",
     chains: [goerli],
   })
 );
@@ -34,15 +34,8 @@ function App() {
       <ConnectKitProvider>
         <ToastContainer />
         <div className="app-container">
-          <div className="logo-container">
-            <img
-              className="logo"
-              src="/RISC_Zero_Logo_lightmode.png"
-              alt="R0 Logo"
-            />
-          </div>
-          <h2 className="title">zk KYC</h2>
-          <p className="subtitle">Verify your identity onchain.™</p>
+          <h2 className="title">zk-KYC</h2>
+          <p className="subtitle">Verify and Mint your onchain identity.</p>
           <ConnectKitButton mode="light" />
           <ViewSelection />
           <p className="read-the-docs">This is for demo purposes only.</p>
