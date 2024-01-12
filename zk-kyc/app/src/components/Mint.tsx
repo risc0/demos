@@ -6,7 +6,7 @@ import Cookies from "js-cookie";
 
 interface MintProps {}
 
-export const Mint: React.FC<MintProps> = ({}) => {
+export const Mint: React.FC<MintProps> = () => {
   // Utility function to ensure strings have a '0x' prefix
   const prefix0x = (str: string): `0x${string}` => `0x${str}`;
 

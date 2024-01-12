@@ -7,7 +7,6 @@ import {
 import { ReactNode, useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import Steps from "./components/Steps";
-import Deposit from "./components/Deposit";
 import { goerli } from "wagmi/chains";
 import Modal from "./components/Modal";
 import "react-toastify/dist/ReactToastify.css";
@@ -77,6 +76,7 @@ function Footer() {
     content: ReactNode;
   }>({ title: "", content: "" });
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const openModal = (title: string, content: ReactNode) => {
     setModalContent({ title, content });
     setIsModalOpen(true);

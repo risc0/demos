@@ -57,7 +57,7 @@ const SignInWithIDme = function ({ disabled, onNext, onUserData }) {
     };
 
     authenticateUser();
-  }, []);
+  }, [onNext, onUserData]);
 
   const authEndpoint = `https://api.idmelabs.com/oauth/authorize?client_id=${VITE_IDME_CLIENT_ID}&redirect_uri=${VITE_REDIRECT_URI}&response_type=code&scope=openid%20identity&nonce=${address}`;
 

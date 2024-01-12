@@ -9,9 +9,8 @@ interface ClaimProps {}
 
 const Steps: React.FC<ClaimProps> = () => {
   const { isConnected } = useAccount();
-  const [jwtExists, setJwtExists] = useState<boolean>(false);
-  const [snarkExists, setSnarkExists] = useState<boolean>(false);
-  const [email, setEmail] = useState<string | null>(null);
+  const [jwtExists, ] = useState<boolean>(false);
+  const [email, ] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [userData, setUserData] = useState(null);
 
@@ -72,7 +71,7 @@ const Steps: React.FC<ClaimProps> = () => {
           <>
             <h4>Prove Identity</h4>
             {userData.fname && <h5>{`Welcome, ${userData.fname}`}</h5>}
-            <Prove disabled={false} email={userData.email} onNext={next} />
+            <Prove disabled={false} onNext={next} />
           </>
         );
       case 4:

@@ -1,14 +1,12 @@
 import React, { useState, useCallback } from "react";
-import Account from "./Account";
 import Cookies from "js-cookie";
 
 interface ProveProps {
   disabled: boolean;
-  email: string | null;
-  onNext: any;
+  onNext: () => void;
 }
 
-const Prove: React.FC<ProveProps> = ({ disabled, email, onNext }) => {
+const Prove: React.FC<ProveProps> = ({ disabled, onNext }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { VITE_API_HOST } = import.meta.env;
