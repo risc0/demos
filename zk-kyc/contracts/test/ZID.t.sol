@@ -49,11 +49,12 @@ contract ZIDTest is Test {
     function test_Mint() public {
         Types.Proof memory proof =
             Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(alice)});
+        
+        uint256 tokenId = uint256(keccak256(abi.encodePacked(alice)));
 
         vm.prank(alice);
         zid.mint(abi.encode(proof), "TEST");
 
-        uint256 tokenId = 1; // Assuming the first minted token has ID 0
         assertEq(zid.ownerOf(tokenId), alice, "Alice should own the minted token");
 
         assertEq(zid.tokenURI(tokenId), "TEST", "Token URI should be 'TEST'");
@@ -63,14 +64,15 @@ contract ZIDTest is Test {
         Types.Proof memory proof =
             Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(alice)});
 
+        uint256 tokenId = uint256(keccak256(abi.encodePacked(alice)));
+
         vm.prank(alice);
         zid.mint(abi.encode(proof), "TEST");
 
-        uint256 tokenId = 1; // Assuming the first minted token has ID 0
         assertEq(zid.ownerOf(tokenId), alice, "Alice should own the minted token");
 
         vm.prank(alice);
-        zid.burn(tokenId);
+        zid.burn();
 
         assertEq(zid.balanceOf(alice), 0, "Alice should not own any tokens");
     }
@@ -79,10 +81,12 @@ contract ZIDTest is Test {
         // should fail to transfer token to any address
         Types.Proof memory proof =
             Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(alice)});
+        
+        uint256 tokenId = uint256(keccak256(abi.encodePacked(alice)));
+
         vm.prank(alice);
         zid.mint(abi.encode(proof), "TEST");
 
-        uint256 tokenId = 1; // Assuming the first minted token has ID 0
         assertEq(zid.ownerOf(tokenId), alice, "Alice should own the minted token");
 
         vm.prank(alice);
@@ -93,10 +97,12 @@ contract ZIDTest is Test {
         // should fail to transfer token to any address
         Types.Proof memory proof =
             Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(alice)});
+
+        uint256 tokenId = uint256(keccak256(abi.encodePacked(alice)));
+
         vm.prank(alice);
         zid.mint(abi.encode(proof), "TEST");
 
-        uint256 tokenId = 0; // Assuming the first minted token has ID 0
         assertEq(zid.ownerOf(tokenId), alice, "Alice should own the minted token");
 
         vm.prank(alice);
@@ -106,10 +112,12 @@ contract ZIDTest is Test {
     function testFail_doubleMint() public {
         Types.Proof memory proof =
             Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(alice)});
+        
+        uint256 tokenId = uint256(keccak256(abi.encodePacked(alice)));
+
         vm.prank(alice);
         zid.mint(abi.encode(proof), "TEST");
 
-        uint256 tokenId = 0; // Assuming the first minted token has ID 0
         assertEq(zid.ownerOf(tokenId), alice, "Alice should own the minted token");
 
         vm.prank(alice);
@@ -119,37 +127,41 @@ contract ZIDTest is Test {
     function test_mintBurnMint() public {
         Types.Proof memory proof =
             Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(alice)});
+        
+        uint256 tokenId = uint256(keccak256(abi.encodePacked(alice)));
+
         vm.prank(alice);
         zid.mint(abi.encode(proof), "TEST");
 
-        uint256 tokenId = 1; // Assuming the first minted token has ID 0
         assertEq(zid.ownerOf(tokenId), alice, "Alice should own the minted token");
 
         vm.prank(alice);
-        zid.burn(tokenId);
+        zid.burn();
 
         assertEq(zid.balanceOf(alice), 0, "Alice should not own any tokens");
 
         vm.prank(alice);
         zid.mint(abi.encode(proof), "TEST");
-        assertEq(zid.ownerOf(2), alice, "Alice should own the minted token");
+        assertEq(zid.ownerOf(tokenId), alice, "Alice should own the minted token");
     }
 
     function testFail_burnNonExistentToken() public {
-        zid.burn(1);
+        zid.burn();
     }
 
     function testFail_burnNonOwnedToken() public {
         Types.Proof memory proof =
             Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(alice)});
+
+        uint256 tokenId = uint256(keccak256(abi.encodePacked(alice)));
+
         vm.prank(alice);
         zid.mint(abi.encode(proof), "TEST");
 
-        uint256 tokenId = 1; // Assuming the first minted token has ID 0
         assertEq(zid.ownerOf(tokenId), alice, "Alice should own the minted token");
 
         vm.prank(bob);
-        zid.burn(tokenId);
+        zid.burn();
     }
 
     function testFail_mintNotProofOwner() public {
@@ -165,7 +177,7 @@ contract ZIDTest is Test {
         vm.prank(alice);
         zid.mint(abi.encode(proof), "TEST");
 
-        Types.Proof memory proof2 = zid.getProof(1);
+        Types.Proof memory proof2 = zid.getProof(alice);
         assertEq(proof2.seal, proof.seal, "Seal should be equal");
         assertEq(proof2.postStateDigest, proof.postStateDigest, "Post state digest should be equal");
         assertEq(proof2.journal, proof.journal, "Journal should be equal");
