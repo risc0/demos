@@ -46,7 +46,7 @@ struct Args {
     jwt: Option<String>,
 
     /// Identity Provider (e.g., "Google")
-    #[arg(long, default_value = "Google")]
+    #[arg(long, default_value = "IDMe")]
     provider: Option<String>,
 }
 
@@ -225,9 +225,13 @@ fn run_local_exec(provider: IdentityProvider, jwt: String) {
 
     let env = builder.build().expect("Failed to build Executor");
 
-    default_executor()
+    let exec = default_executor()
         .execute(env, image)
         .expect("Failed to execute");
+
+    let output = exec.journal;
+    info!("Output: {:x?}", output.bytes);
+    info!("Output: {:x?}", hex::encode(&output.bytes));
 }
 
 async fn handle_connection(ws: warp::ws::WebSocket, users: Users) {
@@ -278,7 +282,7 @@ async fn handle_connection(ws: warp::ws::WebSocket, users: Users) {
                     &jwt_req.jwt[jwt_req.jwt.len() - 32..]
                 );
 
-                let provider = IdentityProvider::Google;
+                let provider = IdentityProvider::IDMe;
                 let jwt = jwt_req.jwt;
 
                 info!("ID: {} | Running Bonsai", id);
@@ -397,7 +401,7 @@ async fn main() -> Result<()> {
             .ok_or_else(|| anyhow!("Identity provider is required in local executor mode"))?;
 
         let provider = match provider_str.to_lowercase().as_str() {
-            "google" => IdentityProvider::Google,
+            "idme" => IdentityProvider::IDMe,
             _ => return Err(anyhow!("Unsupported identity provider")),
         };
 

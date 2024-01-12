@@ -11,7 +11,7 @@ import {Errors, Events, Types} from "./ZIDLibs.sol";
 /**
  * @title ZID - Zero-Knowledge Identity Token
  * @dev Implements a ~soulbound~ ERC721 KYC token with zero-knowledge proofs.
- * Created by RISC Zero for demonstration purposes only. 
+ * Created by RISC Zero for demonstration purposes only.
  */
 contract ZID is Ownable, Pausable, ERC721URIStorage {
     bytes32 public imageId;
@@ -50,21 +50,21 @@ contract ZID is Ownable, Pausable, ERC721URIStorage {
      * @param tokenURI URI for the token metadata.
      */
     function mint(bytes calldata data, string calldata tokenURI) external whenNotPaused {
-
         Types.Proof memory proof = abi.decode(data, (Types.Proof));
 
         if (!_verifier.verify(proof.seal, imageId, proof.postStateDigest, proof.journal)) {
             revert Errors.InvalidProof(proof);
         }
-        
-        address beneficiary = abi.decode(proof.journal, (address));
+
+        (,, address beneficiary) = abi.decode(proof.journal, (uint256, uint256, address));
+
 
         if (beneficiary != msg.sender) {
             revert Errors.NotProofOwner();
         }
 
         uint256 _newTokenId = uint256(keccak256(abi.encodePacked(beneficiary)));
-        
+
         if (_exists(_newTokenId) || balanceOf(beneficiary) > 0) {
             revert Errors.TokenAlreadyMinted();
         }
@@ -80,7 +80,6 @@ contract ZID is Ownable, Pausable, ERC721URIStorage {
      * @dev Burns a token and removes its associated proof.
      */
     function burn() external whenNotPaused {
-
         uint256 tokenId = uint256(keccak256(abi.encodePacked(msg.sender)));
 
         if (msg.sender != ownerOf(tokenId)) {

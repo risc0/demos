@@ -3,7 +3,7 @@ use certs::IDME_JWKS;
 use jwt_compact::{
     alg::{Rsa, RsaPublicKey},
     jwk::{JsonWebKey, KeyType},
-    AlgorithmExt, UntrustedToken,
+    AlgorithmExt, Claims, UntrustedToken,
 };
 use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
@@ -34,15 +34,25 @@ struct Extra {
 
 #[derive(Deserialize, Serialize)]
 pub enum IdentityProvider {
-    Google,
+    IDMe,
+}
+
+pub struct PublicOutput {
+    pub exp: u64,
+    pub iat: u64,
+    pub nonce: String,
 }
 
 impl IdentityProvider {
-    pub fn validate(&self, token: &str) -> Result<String, OidcErr> {
+    pub fn validate(&self, token: &str) -> Result<PublicOutput, OidcErr> {
         match self {
-            Self::Google => {
+            Self::IDMe => {
                 let decoded = decode_token::<IDMeClaims>(token, &IDME_KEYS).unwrap();
-                Ok(decoded.nonce)
+                Ok(PublicOutput {
+                    exp: decoded.expiration.unwrap().timestamp() as u64,
+                    iat: decoded.issued_at.unwrap().timestamp() as u64,
+                    nonce: decoded.custom.nonce,
+                })
             }
         }
     }
@@ -80,7 +90,7 @@ pub enum OidcErr {
     KeyIdMissingError,
 }
 
-fn decode_token<T>(token: &str, keys: &JwkKeys) -> Result<T, OidcErr>
+fn decode_token<T>(token: &str, keys: &JwkKeys) -> Result<Claims<T>, OidcErr>
 where
     T: for<'de> Deserialize<'de> + Serialize + Clone,
 {
@@ -111,7 +121,7 @@ where
         .validate_integrity::<T>(&token, &vkey)
         .map_err(|_| OidcErr::TokenValidationError);
 
-    Ok(res.unwrap().claims().custom.clone())
+    Ok(res.unwrap().claims().clone())
 }
 
 #[cfg(test)]

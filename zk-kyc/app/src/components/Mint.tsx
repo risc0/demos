@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useZidBurn, useZidMint } from "../generated";
+import { useZidMint } from "../generated";
 import { SnarkReceipt } from "../libs/types";
 import { encodeAbiParameters, parseAbiParameters } from "viem";
 import Cookies from "js-cookie";
