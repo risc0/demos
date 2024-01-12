@@ -7,12 +7,6 @@ library Types {
         bytes32 postStateDigest;
         bytes journal;
     }
-
-    // struct Claims {
-    //     uint256 exp;
-    //     uint256 iat;
-    //     address addr;
-    // }
 }
 
 library Errors {
