@@ -20,9 +20,9 @@ const Steps: React.FC<ClaimProps> = () => {
 
   const stepDescriptions = [
     "Connect Wallet",
-    "Verify",
+    "Verify Identity",
     "Generate Proof",
-    "Mint",
+    "Mint Identity",
   ];
 
   const renderStepIndicator = () => {
@@ -57,7 +57,7 @@ const Steps: React.FC<ClaimProps> = () => {
       case 2:
         return (
           <>
-            <h4> Sign in to your account</h4>
+            <h4> Sign in / Signup to your account</h4>
             <SignInWithIDme
               disabled={jwtExists}
               onNext={next}

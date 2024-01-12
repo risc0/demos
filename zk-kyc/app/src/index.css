@@ -471,6 +471,7 @@ button:focus-visible {
   justify-content: space-between;
   /* Distribute space evenly between the steps */
   margin-bottom: 1em;
+  margin-top: 1em;
   /* Space between the indicator and the content */
 }
 
@@ -586,4 +587,10 @@ input[type="number"] {
 .idmebutton:hover {
   opacity: 0.8;
   transition: 0.2s;
+}
+
+.whoisidme {
+  width: 100%;
+  height: auto;
+  font-size: small;
 }

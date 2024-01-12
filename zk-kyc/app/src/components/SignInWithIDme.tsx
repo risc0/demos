@@ -75,6 +75,11 @@ const SignInWithIDme = function ({ disabled, onNext, onUserData }) {
           </a>
         )}
       </div>
+          <p className="whoisidme">
+            🔒 Verification by ID.me • <a href="https://www.id.me/about">
+            What is ID.me? 
+            </a>
+          </p>
     </div>
   );
 };

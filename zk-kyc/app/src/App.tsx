@@ -34,7 +34,7 @@ function App() {
         <ToastContainer />
         <div className="app-container">
           <h2 className="title">zk-KYC</h2>
-          <p className="subtitle">Verify and Mint your onchain identity.</p>
+          <p className="subtitle">Verify and mint your onchain identity.</p>
           <ConnectKitButton mode="light" />
           <ViewSelection />
           <p className="read-the-docs">This is for demo purposes only.</p>
