@@ -1,30 +1,27 @@
-# Bonsai Pay Demonstration Application 
+# zk-KYC Demonstration Application
 
-This demo uses Google Sign-In to generate a client authentication token. The token includes a nonce that contains the user's connected wallet address, aligning with similar principles described in the [OpenPubkey: Augmenting OpenID Connect with User held Signing Keys](https://eprint.iacr.org/2023/296) paper. The JWT's integrity is verified within the guest using Google's public RS256 signing [certificates](https://www.googleapis.com/oauth2/v3/certs). The guest then generates a cryptographic proof of the JWT's integrity, issuing a receipt that comprises the SNARK, an obfuscated identifier, and the user's address. The receipt contents can be further validated on the onchain and used to for arbitrary transactions, if valid. 
+This demo leverages ID.me api to generate a client authentication token. The token includes a nonce that is associated with the user's connected wallet address, employing principles from the [OpenPubkey: Augmenting OpenID Connect with User held Signing Keys](https://eprint.iacr.org/2023/296) paper. The JWT's integrity is then verified within the guest using ID.me's public RS256 signing [certificates](https://api.id.me/oidc/.well-known/jwks). Subsequently, the guest generates a cryptographic proof of the JWT's integrity and issues a receipt. This receipt, containing the SNARK, an obfuscated identifier, and the user's address, can be validated on the onchain for ERC721 token minting or other transactions, if valid.
 
-For more information about the RISC Zero zkVM, please see our developer
-[documentation](https://dev.risczero.com/api).
-
-Read our [blog post](https://www.risczero.com/news/bonsai-pay) about the Bonsai Pay Demo release!
+For detailed information about the RISC Zero zkVM, refer to our developer [documentation](https://dev.risczero.com/api).
 
 ### Getting Started
 
 #### Project Structure
 
-Bonsai Pay is composed of three components, all serving together to form the end-user application.
+The ERC721 Token Minting Demo consists of three key components, forming the complete end-user application:
 
-- [`zkvm`]: This houses the host, guest, and OIDC library.
-    - [`zkvm/host`]: The entry point for the web socket client built with the [bonsai-sdk] crate. 
-    - [`zkvm/methods`]: The guest source code that is ran and proven with the zkVM.
-    - [`zkvm/oidc-validator`]: The library for implementing JWT validation in the guest and host using [jwt-compact] crate.
-- [`contracts`]: This serves as the [foundry] project for the associated smart contracts, scripts, and tests.
-- [`app`]: This directory holds the front-end react application, for the end user to interact with.
+- [`zkvm`]: This directory contains the host, guest, and OIDC library components.
+    - [`zkvm/host`]: The entry point for the web socket client using the [bonsai-sdk] crate. 
+    - [`zkvm/methods`]: The guest source code that runs and is proven in the zkVM.
+    - [`zkvm/oidc-validator`]: A library for implementing JWT validation in the guest and host using the [jwt-compact] crate.
+- [`contracts`]: This directory houses the [foundry] project for smart contracts, scripts, and tests related to ERC721 token minting.
+- [`app`]: The front-end react application directory, enabling end-user interaction.
 
 [`zkvm`]: zkvm/
 [`zkvm/host`]: zkvm/host
 [`zkvm/methods`]: zkvm/methods
 [`zkvm/oidc-validator`]: zkvm/oidc-validator
-[`contracts`]: conrtacts/
+[`contracts`]: contracts/
 [`app`]: app/
 [bonsai-sdk]: https://crates.io/crates/bonsai-sdk
 [jwt-compact]: https://github.com/slowli/jwt-compact
@@ -32,29 +29,27 @@ Bonsai Pay is composed of three components, all serving together to form the end
 
 #### Application Setup
 
-First, go to the [`app`] directory, which houses the front-end client application.
+First, head to the [`app`] directory, which hosts the front-end client application.
 
-To launch the client application, configure the `.env` file based on the provided `.env.example`.
-
-Install Node packages using:
+Configure the `.env` file according to `.env.example` and install Node packages:
 
 ```bash
 pnpm i
 ```
 
-Then, start the application in development mode with:
+Then, initiate the application in development mode:
 
 ```bash
 pnpm run dev
 ```
 
-The application is now accessible through your local web browser.
+The application will now be available via your local web browser.
 
 #### Relay Configuration
 
-In the [`zkvm`] directory, you'll find the guest zkVM crates for OIDC validation and the Bonsai Relay server, powered by the `bonsai-sdk`.
+In the [`zkvm`] directory, find the zkVM crates for OIDC validation and the Bonsai Relay server, powered by the `bonsai-sdk`.
 
-Set up the `.env` file for the relay server as per the `.env.example`.
+Prepare the `.env` file for the relay server as outlined in the `.env.example`.
 
 To start the relay server with information logging, execute:
 
@@ -64,27 +59,27 @@ RUST_LOG=info cargo run
 
 #### Smart Contracts
 
-The [`contracts`] directory includes the smart contracts needed for the application. Use Foundry for testing and deployment.
+The [`contracts`] directory contains the necessary smart contracts for ERC721 token minting. Use Foundry for testing and deployment.
 
-Configure the `.env` file according to `.env.example`.
+After setting up the `.env` file:
 
-To test and deploy the contracts, initiate anvil:
+Initiate anvil:
 
 ```bash
 anvil
 ```
 
-For deploying the contracts to a local node, use the `Deploy.s.sol` script:
+Deploy the contracts to a local node:
 
 ```bash
 forge script script/Deploy.s.sol --rpc-url http://localhost:8545
 ```
 
-## Security Notice
+## Privacy and Security
 
-Bonsai Pay, as a sample application, is not suitable for production environments. It is important to note that:
-* The application **HAS NOT BEEN AUDITED** and is **KNOWN TO HAVE SECURITY ISSUES**:
-  * Prior to November 14, 2023, versions exposed recipient email addresses in testnet transactions (see [security advisory](https://github.com/risc0/demos/security/advisories/GHSA-49mm-xg2c-r46j)).
-  * The [OIDC validation process is inadequate](https://github.com/risc0/demos/security/advisories/GHSA-m9r5-6wx3-g33h), as it does not verify the temporal JWT claims in the guest, potentially allowing the reuse of expired tokens.
+As a sample application, the ERC721 Token Minting Demo is designed for demonstration purposes and is not suitable for production use. It is important to be aware that:
+* The application **HAS NOT BEEN AUDITED** and **MAY CONTAIN SECURITY ISSUES**:
+  * The OIDC validation process may be inadequate, as it does not fully verify expiration in the zkVM. 
+* The zkVM Reciept is saved to the chain, publicly. This includes the zk-SNARK, Digest, and Journal which contains the issue date, expiration date, and the proof owner address.
 
-This code is made available for public benefit but requires a thorough security analysis before any practical use.
+This code is shared for the public benefit but necessitates a comprehensive security analysis before any practical application.
