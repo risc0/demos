@@ -1,6 +1,8 @@
 # zk-KYC Demonstration Application
 
-This demo leverages ID.me api to generate a client authentication token. The token includes a nonce that is associated with the user's connected wallet address, employing principles from the [OpenPubkey: Augmenting OpenID Connect with User held Signing Keys](https://eprint.iacr.org/2023/296) paper. The JWT's integrity is then verified within the guest using ID.me's public RS256 signing [certificates](https://api.id.me/oidc/.well-known/jwks). Subsequently, the guest generates a cryptographic proof of the JWT's integrity and issues a receipt. This receipt, containing the SNARK, an obfuscated identifier, and the user's address, can be validated on the onchain for ERC721 token minting or other transactions, if valid.
+The zk-KYC demo application allows individuals to verify and mint their identity as an NFT enabling onchain identity verification with zero-knowledge proofs.
+
+This demo leverages ID.me to generate a client authentication token. The token includes a nonce that is associated with the user's connected wallet address, employing principles from the [OpenPubkey: Augmenting OpenID Connect with User held Signing Keys](https://eprint.iacr.org/2023/296) paper. The JWT's integrity is then verified within the guest using ID.me's public RS256 signing [certificates](https://api.id.me/oidc/.well-known/jwks). Subsequently, the guest generates a cryptographic proof of the JWT's integrity and issues a receipt. This receipt, containing the SNARK, an obfuscated identifier, and the user's address, can be validated on the onchain for ERC721 token minting or other transactions, if valid.
 
 For detailed information about the RISC Zero zkVM, refer to our developer [documentation](https://dev.risczero.com/api).
 
@@ -8,7 +10,7 @@ For detailed information about the RISC Zero zkVM, refer to our developer [docum
 
 #### Project Structure
 
-The ERC721 Token Minting Demo consists of three key components, forming the complete end-user application:
+The zk-KYC  Demo consists of three components, forming the complete end-user application:
 
 - [`zkvm`]: This directory contains the host, guest, and OIDC library components.
     - [`zkvm/host`]: The entry point for the web socket client using the [bonsai-sdk] crate. 
@@ -28,6 +30,8 @@ The ERC721 Token Minting Demo consists of three key components, forming the comp
 [foundry]: https://github.com/foundry-rs/foundry
 
 #### Application Setup
+
+In order to run this application locally with remote proving, you will need to obtain a [Bonsai API](https://www.bonsai.xyz/) Key. You will also need Node and Rust installed. 
 
 First, head to the [`app`] directory, which hosts the front-end client application.
 
@@ -59,7 +63,7 @@ RUST_LOG=info cargo run
 
 #### Smart Contracts
 
-The [`contracts`] directory contains the necessary smart contracts for ERC721 token minting. Use Foundry for testing and deployment.
+The [`contracts`] directory contains the necessary smart contracts for the KYC proof verification and token functionality. Use Foundry for testing and deployment.
 
 After setting up the `.env` file:
 
