@@ -18,7 +18,7 @@ use std::{
 };
 use tokio::sync::{mpsc, RwLock};
 use tokio_stream::wrappers::UnboundedReceiverStream;
-use warp::{filters::ws::Message, http::StatusCode, reply::with_header, Filter};
+use warp::{filters::ws::Message, reply::with_header, Filter};
 
 use dotenv::dotenv;
 
@@ -85,7 +85,7 @@ struct TokenResponse {
 
 async fn auth_handler(
     auth_request: AuthRequest,
-    users: Users,
+    _users: Users,
 ) -> Result<impl warp::Reply, warp::Rejection> {
     info!("auth");
     let client_id = dotenv::var("CLIENT_ID").expect("CLIENT_ID not found in .env file");
@@ -108,13 +108,13 @@ async fn auth_handler(
         .form(&params)
         .send()
         .await
-        .map_err(|e| warp::reject::not_found())?;
+        .map_err(|_e| warp::reject::not_found())?;
 
-    let body = res.text().await.map_err(|e| warp::reject::not_found())?;
+    let body = res.text().await.map_err(|_e| warp::reject::not_found())?;
     info!("ID.me token endpoint response: {}", body);
 
     let token_response: TokenResponse =
-        serde_json::from_str(&body).map_err(|e| warp::reject::not_found())?;
+        serde_json::from_str(&body).map_err(|_e| warp::reject::not_found())?;
 
     let id_token = token_response.id_token; // Assuming you have this from your token response
     info!("ID TOKEN: {}", id_token);

@@ -1,11 +1,10 @@
 #![no_main]
 use std::str::FromStr;
 
-use alloy_primitives::{Address, Bytes, U256};
+use alloy_primitives::{Address, U256};
 use alloy_sol_types::SolType;
 use oidc_validator::IdentityProvider;
 use risc0_zkvm::guest::env;
-use risc0_zkvm::sha::rust_crypto::{Digest as _, Sha256};
 
 risc0_zkvm::guest::entry!(main);
 
