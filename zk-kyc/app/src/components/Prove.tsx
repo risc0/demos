@@ -12,7 +12,6 @@ const Prove: React.FC<ProveProps> = ({ disabled, onNext }) => {
   const { VITE_API_HOST } = import.meta.env;
 
   const handleClick = useCallback(async () => {
-    ///
     setIsLoading(true);
 
     // Initialize a WebSocket connection
@@ -20,8 +19,7 @@ const Prove: React.FC<ProveProps> = ({ disabled, onNext }) => {
     const idToken = Cookies.get("id_token");
 
     const jwt = idToken;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const openHandler = (_event: Event) => {
+    const openHandler = () => {
       const message = JSON.stringify({ jwt });
       socket.send(message);
     };
@@ -39,6 +37,7 @@ const Prove: React.FC<ProveProps> = ({ disabled, onNext }) => {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const closeHandler = (_event: CloseEvent) => {
+      socket.close();
       setIsLoading(false); // Set loading state to false when the socket is closed
     };
 

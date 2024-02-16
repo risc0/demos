@@ -4,11 +4,10 @@ import {
   ConnectKitButton,
   getDefaultConfig,
 } from "connectkit";
-import { ReactNode, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import Steps from "./components/Steps";
 import { goerli } from "wagmi/chains";
-import Modal from "./components/Modal";
 import "react-toastify/dist/ReactToastify.css";
 import { clearCookies } from "./libs/utils";
 
@@ -70,31 +69,8 @@ function ViewSelection() {
 export default App;
 
 function Footer() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalContent, setModalContent] = useState<{
-    title: string;
-    content: ReactNode;
-  }>({ title: "", content: "" });
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const openModal = (title: string, content: ReactNode) => {
-    setModalContent({ title, content });
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
   return (
     <footer className="footer">
-      <Modal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        title={modalContent.title}
-      >
-        {modalContent.content}
-      </Modal>
       <a href="https://www.risczero.com/news/bonsai-pay">About</a>
       <a
         href="https://github.com/risc0/demos/tree/main/bonsai-pay"
