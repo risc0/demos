@@ -54,11 +54,7 @@ contract ZIDTest is Test {
     // Valid Mint
     function test_Mint() public {
         Types.Proof memory proof =
-            Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(
-                0x0,
-                0x0,
-                alice
-            )});
+            Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(0x0, 0x0, alice)});
 
         uint256 tokenId = uint256(keccak256(abi.encodePacked(alice)));
 
@@ -72,10 +68,7 @@ contract ZIDTest is Test {
 
     function test_Burn() public {
         Types.Proof memory proof =
-            Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(
-                0x0, 0x0, alice
-            )}
-        );
+            Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(0x0, 0x0, alice)});
         uint256 tokenId = uint256(keccak256(abi.encodePacked(alice)));
 
         vm.prank(alice);
@@ -92,12 +85,8 @@ contract ZIDTest is Test {
     function testFail_tokenTransfer() public {
         // should fail to transfer token to any address
         Types.Proof memory proof =
-            Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(
-                0x0,
-                0x0,
-                alice
-            )});
-            
+            Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(0x0, 0x0, alice)});
+
         uint256 tokenId = uint256(keccak256(abi.encodePacked(alice)));
 
         vm.prank(alice);
@@ -112,11 +101,7 @@ contract ZIDTest is Test {
     function testFail_safeTransferFrom() public {
         // should fail to transfer token to any address
         Types.Proof memory proof =
-            Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(
-                0x0,
-                0x0,
-                alice
-            )});
+            Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(0x0, 0x0, alice)});
 
         uint256 tokenId = uint256(keccak256(abi.encodePacked(alice)));
 
@@ -131,10 +116,7 @@ contract ZIDTest is Test {
 
     function testFail_doubleMint() public {
         Types.Proof memory proof =
-            Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(
-                0x0, 0x0, alice
-            )}
-        );
+            Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(0x0, 0x0, alice)});
 
         uint256 tokenId = uint256(keccak256(abi.encodePacked(alice)));
 
@@ -148,13 +130,8 @@ contract ZIDTest is Test {
     }
 
     function test_mintBurnMint() public {
-        
         Types.Proof memory proof =
-            Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(
-                0x0,
-                0x0,
-                alice
-            )});
+            Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(0x0, 0x0, alice)});
 
         uint256 tokenId = uint256(keccak256(abi.encodePacked(alice)));
 
@@ -179,11 +156,7 @@ contract ZIDTest is Test {
 
     function testFail_burnNonOwnedToken() public {
         Types.Proof memory proof =
-            Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(
-                0x0,
-                0x0,
-                alice
-            )});
+            Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(0x0, 0x0, alice)});
 
         uint256 tokenId = uint256(keccak256(abi.encodePacked(alice)));
 
@@ -198,11 +171,7 @@ contract ZIDTest is Test {
 
     function testFail_mintNotProofOwner() public {
         Types.Proof memory proof =
-            Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(
-                0x0,
-                0x0,
-                alice
-            )});
+            Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(0x0, 0x0, alice)});
 
         vm.prank(bob);
         zid.mint(abi.encode(proof), "TEST");
@@ -210,11 +179,7 @@ contract ZIDTest is Test {
 
     function test_getProof() public {
         Types.Proof memory proof =
-            Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(
-                0x0,
-                0x0,
-                alice
-            )});
+            Types.Proof({seal: "0x4141", postStateDigest: bytes32(0x0), journal: abi.encode(0x0, 0x0, alice)});
 
         vm.prank(alice);
         zid.mint(abi.encode(proof), "TEST");
