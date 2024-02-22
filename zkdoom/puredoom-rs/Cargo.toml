@@ -1,0 +1,16 @@
+[package]
+name = "puredoom-rs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[build-dependencies]
+bindgen = "0.69.4"
+cc = "1.0.83"
+diffy = "0.3.0"
+ureq = "2.9.6"
+
+[features]
+default = []
+zkvm_dev_mode = []

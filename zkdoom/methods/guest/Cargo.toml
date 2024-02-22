@@ -1,0 +1,18 @@
+[package]
+name = "doom"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+
+[dependencies]
+# TODO: work out how to pass feature flags from the parent workspae into
+# the guest methods so we can toggle this mode from the main cargo workspace system.
+puredoom-rs = { path = "../../puredoom-rs" }
+# If you want to try (experimental) std support, add `features = [ "std" ]` to risc0-zkvm
+risc0-zkvm = { version = "0.20.1", default-features = false, features = ["std"] }
+zkdoom-common = { path = "../../zkdoom-common" }
+
+[features]
+default = ["zkvm_dev_mode"]
+zkvm_dev_mode = ["puredoom-rs/zkvm_dev_mode"]
