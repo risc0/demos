@@ -1,5 +1,5 @@
 # zk-KYC Demonstration Application
-
+> WARNING: this project is experimental and should not be used for any production use cases. Use at your own risk.
 The zk-KYC demo application allows individuals to verify and mint their identity as an NFT enabling onchain identity verification with zero-knowledge proofs.
 
 This demo leverages ID.me to generate a client authentication token. The token includes a nonce that is associated with the user's connected wallet address, employing principles from the [OpenPubkey: Augmenting OpenID Connect with User held Signing Keys](https://eprint.iacr.org/2023/296) paper. The JWT's integrity is then verified within the guest using ID.me's public RS256 signing [certificates](https://api.id.me/oidc/.well-known/jwks). Subsequently, the guest generates a cryptographic proof of the JWT's integrity and issues a receipt. This receipt, containing the SNARK, an obfuscated identifier, and the user's address, can be validated on the onchain for ERC721 token minting or other transactions, if valid.
