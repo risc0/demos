@@ -1,0 +1,59 @@
+--- ./puredoom.h	2024-02-20 16:09:35.029921426 -0800
++++ ./puredoom_patched.h	2024-02-21 10:01:54.005381511 -0800
+@@ -1481,8 +1481,8 @@
+ // plus a checksum for internal state consistency.
+ typedef struct
+ {
+-    char forwardmove;   // *2048 for move
+-    char sidemove;      // *2048 for move
++    signed char forwardmove;   // *2048 for move
++    signed char sidemove;      // *2048 for move
+     short angleturn;    // <<16 for angle delta
+     short consistancy;  // checks for net game
+     byte chatchar;
+@@ -10248,14 +10248,18 @@
+     {
+         singledemo = true;              // quit after one demo
+         G_DeferedPlayDemo(myargv[p + 1]);
+-        D_DoomLoop();  // never returns
++        I_InitGraphics();
++        return;
++        // D_DoomLoop();  // never returns
+     }
+ 
+     p = M_CheckParm("-timedemo");
+     if (p && p < myargc - 1)
+     {
+         G_TimeDemo(myargv[p + 1]);
+-        D_DoomLoop();  // never returns
++        I_InitGraphics();
++        return;
++        // D_DoomLoop();  // never returns
+     }
+ 
+     p = M_CheckParm("-loadgame");
+@@ -13641,8 +13645,13 @@
+         doom_concat(error_buf, doom_itoa(gametic, 10));
+         doom_concat(error_buf, " gametics in ");
+         doom_concat(error_buf, doom_itoa(endtime - starttime, 10));
+-        doom_concat(error_buf, " realtics");
+-        I_Error(error_buf);
++        doom_concat(error_buf, " realtics\n");
++        // Switch the exit to a clean exit code
++        // I_Error(error_buf);
++        D_QuitNetGame();
++        I_ShutdownGraphics();
++        doom_print(error_buf);
++        doom_exit(0);
+     }
+ 
+     if (demoplayback)
+@@ -40186,7 +40195,7 @@
+         doom_memset(sprtemp, -1, sizeof(sprtemp));
+ 
+         maxframe = -1;
+-        intname = *(int*)namelist[i];
++        doom_memcpy(&intname, namelist[i], sizeof(int));
+ 
+         // scan the lumps,
+         //  filling in the frames for whatever is found
