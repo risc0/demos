@@ -4,7 +4,7 @@
 
 ## WAD files
 
-You will need to buy and extra the doom.wad from a full copy, or use the shareware doom1.wad from https://doomwiki.org/wiki/DOOM1.WAD
+You will need to buy and extract the doom.wad from a full copy, or use the shareware doom1.wad from https://doomwiki.org/wiki/DOOM1.WAD
 
 and place it into `puredoom-rs/` dir.
 
