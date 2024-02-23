@@ -321,10 +321,10 @@ impl GameMonitor {
         }
     }
 
-    fn finalize(&self) {
+    fn finalize(&mut self) {
         unsafe {
             let output = OutputData {
-                frames: self.frames.clone(), // TODO resolve this clone
+                frames: std::mem::take(&mut self.frames),
                 gametics: puredoom_rs::gametic as u32,
             };
             env::commit(&output);
