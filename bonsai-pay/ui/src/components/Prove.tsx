@@ -26,11 +26,12 @@ const Prove: React.FC<ProveProps> = ({ disabled, email }) => {
     }
 
     try {
-      const response = await fetch(`${VITE_API_HOST}/`, {
+      const response = await fetch(`${VITE_API_HOST}/auth`, {
         method: "GET",
         headers: {
-          'Authorization': `Bearer ${jwt}`,
-          'Content-Type': 'application/json',
+          'X-Auth-Token': jwt
+          // 'Authorization': `Bearer ${jwt}`,
+          // 'Content-Type': 'application/json',
         },
       });
 

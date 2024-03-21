@@ -12,21 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// This application demonstrates how to send an off-chain proof request
-// to the Bonsai proving service and publish the received proofs directly
-// to your deployed app contract.
-
-use alloy_primitives::{bytes::Buf, U256};
+use alloy_primitives::{bytes::Buf, FixedBytes, U256};
 use alloy_sol_types::{sol, SolInterface, SolValue};
-use anyhow::{Context, Result};
+use anyhow::Context;
 use apps::{BonsaiProver, TxSender};
 use clap::Parser;
-use log::info;
 use methods::IS_EVEN_ELF;
-use std::{
-    io::{prelude::*, BufReader},
-    net::{TcpListener, TcpStream},
-};
+use tokio::sync::oneshot;
+use warp::Filter;
+
 // `IEvenNumber` interface automatically generated via the alloy `sol!` macro.
 sol! {
     interface IEvenNumber {
@@ -59,87 +53,93 @@ struct Args {
     input: U256,
 }
 
-fn handle_connection(mut stream: TcpStream) {
-    info!("Request made");
+const HEADER_XAUTH: &str = "X-Auth-Token";
+
+async fn handle_jwt_authentication(token: String) -> Result<(), warp::Rejection> {
+    if token.is_empty() {
+        return Err(warp::reject::reject());
+    }
+
     let args = Args::parse();
-    let buf_reader = BufReader::new(&mut stream);
-    let request_line = buf_reader.lines().next().unwrap().unwrap();
+    let (tx, rx) = oneshot::channel();
 
-    // Common headers for CORS
-    let cors_headers = "Access-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: GET, POST, OPTIONS\r\nAccess-Control-Allow-Headers: Content-Type, Authorization";
+    // Spawn a new thread for the Bonsai Prover computation
+    std::thread::spawn(move || {
+        prove_and_send_transaction(args, tx);
+    });
 
-    if request_line == "GET / HTTP/1.1" {
-        let input = args.input.abi_encode();
-        let (journal, post_state_digest, seal) =
-            BonsaiProver::prove(IS_EVEN_ELF, &input).expect("failed to prove on bonsai");
-
-        info!("Finsihed Proving...");
-
-        // Create a new `TxSender`.
-        let tx_sender = TxSender::new(
-            args.chain_id,
-            &args.rpc_url,
-            &args.eth_wallet_private_key,
-            &args.contract,
-        )
-        .expect("failed to create tx sender");
-        let x = U256::abi_decode(&journal, true)
-            .context("decoding journal data")
-            .expect("fauled to decode");
-
-        // Encode the function call for `IEvenNumber.set(x)`.
-        let calldata = IEvenNumber::IEvenNumberCalls::set(IEvenNumber::setCall {
-            x,
-            post_state_digest,
-            seal,
-        })
-        .abi_encode();
-
-        // Send the calldata to Ethereum.
-        let runtime = tokio::runtime::Runtime::new().expect("failed to start new tokio runtime");
-        runtime
-            .block_on(tx_sender.send(calldata))
-            .expect("failed to send tx");
-
-        let status_line = "HTTP/1.1 200 OK";
-        let contents = "hello, world!";
-        let length = contents.len();
-
-        let response = format!(
-            "{status_line}\r\n{cors_headers}\r\nContent-Length: {length}\r\n\r\n{contents}"
-        );
-
-        stream.write_all(response.as_bytes()).unwrap();
-    } else {
-        // Include OPTIONS method handling for preflight requests
-        if request_line.starts_with("OPTIONS ") {
-            let status_line = "HTTP/1.1 204 No Content";
-            let response = format!("{status_line}\r\n{cors_headers}\r\n\r\n");
-            stream.write_all(response.as_bytes()).unwrap();
-        } else {
-            let status_line = "HTTP/1.1 404 NOT FOUND";
-            let contents = "404 not found";
-            let length = contents.len();
-
-            let response = format!(
-                "{status_line}\r\n{cors_headers}\r\nContent-Length: {length}\r\n\r\n{contents}"
-            );
-
-            stream.write_all(response.as_bytes()).unwrap();
+    match rx.await {
+        Ok(result) => {
+            println!("Token: {}, Result: {:?}", token, result);
+            Ok(())
         }
+        Err(_) => Err(warp::reject::reject()),
     }
 }
 
-fn main() -> Result<()> {
+fn prove_and_send_transaction(args: Args, tx: oneshot::Sender<(Vec<u8>, FixedBytes<32>, Vec<u8>)>) {
+    let input = U256::from(42).abi_encode();
+    let (journal, post_state_digest, seal) =
+        BonsaiProver::prove(IS_EVEN_ELF, &input).expect("failed to prove on bonsai");
+
+    let seal_clone = seal.clone();
+
+    let tx_sender = TxSender::new(
+        args.chain_id,
+        &args.rpc_url,
+        &args.eth_wallet_private_key,
+        &args.contract,
+    )
+    .expect("failed to create tx sender");
+
+    let x = U256::abi_decode(&journal, true)
+        .context("decoding journal data")
+        .expect("failed to decode");
+
+    // Encode the function call for `IEvenNumber.set(x)`.
+    let calldata = IEvenNumber::IEvenNumberCalls::set(IEvenNumber::setCall {
+        x,
+        post_state_digest,
+        seal: seal_clone,
+    })
+    .abi_encode();
+
+    // Send the calldata to Ethereum.
+    let runtime = tokio::runtime::Runtime::new().expect("failed to start new tokio runtime");
+    runtime
+        .block_on(tx_sender.send(calldata))
+        .expect("failed to send tx");
+
+    tx.send((journal, post_state_digest, seal))
+        .expect("failed to send over channel");
+}
+
+fn jwt_authentication_filter() -> impl Filter<Extract = ((),), Error = warp::Rejection> + Clone {
+    warp::any()
+        .and(warp::header::<String>(HEADER_XAUTH))
+        .and_then(handle_jwt_authentication)
+}
+
+fn auth_filter() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+    let cors = warp::cors()
+        .allow_any_origin()
+        .allow_methods(vec!["GET", "POST", "DELETE"])
+        .allow_headers(vec!["content-type", "x-auth-token"])
+        .max_age(3600);
+
+    warp::path("auth")
+        .and(warp::get())
+        .and(warp::path::end())
+        .and(jwt_authentication_filter().untuple_one())
+        .map(|| warp::reply::html("Hello, World! + 5 seconds"))
+        .with(cors)
+}
+
+#[tokio::main]
+async fn main() {
     env_logger::init();
 
-    info!("Starting server...");
-    let listener = TcpListener::bind("127.0.0.1:8080").expect("Could not bind to address");
+    let api = auth_filter();
 
-    for stream in listener.incoming() {
-        let stream = stream.expect("Failed to establish connection");
-        handle_connection(stream);
-    }
-
-    Ok(())
+    warp::serve(api).run(([127, 0, 0, 1], 8080)).await;
 }
