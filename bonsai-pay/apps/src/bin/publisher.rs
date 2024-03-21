@@ -12,12 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use alloy_primitives::{bytes::Buf, FixedBytes, U256};
+// Copyright 2024 RISC Zero, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+use alloy_primitives::{FixedBytes, U256};
 use alloy_sol_types::{sol, SolInterface, SolValue};
 use anyhow::Context;
 use apps::{BonsaiProver, TxSender};
 use clap::Parser;
 use methods::IS_EVEN_ELF;
+use oidc_validator::IdentityProvider;
+use risc0_zkvm::serde::to_vec;
 use tokio::sync::oneshot;
 use warp::Filter;
 
@@ -47,10 +63,6 @@ struct Args {
     /// Application's contract address on Ethereum
     #[clap(long)]
     contract: String,
-
-    /// The input to provide to the guest binary
-    #[clap(short, long)]
-    input: U256,
 }
 
 const HEADER_XAUTH: &str = "X-Auth-Token";
@@ -60,25 +72,31 @@ async fn handle_jwt_authentication(token: String) -> Result<(), warp::Rejection>
         return Err(warp::reject::reject());
     }
 
+    println!("Token: {}", token);
+
     let args = Args::parse();
     let (tx, rx) = oneshot::channel();
 
     // Spawn a new thread for the Bonsai Prover computation
     std::thread::spawn(move || {
-        prove_and_send_transaction(args, tx);
+        prove_and_send_transaction(args, token, tx);
     });
 
     match rx.await {
         Ok(result) => {
-            println!("Token: {}, Result: {:?}", token, result);
+            // println!("Token: {}, Result: {:?}", token, result);
             Ok(())
         }
         Err(_) => Err(warp::reject::reject()),
     }
 }
 
-fn prove_and_send_transaction(args: Args, tx: oneshot::Sender<(Vec<u8>, FixedBytes<32>, Vec<u8>)>) {
-    let input = U256::from(42).abi_encode();
+fn prove_and_send_transaction(
+    args: Args,
+    token: String,
+    tx: oneshot::Sender<(Vec<u8>, FixedBytes<32>, Vec<u8>)>,
+) {
+    let input = bytemuck::cast_slice(&to_vec(&(IdentityProvider::Google, token)).unwrap()).to_vec();
     let (journal, post_state_digest, seal) =
         BonsaiProver::prove(IS_EVEN_ELF, &input).expect("failed to prove on bonsai");
 

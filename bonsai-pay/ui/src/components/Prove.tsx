@@ -30,8 +30,6 @@ const Prove: React.FC<ProveProps> = ({ disabled, email }) => {
         method: "GET",
         headers: {
           'X-Auth-Token': jwt
-          // 'Authorization': `Bearer ${jwt}`,
-          // 'Content-Type': 'application/json',
         },
       });
 
