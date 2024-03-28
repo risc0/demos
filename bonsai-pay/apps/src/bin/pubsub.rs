@@ -31,6 +31,7 @@ use alloy_sol_types::{sol, SolInterface, SolValue};
 use anyhow::Context;
 use apps::{BonsaiProver, TxSender};
 use clap::Parser;
+use log::info;
 use methods::IS_EVEN_ELF;
 use oidc_validator::IdentityProvider;
 use risc0_zkvm::serde::to_vec;
@@ -72,7 +73,7 @@ async fn handle_jwt_authentication(token: String) -> Result<(), warp::Rejection>
         return Err(warp::reject::reject());
     }
 
-    println!("Token: {}", token);
+    info!("Token received: {}", token);
 
     let args = Args::parse();
     let (tx, rx) = oneshot::channel();
