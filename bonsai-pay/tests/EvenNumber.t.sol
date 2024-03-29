@@ -26,10 +26,19 @@ import {Elf} from "./Elf.sol"; // auto-generated contract after running `cargo b
 contract EvenNumberTest is RiscZeroCheats, Test {
     EvenNumber public evenNumber;
 
+    address public alice = makeAddr("alice");
+    address public bob = makeAddr("bob");
+    address public charlie = makeAddr("charlie");
+
     function setUp() public {
         IRiscZeroVerifier verifier = deployRiscZeroVerifier();
         evenNumber = new EvenNumber(verifier);
         assertEq(evenNumber.get(), 0);
+
+        // fund alice and bob and charlie
+        vm.deal(alice, 5 ether);
+        vm.deal(bob, 5 ether);
+        vm.deal(charlie, 5 ether);
     }
 
     function test_SetEven() public {
@@ -48,5 +57,33 @@ contract EvenNumberTest is RiscZeroCheats, Test {
 
         evenNumber.set(abi.decode(journal, (uint256)), post_state_digest, seal);
         assertEq(evenNumber.get(), number);
+    }
+
+    function test_Deposit() public payable {
+        bytes32 claimId = sha256(abi.encodePacked("bob@email.com"));
+        vm.prank(alice);
+        evenNumber.deposit{value: 1 ether}(claimId);
+
+        assertEq(address(evenNumber).balance, 1 ether);
+    }
+
+    function test_Claim() public {
+        // deposit as alice
+        bytes32 claimId = sha256(abi.encodePacked("bob@email.com"));
+        vm.prank(alice);
+        evenNumber.deposit{value: 1 ether}(claimId);
+        assertEq(address(evenNumber).balance, 1 ether);
+        assertEq(alice.balance, 4 ether);
+
+        // claim as bob
+
+        uint256 number = 12345678;
+        (bytes memory journal, bytes32 post_state_digest, bytes memory seal) =
+            prove(Elf.IS_EVEN_PATH, abi.encode(number));
+
+        vm.prank(bob);
+        evenNumber.claim(claimId, post_state_digest, seal);
+        assertEq(address(evenNumber).balance, 0);
+        assertEq(bob.balance, 6 ether);
     }
 }

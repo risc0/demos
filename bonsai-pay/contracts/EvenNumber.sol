@@ -33,6 +33,11 @@ contract EvenNumber {
     ///         It can be set by calling the `set` function.
     uint256 public number;
 
+    Types.Deposit[] private deposits;
+
+    mapping(bytes32 => uint256[]) public claimMem;
+    mapping(bytes32 => uint256[]) public depositMem;
+
     /// @notice Initialize the contract, binding it to a specified RISC Zero verifier.
     constructor(IRiscZeroVerifier _verifier) {
         verifier = _verifier;
@@ -50,5 +55,61 @@ contract EvenNumber {
     /// @notice Returns the number stored.
     function get() public view returns (uint256) {
         return number;
+    }
+
+    function deposit(bytes32 claimId) public payable {
+        bytes32 depositId = sha256(abi.encodePacked(msg.sender, claimId));
+
+        Types.Deposit memory deposit = Types.Deposit({
+            state: Types.DepositState.Deposited,
+            depositId: depositId,
+            claimId: claimId,
+            amount: msg.value
+        });
+
+        deposits.push(deposit);
+
+        depositMem[depositId].push(deposits.length - 1);
+        claimMem[claimId].push(deposits.length - 1);
+    }
+
+    function claim(bytes32 claimId, bytes32 postStateDigest, bytes calldata seal) public {
+        bytes memory journal = abi.encode(msg.sender, claimId);
+        require(verifier.verify(seal, imageId, postStateDigest, sha256(journal)));
+
+        require(claimMem[claimId].length > 0, "No deposits found for the given claimId");
+
+        uint256 totalAmount = 0;
+        for (uint256 i = 0; i < claimMem[claimId].length; ++i) {
+            uint256 depositIndex = claimMem[claimId][i];
+            Types.Deposit storage deposit = deposits[depositIndex];
+
+            require(deposit.state != Types.DepositState.Claimed, "Deposit already claimed");
+
+            totalAmount += deposit.amount;
+            deposit.state = Types.DepositState.Claimed;
+        }
+
+        payable(msg.sender).transfer(totalAmount);
+    }
+}
+
+library Types {
+    enum DepositState {
+        Deposited,
+        Claimed
+    }
+
+    struct Deposit {
+        DepositState state;
+        bytes32 depositId;
+        bytes32 claimId;
+        uint256 amount;
+    }
+
+    struct Proof {
+        bytes seal;
+        bytes32 postStateDigest;
+        bytes journal;
     }
 }
