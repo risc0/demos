@@ -16,3 +16,4 @@ risc0-zkp = { workspace = true }
 alloy-primitives = { workspace = true }
 alloy-sol-types = { workspace = true }
 risc0-zkvm = { workspace = true, features = ["client"] }
+oidc-validator = { workspace = true }
