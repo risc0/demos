@@ -12,24 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::io::Read;
+// use std::io::Read;
 
-use alloy_primitives::U256;
+use alloy_primitives::{Address, FixedBytes};
 use alloy_sol_types::SolValue;
+use oidc_validator::IdentityProvider;
 use risc0_zkvm::guest::env;
+use risc0_zkvm::sha::rust_crypto::{Digest as _, Sha256};
 
+alloy_sol_types::sol! {
+    struct ClaimsData {
+        address msg_sender;
+        bytes32 claim_id;
+    }
+}
 fn main() {
-    // Read the input data for this application.
-    let mut input_bytes = Vec::<u8>::new();
-    env::stdin().read_to_end(&mut input_bytes).unwrap();
-    // Decode and parse the input
-    let number = <U256>::abi_decode(&input_bytes, true).unwrap();
+    let (identity_provider, jwt): (IdentityProvider, String) = env::read();
 
-    // Run the computation.
-    // In this case, asserting that the provided number is even.
-    assert!(!number.bit(0), "number is not even");
+    let (claim_id, msg_sender) = identity_provider.validate(&jwt).unwrap();
+    let msg_sender: Address = Address::parse_checksummed(msg_sender, None).unwrap();
+    let claim_id: FixedBytes<32> =
+        FixedBytes::from_slice(Sha256::digest(claim_id.as_bytes()).as_slice());
+    let output = ClaimsData {
+        msg_sender,
+        claim_id,
+    };
+    let output = output.abi_encode();
 
-    // Commit the journal that will be received by the application contract.
-    // Journal is encoded using Solidity ABI for easy decoding in the app contract.
-    env::commit_slice(number.abi_encode().as_slice());
+    env::commit_slice(&output);
 }

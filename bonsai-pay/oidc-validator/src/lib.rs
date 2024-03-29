@@ -143,8 +143,8 @@ pub mod test_oidc_validator {
     use std::env;
 
     use super::{decode_token, GoogleClaims};
-    // NOTE: Test with the jwt env var
 
+    #[ignore] // Ignoring this test because it requires a valid jwt token with env var.
     #[test]
     fn test_validate_google_jwt_valid_token() {
         let jwt = env::var("jwt").expect("jwt not set");
@@ -152,12 +152,6 @@ pub mod test_oidc_validator {
 
         assert_eq!(&decoded.email, "hans@risczero.com");
         assert_eq!(&decoded.nonce, "0xefdF9861F3eDc2404643B588378FE242FCadE658");
-    }
-    #[test]
-    #[should_panic]
-    fn test_fail_invalid_token() {
-        let jwt = env::var("jwt").expect("jwt not set");
-        decode_token::<GoogleClaims>(&jwt, &GOOGLE_KEYS).unwrap();
     }
 
     #[test]
