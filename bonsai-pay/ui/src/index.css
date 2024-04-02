@@ -404,7 +404,7 @@ button:focus-visible {
 .select-token-btn {
   position: absolute;
   font-size: small;
-  margin: 2.64em 0 0 9em;
+  margin: -2.64em 0 0 9em;
   background: none;
   transition: none;
 }

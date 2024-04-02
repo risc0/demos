@@ -97,7 +97,7 @@ const Deposit: React.FC<DepositProps> = () => {
           className="input-field"
           aria-label="Recipient"
           onChange={(e) => setTo(e.target.value)}
-          placeholder="Recipient Email"
+          placeholder="example@gmail.com"
           value={to}
           type="email"
         />
@@ -126,6 +126,9 @@ const Deposit: React.FC<DepositProps> = () => {
         >
           {isSending ? "Sending..." : "Send"}
         </button>
+        <h6>
+          Only Google accounts are supported.
+        </h6>
       </form>
 
       <Modal isOpen={isModalOpen} onClose={toggleModal} title="Select Token">
