@@ -1,4 +1,5 @@
 mod certs;
+use alloy_primitives::{Uint, U256};
 use certs::{GOOGLE_PUB_JWK, TEST_PUB_JWK};
 use jwt_compact::{
     alg::{Rsa, RsaPublicKey},
@@ -52,6 +53,15 @@ impl IdentityProvider {
                 let decoded = decode_token::<TestClaims>(token, &TEST_KEYS).unwrap();
                 Ok((decoded.email.to_string(), decoded.nonce))
             }
+        }
+    }
+}
+
+impl From<Uint<256, 4>> for IdentityProvider {
+    fn from(value: Uint<256, 4>) -> Self {
+        match value {
+            U256::ZERO => Self::Google,
+            _ => Self::Test,
         }
     }
 }
