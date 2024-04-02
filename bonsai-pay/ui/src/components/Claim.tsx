@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Prove from "./Prove";
-
 import { useAccount } from "wagmi";
 import { GoogleTokenPayload } from "../libs/types";
 import { SignInWithGoogle } from "./SignInWithGoogle";
