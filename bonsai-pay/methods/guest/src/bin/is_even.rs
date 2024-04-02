@@ -19,15 +19,27 @@ use alloy_sol_types::SolValue;
 use oidc_validator::IdentityProvider;
 use risc0_zkvm::guest::env;
 use risc0_zkvm::sha::rust_crypto::{Digest as _, Sha256};
+use std::io::Read;
 
 alloy_sol_types::sol! {
     struct ClaimsData {
         address msg_sender;
         bytes32 claim_id;
     }
+    struct Input {
+        uint256 identity_provider;
+        string jwt;
+    }
 }
+
 fn main() {
-    let (identity_provider, jwt): (IdentityProvider, String) = env::read();
+    let mut input_bytes = Vec::<u8>::new();
+    env::stdin().read_to_end(&mut input_bytes).unwrap();
+
+    let input: Input = <Input>::abi_decode(&input_bytes, true).unwrap();
+
+    let identity_provider: IdentityProvider = input.identity_provider.into();
+    let jwt: String = input.jwt;
 
     let (claim_id, msg_sender) = identity_provider.validate(&jwt).unwrap();
     let msg_sender: Address = Address::parse_checksummed(msg_sender, None).unwrap();
