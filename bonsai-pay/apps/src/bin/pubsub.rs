@@ -33,15 +33,23 @@ use apps::{BonsaiProver, TxSender};
 use clap::Parser;
 use log::info;
 use methods::IS_EVEN_ELF;
-use oidc_validator::IdentityProvider;
-use risc0_zkvm::serde::to_vec;
 use tokio::sync::oneshot;
 use warp::Filter;
 
 // `IEvenNumber` interface automatically generated via the alloy `sol!` macro.
 sol! {
     interface IEvenNumber {
-        function set(uint256 x, bytes32 post_state_digest, bytes calldata seal);
+        function withdraw(address payable to, bytes32 claim_id, bytes32 post_state_digest, bytes calldata seal);
+    }
+
+    struct Input {
+        uint256 identity_provider;
+        string jwt;
+    }
+
+    struct ClaimsData {
+        address msg_sender;
+        bytes32 claim_id;
     }
 }
 
@@ -84,10 +92,7 @@ async fn handle_jwt_authentication(token: String) -> Result<(), warp::Rejection>
     });
 
     match rx.await {
-        Ok(result) => {
-            // println!("Token: {}, Result: {:?}", token, result);
-            Ok(())
-        }
+        Ok(_result) => Ok(()),
         Err(_) => Err(warp::reject::reject()),
     }
 }
@@ -97,9 +102,13 @@ fn prove_and_send_transaction(
     token: String,
     tx: oneshot::Sender<(Vec<u8>, FixedBytes<32>, Vec<u8>)>,
 ) {
-    let input = bytemuck::cast_slice(&to_vec(&(IdentityProvider::Google, token)).unwrap()).to_vec();
+    let input = Input {
+        identity_provider: U256::ZERO, // Google as the identity provider
+        jwt: token,
+    };
+
     let (journal, post_state_digest, seal) =
-        BonsaiProver::prove(IS_EVEN_ELF, &input).expect("failed to prove on bonsai");
+        BonsaiProver::prove(IS_EVEN_ELF, &input.abi_encode()).expect("failed to prove on bonsai");
 
     let seal_clone = seal.clone();
 
@@ -111,13 +120,16 @@ fn prove_and_send_transaction(
     )
     .expect("failed to create tx sender");
 
-    let x = U256::abi_decode(&journal, true)
+    let claims = ClaimsData::abi_decode(&journal, true)
         .context("decoding journal data")
         .expect("failed to decode");
 
-    // Encode the function call for `IEvenNumber.set(x)`.
-    let calldata = IEvenNumber::IEvenNumberCalls::set(IEvenNumber::setCall {
-        x,
+    info!("Claim ID: {:?}", claims.claim_id);
+    info!("Msg Sender: {:?}", claims.msg_sender);
+
+    let calldata = IEvenNumber::IEvenNumberCalls::withdraw(IEvenNumber::withdrawCall {
+        to: claims.msg_sender,
+        claim_id: claims.claim_id,
         post_state_digest,
         seal: seal_clone,
     })
