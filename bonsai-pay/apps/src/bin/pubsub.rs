@@ -39,7 +39,7 @@ use warp::Filter;
 // `IBonsaiPay` interface automatically generated via the alloy `sol!` macro.
 sol! {
     interface IBonsaiPay {
-        function withdraw(address payable to, bytes32 claim_id, bytes32 post_state_digest, bytes calldata seal);
+        function claim(address payable to, bytes32 claim_id, bytes32 post_state_digest, bytes calldata seal);
     }
 
     struct Input {
@@ -128,7 +128,7 @@ fn prove_and_send_transaction(
     info!("Claim ID: {:?}", claims.claim_id);
     info!("Msg Sender: {:?}", claims.msg_sender);
 
-    let calldata = IBonsaiPay::IBonsaiPayCalls::withdraw(IBonsaiPay::withdrawCall {
+    let calldata = IBonsaiPay::IBonsaiPayCalls::claim(IBonsaiPay::claimCall {
         to: claims.msg_sender,
         claim_id: claims.claim_id,
         post_state_digest,
