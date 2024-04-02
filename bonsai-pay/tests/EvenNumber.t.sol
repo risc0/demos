@@ -30,33 +30,19 @@ contract EvenNumberTest is RiscZeroCheats, Test {
     address public bob = makeAddr("bob");
     address public charlie = makeAddr("charlie");
 
+    struct Input {
+        uint256 id_provider;
+        string jwt;
+    }
+
     function setUp() public {
         IRiscZeroVerifier verifier = deployRiscZeroVerifier();
         evenNumber = new EvenNumber(verifier);
-        assertEq(evenNumber.get(), 0);
 
         // fund alice and bob and charlie
         vm.deal(alice, 5 ether);
         vm.deal(bob, 5 ether);
         vm.deal(charlie, 5 ether);
-    }
-
-    function test_SetEven() public {
-        uint256 number = 12345678;
-        (bytes memory journal, bytes32 post_state_digest, bytes memory seal) =
-            prove(Elf.IS_EVEN_PATH, abi.encode(number));
-
-        evenNumber.set(abi.decode(journal, (uint256)), post_state_digest, seal);
-        assertEq(evenNumber.get(), number);
-    }
-
-    function test_SetZero() public {
-        uint256 number = 0;
-        (bytes memory journal, bytes32 post_state_digest, bytes memory seal) =
-            prove(Elf.IS_EVEN_PATH, abi.encode(number));
-
-        evenNumber.set(abi.decode(journal, (uint256)), post_state_digest, seal);
-        assertEq(evenNumber.get(), number);
     }
 
     function test_Deposit() public payable {
@@ -67,7 +53,7 @@ contract EvenNumberTest is RiscZeroCheats, Test {
         assertEq(address(evenNumber).balance, 1 ether);
     }
 
-    function test_Claim() public {
+    function test_Withdraw() public {
         // deposit as alice
         bytes32 claimId = sha256(abi.encodePacked("bob@email.com"));
         vm.prank(alice);
@@ -76,13 +62,17 @@ contract EvenNumberTest is RiscZeroCheats, Test {
         assertEq(alice.balance, 4 ether);
 
         // claim as bob
+        string memory jwt =
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ijg3OTJlN2MyYTJiN2MxYWI5MjRlMTU4YTRlYzRjZjUxIn0.eyJlbWFpbCI6ImJvYkBlbWFpbC5jb20iLCJub25jZSI6IjB4MUQ5NkYyZjZCZUYxMjAyRTRDZTFGZjZEYWQwYzJDQjAwMjg2MWQzZSJ9.Ad3Hr5SOo0uDQ-uOldnXVhlkJIClfWJE6UsnWWDTgFNGEYqAYpbqIqPSrUIMPMy9ZHZhnQGJJcED0krQTlys5UfN6K9THo-CnIa72EhHWtALJC3XcuaFZ-iNCbFYQtaL6M7Bu4NtdlllcsUYU9V3Q2h6xOGlMjGmwOr0xQjwnI-qpny5ctzlAjGsa4E9Y2_Hu_iBQ483Yv01g31H34efGamPf8rqBDXtHobsX2W7FGYnOWLLP4nZD8obn3g-6ny5joIlx3IklAE0t7M5E98kNVKc5P7_J7e3LdEQ-0AzYcBvPvx3F29kyYa4mevPTulU2kxtCKue8EMFu7nFE0VZHQ";
+        uint256 id_provider = 1;
 
-        uint256 number = 12345678;
+        Input memory input = Input({id_provider: id_provider, jwt: jwt});
+
         (bytes memory journal, bytes32 post_state_digest, bytes memory seal) =
-            prove(Elf.IS_EVEN_PATH, abi.encode(number));
+            prove(Elf.IS_EVEN_PATH, abi.encode(input));
 
         vm.prank(bob);
-        evenNumber.claim(claimId, post_state_digest, seal);
+        evenNumber.claim(payable(bob), claimId, post_state_digest, seal);
         assertEq(address(evenNumber).balance, 0);
         assertEq(bob.balance, 6 ether);
     }
