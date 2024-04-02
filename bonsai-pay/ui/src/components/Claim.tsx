@@ -11,7 +11,6 @@ interface ClaimProps {}
 const Claim: React.FC<ClaimProps> = () => {
   const { isConnected } = useAccount();
   const [jwtExists, setJwtExists] = useState<boolean>(false);
-  const [snarkExists, setSnarkExists] = useState<boolean>(false);
   const [email, setEmail] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState<number>(1);
 
@@ -36,17 +35,7 @@ const Claim: React.FC<ClaimProps> = () => {
 
       setJwtExists(newJwtExists);
 
-      // Check for snark cookie
-      const snark = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("snark="));
-      const snarkValue = snark && snark.split("=")[1];
-
-      if (snarkValue && snarkValue !== "") {
-        setSnarkExists(true);
-      } else {
-        setSnarkExists(false);
-      }
+      
     }, 1000);
 
     return () => clearInterval(intervalId);
@@ -55,8 +44,7 @@ const Claim: React.FC<ClaimProps> = () => {
   const stepDescriptions = [
     "Connect Wallet",
     "Sign In",
-    "Prove Ownership",
-    "Claim",
+    "Prove & Withdraw",
   ];
 
   const renderStepIndicator = () => {
@@ -79,12 +67,10 @@ const Claim: React.FC<ClaimProps> = () => {
       setCurrentStep(1);
     } else if (isConnected && !jwtExists) {
       setCurrentStep(2);
-    } else if (jwtExists && !snarkExists) {
+    } else if (isConnected && jwtExists) {
       setCurrentStep(3);
-    } else if (jwtExists && snarkExists) {
-      setCurrentStep(4);
-    }
-  }, [isConnected, jwtExists, snarkExists]);
+    } 
+  }, [isConnected, jwtExists]);
 
   const renderCurrentStep = () => {
     switch (currentStep) {
@@ -104,7 +90,7 @@ const Claim: React.FC<ClaimProps> = () => {
           <>
             <h4>Prove account ownership</h4>
             {email && <h5>{`Welcome, ${email}`}</h5>}
-            <Prove disabled={snarkExists} email={email} />
+            <Prove disabled={false} email={email} />
           </>
         );
       case 4:

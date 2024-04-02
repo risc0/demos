@@ -1,89 +1,40 @@
 import React, { useState, useEffect } from "react";
 import { useDebounce } from "use-debounce";
-import { useWaitForTransaction, useBlockNumber, useAccount } from "wagmi";
-import {
-  useZrpDeposit,
-  useErc20Allowance,
-  useErc20Approve,
-} from "../generated";
+import { useWaitForTransaction, useAccount } from "wagmi";
+import { useBonsaiPayDeposit } from "../generated";
 import Modal from "./Modal";
 import tokens from "../assets/tokens.json";
 import { Token } from "../libs/types";
-import { parseUnits, zeroAddress, parseEther, toHex } from "viem";
+import { parseEther, toHex} from "viem";
 import { toast } from "react-toastify";
-import { sha256 } from 'js-sha256';
+import { sha256 } from "@noble/hashes/sha256";
 
 interface DepositProps {}
 
 const Deposit: React.FC<DepositProps> = () => {
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAccount();
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [selectedToken, setSelectedToken] = useState<Token | null>(null);
   const [to, setTo] = useState<string>("");
   const [debouncedTo] = useDebounce(to, 500);
   const [amount, setAmount] = useState<string>("");
   const [debouncedAmount] = useDebounce(amount, 500);
-  const { data: blockNumber } = useBlockNumber();
 
-  const { data: txn, write: sendTxn } = useZrpDeposit({
+  const { data: txn, write: sendTxn } = useBonsaiPayDeposit({
     args: [
-      toHex(sha256.hex(debouncedTo)), 
-      selectedToken?.address ?? zeroAddress,
-      debouncedAmount
-        ? parseUnits(debouncedAmount, selectedToken?.decimals ?? 18)
-        : 0n,
-      blockNumber ?? 0n,
+      toHex(sha256(debouncedTo))
     ] as never,
-    value: (selectedToken?.address === zeroAddress
-      ? parseEther(debouncedAmount)
-      : 0n) as never,
+    value: parseEther(debouncedAmount) as never,
   });
 
   const { isLoading: isSending, isSuccess: sentSuccessful } =
     useWaitForTransaction({
       hash: txn?.hash,
     });
-  const VITE_CUSTODY_ADDRESS = import.meta.env.VITE_CUSTODY_ADDRESS;
-
-  const { data: allowance, refetch: refetchAllowance } = useErc20Allowance({
-    address: selectedToken?.address ?? zeroAddress,
-    args: [address ?? zeroAddress, VITE_CUSTODY_ADDRESS],
-  });
-
-  const { data: approve, write: approveTxn } = useErc20Approve({
-    address: (selectedToken?.address ?? zeroAddress) as never,
-    args: [
-      VITE_CUSTODY_ADDRESS,
-      parseUnits(debouncedAmount, selectedToken?.decimals ?? 18),
-    ] as never,
-  });
-  const { isLoading: isApproving } = useWaitForTransaction({
-    hash: approve?.hash,
-  });
-
-  const [isAmountGreaterThanAllowance, setIsAmountGreaterThanAllowance] =
-    useState<boolean>(false);
-
-  useEffect(() => {
-    // refresh allowance every 2 seconds
-    const intervalId = setInterval(() => {
-      refetchAllowance?.();
-    }, 2000);
-    return () => clearInterval(intervalId);
-  });
 
   const toggleModal = () => setModalOpen((prev) => !prev);
 
   const isTokenSelected = !!selectedToken;
-  const isZeroAddress = selectedToken?.address === zeroAddress;
-
-  useEffect(() => {
-    const amountInUnits = parseUnits(
-      debouncedAmount || "0",
-      selectedToken?.decimals ?? 18
-    );
-    setIsAmountGreaterThanAllowance(amountInUnits > (allowance ?? 0n));
-  }, [debouncedAmount, allowance, selectedToken]);
 
   const handleSend = () => {
     if (!isValidEmail(to)) {
@@ -101,7 +52,7 @@ const Deposit: React.FC<DepositProps> = () => {
     if (sentSuccessful) {
       const Msg = () => (
         <div>
-          Successfully sent {amount} {selectedToken?.name} to {to}
+          Successfully sent {amount} ETH to {to}
           <div>
             <a href={`https://sepolia.etherscan.io/tx/${txn?.hash}`}>
               View on Etherscan
@@ -152,46 +103,21 @@ const Deposit: React.FC<DepositProps> = () => {
           min="0"
           step={1e-18}
         />
-        {(!isTokenSelected ||
-          isZeroAddress ||
-          !isAmountGreaterThanAllowance) && (
-          <button
-            type="submit"
-            disabled={
-              isSending ||
-              !sendTxn ||
-              !to ||
-              !amount ||
-              !isValidEmail(to) ||
-              !isValidAmount(amount) ||
-              !isTokenSelected ||
-              !isConnected
-            }
-          >
-            {isSending ? "Sending..." : "Send"}
-          </button>
-        )}
-        {isTokenSelected && !isZeroAddress && isAmountGreaterThanAllowance && (
-          <button
-            className="approve-btn"
-            disabled={isApproving}
-            onClick={() => {
-              approveTxn?.();
-            }}
-          >
-            {isApproving ? "Approving..." : "Approve"}
-          </button>
-        )}
-        {/* {sentSuccessful && (
-          <div>
-            Successfully sent {amount} to {to}
-            <div>
-              <a href={`https://sepolia.etherscan.io/tx/${txn?.hash}`}>
-                View on Etherscan
-              </a>
-            </div>
-          </div>
-        )} */}
+        <button
+          type="submit"
+          disabled={
+            isSending ||
+            !sendTxn ||
+            !to ||
+            !amount ||
+            !isValidEmail(to) ||
+            !isValidAmount(amount) ||
+            !isTokenSelected ||
+            !isConnected
+          }
+        >
+          {isSending ? "Sending..." : "Send"}
+        </button>
       </form>
 
       <Modal isOpen={isModalOpen} onClose={toggleModal} title="Select Token">

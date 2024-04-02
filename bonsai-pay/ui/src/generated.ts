@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   useContractRead,
   UseContractReadConfig,
@@ -20,7 +21,7 @@ import {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x834f362A264714cB876334C997aEFEb3FE581Ff5)
  */
 export const bonsaiPayABI = [
   {
@@ -35,6 +36,68 @@ export const bonsaiPayABI = [
     ],
   },
   {
+    type: 'error',
+    inputs: [{ name: 'message', internalType: 'string', type: 'string' }],
+    name: 'InvalidClaim',
+  },
+  {
+    type: 'error',
+    inputs: [{ name: 'message', internalType: 'string', type: 'string' }],
+    name: 'InvalidDeposit',
+  },
+  { type: 'error', inputs: [], name: 'TransferFailed' },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'recipient',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'claimId',
+        internalType: 'bytes32',
+        type: 'bytes32',
+        indexed: true,
+      },
+      {
+        name: 'amount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'Claimed',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'claimId',
+        internalType: 'bytes32',
+        type: 'bytes32',
+        indexed: true,
+      },
+      {
+        name: 'amount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'Deposited',
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: 'claimId', internalType: 'bytes32', type: 'bytes32' }],
+    name: 'balanceOf',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
@@ -47,31 +110,11 @@ export const bonsaiPayABI = [
     outputs: [],
   },
   {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [
-      { name: '', internalType: 'bytes32', type: 'bytes32' },
-      { name: '', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'claimMem',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
     stateMutability: 'payable',
     type: 'function',
     inputs: [{ name: 'claimId', internalType: 'bytes32', type: 'bytes32' }],
     name: 'deposit',
     outputs: [],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [
-      { name: '', internalType: 'bytes32', type: 'bytes32' },
-      { name: '', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'depositMem',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
   },
   {
     stateMutability: 'view',
@@ -92,14 +135,14 @@ export const bonsaiPayABI = [
 ] as const
 
 /**
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x834f362A264714cB876334C997aEFEb3FE581Ff5)
  */
 export const bonsaiPayAddress = {
-  11155111: '0xC462788Dc4198C5264b19460F9076DC86A80D99C',
+  11155111: '0x834f362A264714cB876334C997aEFEb3FE581Ff5',
 } as const
 
 /**
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x834f362A264714cB876334C997aEFEb3FE581Ff5)
  */
 export const bonsaiPayConfig = {
   address: bonsaiPayAddress,
@@ -214,7 +257,7 @@ export const erc20ABI = [
 /**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link bonsaiPayABI}__.
  *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x834f362A264714cB876334C997aEFEb3FE581Ff5)
  */
 export function useBonsaiPayRead<
   TFunctionName extends string,
@@ -233,12 +276,12 @@ export function useBonsaiPayRead<
 }
 
 /**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link bonsaiPayABI}__ and `functionName` set to `"claimMem"`.
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link bonsaiPayABI}__ and `functionName` set to `"balanceOf"`.
  *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x834f362A264714cB876334C997aEFEb3FE581Ff5)
  */
-export function useBonsaiPayClaimMem<
-  TFunctionName extends 'claimMem',
+export function useBonsaiPayBalanceOf<
+  TFunctionName extends 'balanceOf',
   TSelectData = ReadContractResult<typeof bonsaiPayABI, TFunctionName>,
 >(
   config: Omit<
@@ -249,29 +292,7 @@ export function useBonsaiPayClaimMem<
   return useContractRead({
     abi: bonsaiPayABI,
     address: bonsaiPayAddress[11155111],
-    functionName: 'claimMem',
-    ...config,
-  } as UseContractReadConfig<typeof bonsaiPayABI, TFunctionName, TSelectData>)
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link bonsaiPayABI}__ and `functionName` set to `"depositMem"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
- */
-export function useBonsaiPayDepositMem<
-  TFunctionName extends 'depositMem',
-  TSelectData = ReadContractResult<typeof bonsaiPayABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof bonsaiPayABI, TFunctionName, TSelectData>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof bonsaiPayAddress } = {} as any,
-) {
-  return useContractRead({
-    abi: bonsaiPayABI,
-    address: bonsaiPayAddress[11155111],
-    functionName: 'depositMem',
+    functionName: 'balanceOf',
     ...config,
   } as UseContractReadConfig<typeof bonsaiPayABI, TFunctionName, TSelectData>)
 }
@@ -279,7 +300,7 @@ export function useBonsaiPayDepositMem<
 /**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link bonsaiPayABI}__ and `functionName` set to `"imageId"`.
  *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x834f362A264714cB876334C997aEFEb3FE581Ff5)
  */
 export function useBonsaiPayImageId<
   TFunctionName extends 'imageId',
@@ -301,7 +322,7 @@ export function useBonsaiPayImageId<
 /**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link bonsaiPayABI}__ and `functionName` set to `"verifier"`.
  *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x834f362A264714cB876334C997aEFEb3FE581Ff5)
  */
 export function useBonsaiPayVerifier<
   TFunctionName extends 'verifier',
@@ -323,7 +344,7 @@ export function useBonsaiPayVerifier<
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link bonsaiPayABI}__.
  *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x834f362A264714cB876334C997aEFEb3FE581Ff5)
  */
 export function useBonsaiPayWrite<
   TFunctionName extends string,
@@ -355,7 +376,7 @@ export function useBonsaiPayWrite<
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link bonsaiPayABI}__ and `functionName` set to `"claim"`.
  *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x834f362A264714cB876334C997aEFEb3FE581Ff5)
  */
 export function useBonsaiPayClaim<
   TMode extends WriteContractMode = undefined,
@@ -388,7 +409,7 @@ export function useBonsaiPayClaim<
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link bonsaiPayABI}__ and `functionName` set to `"deposit"`.
  *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x834f362A264714cB876334C997aEFEb3FE581Ff5)
  */
 export function useBonsaiPayDeposit<
   TMode extends WriteContractMode = undefined,
@@ -421,7 +442,7 @@ export function useBonsaiPayDeposit<
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link bonsaiPayABI}__.
  *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x834f362A264714cB876334C997aEFEb3FE581Ff5)
  */
 export function usePrepareBonsaiPayWrite<TFunctionName extends string>(
   config: Omit<
@@ -439,7 +460,7 @@ export function usePrepareBonsaiPayWrite<TFunctionName extends string>(
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link bonsaiPayABI}__ and `functionName` set to `"claim"`.
  *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x834f362A264714cB876334C997aEFEb3FE581Ff5)
  */
 export function usePrepareBonsaiPayClaim(
   config: Omit<
@@ -458,7 +479,7 @@ export function usePrepareBonsaiPayClaim(
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link bonsaiPayABI}__ and `functionName` set to `"deposit"`.
  *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x834f362A264714cB876334C997aEFEb3FE581Ff5)
  */
 export function usePrepareBonsaiPayDeposit(
   config: Omit<
@@ -472,6 +493,62 @@ export function usePrepareBonsaiPayDeposit(
     functionName: 'deposit',
     ...config,
   } as UsePrepareContractWriteConfig<typeof bonsaiPayABI, 'deposit'>)
+}
+
+/**
+ * Wraps __{@link useContractEvent}__ with `abi` set to __{@link bonsaiPayABI}__.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x834f362A264714cB876334C997aEFEb3FE581Ff5)
+ */
+export function useBonsaiPayEvent<TEventName extends string>(
+  config: Omit<
+    UseContractEventConfig<typeof bonsaiPayABI, TEventName>,
+    'abi' | 'address'
+  > & { chainId?: keyof typeof bonsaiPayAddress } = {} as any,
+) {
+  return useContractEvent({
+    abi: bonsaiPayABI,
+    address: bonsaiPayAddress[11155111],
+    ...config,
+  } as UseContractEventConfig<typeof bonsaiPayABI, TEventName>)
+}
+
+/**
+ * Wraps __{@link useContractEvent}__ with `abi` set to __{@link bonsaiPayABI}__ and `eventName` set to `"Claimed"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x834f362A264714cB876334C997aEFEb3FE581Ff5)
+ */
+export function useBonsaiPayClaimedEvent(
+  config: Omit<
+    UseContractEventConfig<typeof bonsaiPayABI, 'Claimed'>,
+    'abi' | 'address' | 'eventName'
+  > & { chainId?: keyof typeof bonsaiPayAddress } = {} as any,
+) {
+  return useContractEvent({
+    abi: bonsaiPayABI,
+    address: bonsaiPayAddress[11155111],
+    eventName: 'Claimed',
+    ...config,
+  } as UseContractEventConfig<typeof bonsaiPayABI, 'Claimed'>)
+}
+
+/**
+ * Wraps __{@link useContractEvent}__ with `abi` set to __{@link bonsaiPayABI}__ and `eventName` set to `"Deposited"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x834f362A264714cB876334C997aEFEb3FE581Ff5)
+ */
+export function useBonsaiPayDepositedEvent(
+  config: Omit<
+    UseContractEventConfig<typeof bonsaiPayABI, 'Deposited'>,
+    'abi' | 'address' | 'eventName'
+  > & { chainId?: keyof typeof bonsaiPayAddress } = {} as any,
+) {
+  return useContractEvent({
+    abi: bonsaiPayABI,
+    address: bonsaiPayAddress[11155111],
+    eventName: 'Deposited',
+    ...config,
+  } as UseContractEventConfig<typeof bonsaiPayABI, 'Deposited'>)
 }
 
 /**

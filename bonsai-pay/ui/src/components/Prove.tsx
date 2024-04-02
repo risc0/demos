@@ -45,6 +45,7 @@ const Prove: React.FC<ProveProps> = ({ disabled, email }) => {
     } finally {
       setIsLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
