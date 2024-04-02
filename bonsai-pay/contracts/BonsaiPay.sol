@@ -16,76 +16,96 @@
 pragma solidity ^0.8.20;
 
 import {IRiscZeroVerifier} from "risc0/IRiscZeroVerifier.sol";
-import {ImageID} from "./ImageID.sol"; // auto-generated contract after running `cargo build`.
+import {ImageID} from "./ImageID.sol";
 
 contract BonsaiPay {
+    IRiscZeroVerifier public immutable verifier;
+    bytes32 public constant imageId = ImageID.JWT_VALIDATOR_ID;
 
-    enum DepositState {
-        Deposited,
+    enum ClaimStatus {
+        Pending,
         Claimed
     }
 
     struct Deposit {
-        DepositState state;
-        bytes32 depositId;
+        ClaimStatus status;
         bytes32 claimId;
         uint256 amount;
     }
 
-    struct Proof {
-        bytes seal;
-        bytes32 postStateDigest;
-        bytes journal;
-    }
-
-    /// @notice RISC Zero verifier contract address.
-    IRiscZeroVerifier public immutable verifier;
-    /// @notice Image ID of the only zkVM binary to accept verification from.
-    bytes32 public constant imageId = ImageID.JWT_VALIDATOR_ID;
-
     Deposit[] private deposits;
+    mapping(bytes32 => uint256[]) private claimRecords;
 
-    mapping(bytes32 => uint256[]) public claimMem;
-    mapping(bytes32 => uint256[]) public depositMem;
+    event Deposited(bytes32 indexed claimId, uint256 amount);
+    event Claimed(address indexed recipient, bytes32 indexed claimId, uint256 amount);
 
-    /// @notice Initialize the contract, binding it to a specified RISC Zero verifier.
+    error InvalidDeposit(string message);
+    error InvalidClaim(string message);
+    error TransferFailed();
+
     constructor(IRiscZeroVerifier _verifier) {
         verifier = _verifier;
     }
 
     function deposit(bytes32 claimId) public payable {
-        bytes32 depositId = sha256(abi.encodePacked(msg.sender, claimId));
+        if (claimId == bytes32(0)) revert InvalidDeposit("Empty claimId");
+        if (msg.value == 0) revert InvalidDeposit("Zero deposit amount");
 
-        Deposit memory deposit = Deposit({
-            state: DepositState.Deposited,
-            depositId: depositId,
-            claimId: claimId,
-            amount: msg.value
-        });
+        deposits.push(Deposit({status: ClaimStatus.Pending, claimId: claimId, amount: msg.value}));
+        claimRecords[claimId].push(deposits.length - 1);
 
-        deposits.push(deposit);
-
-        depositMem[depositId].push(deposits.length - 1);
-        claimMem[claimId].push(deposits.length - 1);
+        emit Deposited(claimId, msg.value);
     }
 
     function claim(address payable to, bytes32 claimId, bytes32 postStateDigest, bytes calldata seal) public {
-        bytes memory journal = abi.encode(to, claimId);
-        require(verifier.verify(seal, imageId, postStateDigest, sha256(journal)));
-
-        require(claimMem[claimId].length > 0, "No deposits found for the given claimId");
-
-        uint256 totalAmount = 0;
-        for (uint256 i = 0; i < claimMem[claimId].length; ++i) {
-            uint256 depositIndex = claimMem[claimId][i];
-            Deposit storage deposit = deposits[depositIndex];
-
-            require(deposit.state != DepositState.Claimed, "Deposit already claimed");
-
-            totalAmount += deposit.amount;
-            deposit.state = DepositState.Claimed;
+        if (to == address(0)) revert InvalidClaim("Invalid recipient address");
+        if (claimId == bytes32(0)) revert InvalidClaim("Empty claimId");
+        if (!verifier.verify(seal, imageId, postStateDigest, sha256(abi.encode(to, claimId)))) {
+            revert InvalidClaim("Invalid proof");
         }
 
-        to.transfer(totalAmount);
+        uint256[] storage depositIndices = claimRecords[claimId];
+        uint256 balance = _processDeposits(depositIndices);
+
+        if (balance == 0) revert InvalidClaim("No claimable balance");
+
+        (bool success,) = to.call{value: balance}("");
+        if (!success) revert TransferFailed();
+
+        emit Claimed(to, claimId, balance);
+    }
+
+    function balanceOf(bytes32 claimId) public view returns (uint256) {
+        if (claimId == bytes32(0)) revert InvalidClaim("Empty claimId");
+
+        uint256[] storage depositIndices = claimRecords[claimId];
+        return _calculateBalance(depositIndices);
+    }
+
+    function _processDeposits(uint256[] storage depositIndices) private returns (uint256) {
+        uint256 balance = 0;
+
+        for (uint256 i = 0; i < depositIndices.length; ++i) {
+            Deposit storage dep = deposits[depositIndices[i]];
+            if (dep.status == ClaimStatus.Pending) {
+                dep.status = ClaimStatus.Claimed;
+                balance += dep.amount;
+            }
+        }
+
+        return balance;
+    }
+
+    function _calculateBalance(uint256[] storage depositIndices) private view returns (uint256) {
+        uint256 balance = 0;
+
+        for (uint256 i = 0; i < depositIndices.length; ++i) {
+            Deposit storage dep = deposits[depositIndices[i]];
+            if (dep.status == ClaimStatus.Pending) {
+                balance += dep.amount;
+            }
+        }
+
+        return balance;
     }
 }
