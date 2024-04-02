@@ -1,5 +1,8 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import Account from "./Account";
+import { useBonsaiPayClaimedEvent, useBonsaiPayBalanceOf } from "../generated";
+import { sha256 } from "@noble/hashes/sha256";
+import { toHex } from "viem";
 
 interface ProveProps {
   disabled: boolean;
@@ -8,6 +11,23 @@ interface ProveProps {
 
 const Prove: React.FC<ProveProps> = ({ disabled, email }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isClaimed, setIsClaimed] = useState(false);
+  const [isNonZeroBalance, setIsNonZeroBalance] = useState(false);
+
+  useBonsaiPayClaimedEvent({
+    listener: () => {
+      setIsClaimed(true);
+    },
+  });
+
+  const { data: balance } = useBonsaiPayBalanceOf({
+    args: [toHex(sha256(email ?? ""))],
+  });
+
+  useEffect(() => { 
+    setIsNonZeroBalance(balance !== 0n);
+  }, [balance]);
+
 
   const { VITE_API_HOST } = import.meta.env;
 
@@ -29,7 +49,7 @@ const Prove: React.FC<ProveProps> = ({ disabled, email }) => {
       const response = await fetch(`${VITE_API_HOST}/auth`, {
         method: "GET",
         headers: {
-          'X-Auth-Token': jwt
+          "X-Auth-Token": jwt,
         },
       });
 
@@ -38,23 +58,23 @@ const Prove: React.FC<ProveProps> = ({ disabled, email }) => {
         // Handle your response data here
         console.log("Success:", data);
       } else {
-        throw new Error('Response not OK');
+        throw new Error("Response not OK");
       }
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
       setIsLoading(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <>
-      <button onClick={handleClick} disabled={isLoading || disabled}>
-        {isLoading ? "Proving..." : "Prove with Bonsai™"}
-      </button>
-      {isLoading && <p>This will take a couple of minutes...</p>}
       <Account email={email} disabled={disabled} hideClaim={true} />
+      <button onClick={handleClick} disabled={isLoading || disabled || isClaimed || !isNonZeroBalance}>
+        {isClaimed ? "Claimed" : isLoading ? "Proving..." : "Prove with Bonsai™"}
+      </button>
+      {isLoading ? <p>This will take a few moments...</p> : <p></p>} 
     </>
   );
 };

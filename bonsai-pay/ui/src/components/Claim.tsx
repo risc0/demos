@@ -44,7 +44,7 @@ const Claim: React.FC<ClaimProps> = () => {
   const stepDescriptions = [
     "Connect Wallet",
     "Sign In",
-    "Prove & Withdraw",
+    "Prove & Claim",
   ];
 
   const renderStepIndicator = () => {
@@ -89,16 +89,14 @@ const Claim: React.FC<ClaimProps> = () => {
         return (
           <>
             <h4>Prove account ownership</h4>
+
             {email && <h5>{`Welcome, ${email}`}</h5>}
             <Prove disabled={false} email={email} />
-          </>
-        );
-      case 4:
-        return (
-          <>
-            <h4>Claim your tokens</h4>
-            {email && <h5>{`You have proven account ownership.`}</h5>}
-            <Account email={email} disabled={false} />
+            <h6> 
+              Proving ownership will automatically 
+              <br></br>
+              deposit the balance to your wallet.
+            </h6>
           </>
         );
       default:

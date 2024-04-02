@@ -146,8 +146,12 @@ button:focus-visible {
     min-width: 1em;
   }
 
+  .balance {
+    display: flex;
+    margin: 0em 0em 0em -4em;
+  }
+
   .card,
-  .balance,
   .radio-container {
     grid-template-columns: 1fr; /* Stack elements vertically */
     padding: 0.5em;
@@ -425,7 +429,7 @@ button:focus-visible {
 
 .balance {
   display: flex;
-  padding: 0em 0em 0em 9em;
+  padding: 0em 0em 0em 7.5em;
 }
 .balance img {
   height: 1.74em;
@@ -551,4 +555,10 @@ input[type="number"] {
 
 .privacy-content {
   width: 54em;
+}
+
+h6 {
+  padding: 0em 1em 0em 1em;
+  font-weight: 500;
+  opacity: 0.7;
 }

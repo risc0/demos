@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDebounce } from "use-debounce";
 import { useWaitForTransaction, useAccount } from "wagmi";
-import { useBonsaiPayDeposit } from "../generated";
+import { useBonsaiPayDeposit, useBonsaiPayDepositedEvent } from "../generated";
 import Modal from "./Modal";
 import tokens from "../assets/tokens.json";
 import { Token } from "../libs/types";
@@ -19,6 +19,14 @@ const Deposit: React.FC<DepositProps> = () => {
   const [debouncedTo] = useDebounce(to, 500);
   const [amount, setAmount] = useState<string>("");
   const [debouncedAmount] = useDebounce(amount, 500);
+
+
+  useBonsaiPayDepositedEvent({
+    listener: () => {
+      setTo("");
+      setAmount("");
+    },
+  });
 
   const { data: txn, write: sendTxn } = useBonsaiPayDeposit({
     args: [

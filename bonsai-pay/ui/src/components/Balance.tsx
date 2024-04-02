@@ -33,6 +33,9 @@ export const Balance: React.FC<BalanceProps> = ({
 
   return (
     <>
+    <div>
+      <p>Availiable Balance:</p>
+    </div>
       <div className="balance">
         <img src={token.icon} alt={token.name} />
         <p>

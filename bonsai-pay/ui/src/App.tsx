@@ -34,14 +34,7 @@ function App() {
       <ConnectKitProvider>
         <ToastContainer />
         <div className="app-container">
-          <div className="logo-container">
-            <img
-              className="logo"
-              src="/RISC_Zero_Logo_lightmode.png"
-              alt="R0 Logo"
-            />
-          </div>
-          <h2 className="title">Bonsai Pay</h2>
+          <h2 className="title">Bonsai Pay Demo</h2>
           <p className="subtitle">powered by Bonsai™</p>
           <ConnectKitButton mode="light" />
           <ViewSelection />

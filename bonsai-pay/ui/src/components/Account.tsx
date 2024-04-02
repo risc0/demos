@@ -5,13 +5,6 @@ import { Balance } from "./Balance";
 import { Token } from "../libs/types";
 import { sha256 } from "@noble/hashes/sha256";
 
-export type TokenData = {
-  name: string;
-  icon: string;
-  address: `0x${string}`;
-  decimals: number;
-};
-
 interface AccountProps {
   email: string | null;
   disabled: boolean;

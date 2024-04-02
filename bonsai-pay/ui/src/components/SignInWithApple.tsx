@@ -1,3 +1,6 @@
+/*
+  NOTE: This component is not used in the demo, but it is a good example of how to implement Apple Sign In.
+*/
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 
