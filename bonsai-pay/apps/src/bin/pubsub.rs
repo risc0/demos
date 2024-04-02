@@ -148,7 +148,7 @@ fn auth_filter() -> impl Filter<Extract = impl warp::Reply, Error = warp::Reject
         .and(warp::get())
         .and(warp::path::end())
         .and(jwt_authentication_filter().untuple_one())
-        .map(|| warp::reply::html("Hello, World! + 5 seconds"))
+        .map(|| warp::reply())
         .with(cors)
 }
 
