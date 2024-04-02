@@ -20,11 +20,11 @@ import {RiscZeroCheats} from "risc0/RiscZeroCheats.sol";
 import {console2} from "forge-std/console2.sol";
 import {Test} from "forge-std/Test.sol";
 import {IRiscZeroVerifier} from "risc0/IRiscZeroVerifier.sol";
-import {EvenNumber} from "../contracts/EvenNumber.sol";
+import {BonsaiPay} from "../contracts/BonsaiPay.sol";
 import {Elf} from "./Elf.sol"; // auto-generated contract after running `cargo build`.
 
-contract EvenNumberTest is RiscZeroCheats, Test {
-    EvenNumber public evenNumber;
+contract BonsaiPayTest is RiscZeroCheats, Test {
+    BonsaiPay public bonsaiPay;
 
     address public alice = makeAddr("alice");
     address public bob = makeAddr("bob");
@@ -37,7 +37,7 @@ contract EvenNumberTest is RiscZeroCheats, Test {
 
     function setUp() public {
         IRiscZeroVerifier verifier = deployRiscZeroVerifier();
-        evenNumber = new EvenNumber(verifier);
+        bonsaiPay = new BonsaiPay(verifier);
 
         // fund alice and bob and charlie
         vm.deal(alice, 5 ether);
@@ -48,17 +48,17 @@ contract EvenNumberTest is RiscZeroCheats, Test {
     function test_Deposit() public payable {
         bytes32 claimId = sha256(abi.encodePacked("bob@email.com"));
         vm.prank(alice);
-        evenNumber.deposit{value: 1 ether}(claimId);
+        bonsaiPay.deposit{value: 1 ether}(claimId);
 
-        assertEq(address(evenNumber).balance, 1 ether);
+        assertEq(address(bonsaiPay).balance, 1 ether);
     }
 
     function test_Withdraw() public {
         // deposit as alice
         bytes32 claimId = sha256(abi.encodePacked("bob@email.com"));
         vm.prank(alice);
-        evenNumber.deposit{value: 1 ether}(claimId);
-        assertEq(address(evenNumber).balance, 1 ether);
+        bonsaiPay.deposit{value: 1 ether}(claimId);
+        assertEq(address(bonsaiPay).balance, 1 ether);
         assertEq(alice.balance, 4 ether);
 
         // claim as bob
@@ -69,11 +69,11 @@ contract EvenNumberTest is RiscZeroCheats, Test {
         Input memory input = Input({id_provider: id_provider, jwt: jwt});
 
         (bytes memory journal, bytes32 post_state_digest, bytes memory seal) =
-            prove(Elf.IS_EVEN_PATH, abi.encode(input));
+            prove(Elf.JWT_VALIDATOR_PATH, abi.encode(input));
 
         vm.prank(bob);
-        evenNumber.claim(payable(bob), claimId, post_state_digest, seal);
-        assertEq(address(evenNumber).balance, 0);
+        bonsaiPay.claim(payable(bob), claimId, post_state_digest, seal);
+        assertEq(address(bonsaiPay).balance, 0);
         assertEq(bob.balance, 6 ether);
     }
 }

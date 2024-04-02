@@ -32,13 +32,13 @@ use anyhow::Context;
 use apps::{BonsaiProver, TxSender};
 use clap::Parser;
 use log::info;
-use methods::IS_EVEN_ELF;
+use methods::JWT_VALIDATOR_ELF;
 use tokio::sync::oneshot;
 use warp::Filter;
 
-// `IEvenNumber` interface automatically generated via the alloy `sol!` macro.
+// `IBonsaiPay` interface automatically generated via the alloy `sol!` macro.
 sol! {
-    interface IEvenNumber {
+    interface IBonsaiPay {
         function withdraw(address payable to, bytes32 claim_id, bytes32 post_state_digest, bytes calldata seal);
     }
 
@@ -108,7 +108,8 @@ fn prove_and_send_transaction(
     };
 
     let (journal, post_state_digest, seal) =
-        BonsaiProver::prove(IS_EVEN_ELF, &input.abi_encode()).expect("failed to prove on bonsai");
+        BonsaiProver::prove(JWT_VALIDATOR_ELF, &input.abi_encode())
+            .expect("failed to prove on bonsai");
 
     let seal_clone = seal.clone();
 
@@ -127,7 +128,7 @@ fn prove_and_send_transaction(
     info!("Claim ID: {:?}", claims.claim_id);
     info!("Msg Sender: {:?}", claims.msg_sender);
 
-    let calldata = IEvenNumber::IEvenNumberCalls::withdraw(IEvenNumber::withdrawCall {
+    let calldata = IBonsaiPay::IBonsaiPayCalls::withdraw(IBonsaiPay::withdrawCall {
         to: claims.msg_sender,
         claim_id: claims.claim_id,
         post_state_digest,

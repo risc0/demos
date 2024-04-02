@@ -47,7 +47,9 @@ mod tests {
             .unwrap();
 
         // NOTE: Use the executor to run tests without proving.
-        let session_info = default_executor().execute(env, super::IS_EVEN_ELF).unwrap();
+        let session_info = default_executor()
+            .execute(env, super::JWT_VALIDATOR_ELF)
+            .unwrap();
 
         let output = ClaimsData::abi_decode(&session_info.journal.bytes, true).unwrap();
 

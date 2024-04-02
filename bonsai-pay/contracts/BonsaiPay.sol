@@ -18,7 +18,7 @@ pragma solidity ^0.8.20;
 import {IRiscZeroVerifier} from "risc0/IRiscZeroVerifier.sol";
 import {ImageID} from "./ImageID.sol"; // auto-generated contract after running `cargo build`.
 
-contract EvenNumber {
+contract BonsaiPay {
 
     enum DepositState {
         Deposited,
@@ -41,7 +41,7 @@ contract EvenNumber {
     /// @notice RISC Zero verifier contract address.
     IRiscZeroVerifier public immutable verifier;
     /// @notice Image ID of the only zkVM binary to accept verification from.
-    bytes32 public constant imageId = ImageID.IS_EVEN_ID;
+    bytes32 public constant imageId = ImageID.JWT_VALIDATOR_ID;
 
     Deposit[] private deposits;
 
