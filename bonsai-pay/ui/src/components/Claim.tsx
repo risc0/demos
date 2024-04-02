@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Account from "./Account";
 import Prove from "./Prove";
 
 import { useAccount } from "wagmi";
