@@ -1,29 +1,23 @@
-# Apps
+# Publisher/Subscriber Application
 
-In typical applications, an off-chain app is needed to do two main actions:
+The Publisher/Subscriber application is a simple application that listens for incoming JWT tokens, sends a proof request to the [Bonsai] proving service, and publishes the received proofs to a deployed Bonsai Pay contract on Ethereum. This application is useful for integrating the Bonsai proving service with a deployed Bonsai Pay contract and UI. 
 
-* Produce a proof e.g. by sending a proof request to [Bonsai].
-* Send a transaction to Ethereum to execute your on-chain logic.
+## Getting Started
 
-This template provides the `publisher` CLI as an example application to execute these steps.
-In a production application, a back-end server or your dApp client may take on this role.
-
-## Publisher
-
-The [`publisher` CLI][publisher], is an example application that sends an off-chain proof request to the [Bonsai] proving service, and publishes the received proofs to your deployed app contract.
+The [`pubsub` CLI][pubsub], is an application that listens for JWT tokens via HTTP, sends an off-chain proof request to the [Bonsai] proving service, and publishes the received proofs to the deployed Bonsai Pay contract.
 
 ### Usage
 
-Run the `publisher` with:
+Run the `pubsub` with:
 
 ```sh
-cargo run --bin publisher
+cargo run --bin pubsub
 ```
 
 ```text
-$ cargo run --bin publisher -- --help
+$ cargo run --bin pubsub -- --help
 
-Usage: publisher --chain-id <CHAIN_ID> --eth-wallet-private-key <ETH_WALLET_PRIVATE_KEY> --rpc-url <RPC_URL> --contract <CONTRACT> --input <INPUT>
+Usage: pubsub --chain-id <CHAIN_ID> --eth-wallet-private-key <ETH_WALLET_PRIVATE_KEY> --rpc-url <RPC_URL> --contract <CONTRACT> 
 
 Options:
       --chain-id <CHAIN_ID>
@@ -33,23 +27,25 @@ Options:
       --rpc-url <RPC_URL>
           Ethereum Node endpoint
       --contract <CONTRACT>
-          Application's contract address on Ethereum
-  -i, --input <INPUT>
-          The input to provide to the guest binary
+          Bonsai Pay's contract address on Ethereum
   -h, --help
           Print help
   -V, --version
           Print version
 ```
 
+The server listens on `http://localhost:8080` for incoming requests with a JWT token in the X-Auth-Token header. Upon receiving a token, it sends a proof request to Bonsai and publishes the received proof to the specified contract on Ethereum.
+
+#### Example Request
+
+```sh
+curl -H "X-Auth-Token: <JWT_TOKEN>" http://localhost:8080/auth
+```
+
 ## Library
 
-We provide a small rust [library] containing utility functions to help with sending off-chain proof requests to the Bonsai proving service and publish the received proofs directly to a deployed app contract on Ethereum.
+A small rust [library] containing utility functions to help with sending off-chain proof requests to the Bonsai proving service and publish the received proofs directly to a deployed app contract on Ethereum.
 
-As we continue to improve the [risc0-zkvm] and [bonsai-sdk] crates, we will absorb some of the functionality provided here into those crates.
-
-[publisher]: ./src/bin/publisher.rs
+[pubsub]: ./src/bin/pubsub.rs
 [Bonsai]: https://dev.bonsai.xyz/
 [library]: ./src/lib.rs
-[risc0-zkvm]: https://docs.rs/risc0-zkvm/latest/risc0_zkvm/
-[bonsai-sdk]: https://docs.rs/bonsai-sdk/latest/bonsai_sdk/
