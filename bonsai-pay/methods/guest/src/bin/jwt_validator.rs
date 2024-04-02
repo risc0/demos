@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// use std::io::Read;
-
 use alloy_primitives::{Address, FixedBytes};
 use alloy_sol_types::SolValue;
 use oidc_validator::IdentityProvider;

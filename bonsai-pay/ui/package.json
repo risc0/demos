@@ -15,7 +15,6 @@
     "@noble/hashes": "^1.4.0",
     "connectkit": "^1.5.3",
     "dotenv": "^16.3.1",
-    "js-sha256": "^0.10.1",
     "jwt-decode": "3.1.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
