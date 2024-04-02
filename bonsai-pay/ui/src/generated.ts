@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   useContractRead,
   UseContractReadConfig,
@@ -17,185 +16,32 @@ import {
 } from 'wagmi/actions'
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// ZRP
+// BonsaiPay
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
  */
-export const zrpABI = [
+export const bonsaiPayABI = [
   {
     stateMutability: 'nonpayable',
     type: 'constructor',
     inputs: [
       {
-        name: 'initVerifier',
+        name: '_verifier',
         internalType: 'contract IRiscZeroVerifier',
         type: 'address',
       },
-      { name: 'initImgId', internalType: 'bytes32', type: 'bytes32' },
     ],
-  },
-  {
-    type: 'error',
-    inputs: [{ name: 'id', internalType: 'bytes32', type: 'bytes32' }],
-    name: 'ClaimFailed',
-  },
-  {
-    type: 'error',
-    inputs: [{ name: 'id', internalType: 'bytes32', type: 'bytes32' }],
-    name: 'DepositAlreadyExists',
-  },
-  {
-    type: 'error',
-    inputs: [{ name: 'id', internalType: 'bytes32', type: 'bytes32' }],
-    name: 'DepositFailed',
-  },
-  {
-    type: 'error',
-    inputs: [{ name: 'id', internalType: 'bytes32', type: 'bytes32' }],
-    name: 'InvalidDepositState',
-  },
-  { type: 'error', inputs: [], name: 'InvalidFee' },
-  {
-    type: 'error',
-    inputs: [
-      {
-        name: 'proof',
-        internalType: 'struct Types.Proof',
-        type: 'tuple',
-        components: [
-          { name: 'seal', internalType: 'bytes', type: 'bytes' },
-          { name: 'postStateDigest', internalType: 'bytes32', type: 'bytes32' },
-          { name: 'journal', internalType: 'bytes', type: 'bytes' },
-        ],
-      },
-    ],
-    name: 'InvalidProof',
-  },
-  {
-    type: 'error',
-    inputs: [{ name: 'id', internalType: 'bytes32', type: 'bytes32' }],
-    name: 'WithdrawFailed',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'id', internalType: 'bytes', type: 'bytes', indexed: true },
-      {
-        name: 'account',
-        internalType: 'address',
-        type: 'address',
-        indexed: true,
-      },
-      {
-        name: 'amount',
-        internalType: 'uint256',
-        type: 'uint256',
-        indexed: false,
-      },
-    ],
-    name: 'Claimed',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'id', internalType: 'bytes', type: 'bytes', indexed: true },
-      {
-        name: 'account',
-        internalType: 'address',
-        type: 'address',
-        indexed: true,
-      },
-      {
-        name: 'amount',
-        internalType: 'uint256',
-        type: 'uint256',
-        indexed: false,
-      },
-    ],
-    name: 'Deposited',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      {
-        name: 'previousOwner',
-        internalType: 'address',
-        type: 'address',
-        indexed: true,
-      },
-      {
-        name: 'newOwner',
-        internalType: 'address',
-        type: 'address',
-        indexed: true,
-      },
-    ],
-    name: 'OwnershipTransferred',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      {
-        name: 'account',
-        internalType: 'address',
-        type: 'address',
-        indexed: false,
-      },
-    ],
-    name: 'Paused',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      {
-        name: 'account',
-        internalType: 'address',
-        type: 'address',
-        indexed: false,
-      },
-    ],
-    name: 'Unpaused',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'id', internalType: 'bytes', type: 'bytes', indexed: true },
-      {
-        name: 'account',
-        internalType: 'address',
-        type: 'address',
-        indexed: true,
-      },
-      {
-        name: 'amount',
-        internalType: 'uint256',
-        type: 'uint256',
-        indexed: false,
-      },
-    ],
-    name: 'Withdrawn',
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: 'amount', internalType: 'uint256', type: 'uint256' }],
-    name: 'calculateFee',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
-      { name: 'data', internalType: 'bytes', type: 'bytes' },
-      { name: 'token', internalType: 'address', type: 'address' },
+      { name: 'to', internalType: 'address payable', type: 'address' },
+      { name: 'claimId', internalType: 'bytes32', type: 'bytes32' },
+      { name: 'postStateDigest', internalType: 'bytes32', type: 'bytes32' },
+      { name: 'seal', internalType: 'bytes', type: 'bytes' },
     ],
     name: 'claim',
     outputs: [],
@@ -203,57 +49,29 @@ export const zrpABI = [
   {
     stateMutability: 'view',
     type: 'function',
-    inputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
-    name: 'claimBalance',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'claimFee',
+    inputs: [
+      { name: '', internalType: 'bytes32', type: 'bytes32' },
+      { name: '', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'claimMem',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
   },
   {
     stateMutability: 'payable',
     type: 'function',
-    inputs: [
-      { name: 'id', internalType: 'bytes', type: 'bytes' },
-      { name: 'token', internalType: 'address', type: 'address' },
-      { name: 'amount', internalType: 'uint256', type: 'uint256' },
-      { name: 'salt', internalType: 'uint256', type: 'uint256' },
-    ],
+    inputs: [{ name: 'claimId', internalType: 'bytes32', type: 'bytes32' }],
     name: 'deposit',
     outputs: [],
   },
   {
     stateMutability: 'view',
     type: 'function',
-    inputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
-    name: 'depositBalance',
+    inputs: [
+      { name: '', internalType: 'bytes32', type: 'bytes32' },
+      { name: '', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'depositMem',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'pure',
-    type: 'function',
-    inputs: [
-      { name: 'id', internalType: 'bytes', type: 'bytes' },
-      { name: 'token', internalType: 'address', type: 'address' },
-    ],
-    name: 'getClaimId',
-    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
-  },
-  {
-    stateMutability: 'pure',
-    type: 'function',
-    inputs: [
-      { name: 'depositor', internalType: 'address', type: 'address' },
-      { name: 'id', internalType: 'bytes', type: 'bytes' },
-      { name: 'token', internalType: 'address', type: 'address' },
-      { name: 'salt', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'getDepositId',
-    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
   },
   {
     stateMutability: 'view',
@@ -266,116 +84,27 @@ export const zrpABI = [
     stateMutability: 'view',
     type: 'function',
     inputs: [],
-    name: 'owner',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [],
-    name: 'pause',
-    outputs: [],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'paused',
-    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [],
-    name: 'renounceOwnership',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: 'feePercentage', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'setFee',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: 'newImageId', internalType: 'bytes32', type: 'bytes32' }],
-    name: 'setImageId',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      {
-        name: 'newVerifier',
-        internalType: 'contract IRiscZeroVerifier',
-        type: 'address',
-      },
-    ],
-    name: 'setVerifier',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: 'newOwner', internalType: 'address', type: 'address' }],
-    name: 'transferOwnership',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [],
-    name: 'unpause',
-    outputs: [],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
     name: 'verifier',
     outputs: [
       { name: '', internalType: 'contract IRiscZeroVerifier', type: 'address' },
     ],
   },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: 'to', internalType: 'address', type: 'address' },
-      { name: 'token', internalType: 'address', type: 'address' },
-    ],
-    name: 'withdrawContract',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: 'id', internalType: 'bytes', type: 'bytes' },
-      { name: 'token', internalType: 'address', type: 'address' },
-      { name: 'salt', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'withdrawDeposit',
-    outputs: [],
-  },
 ] as const
 
 /**
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
  */
-export const zrpAddress = {
-  11155111: '0xE4793Ef0efFF43976b0Bd368B02680F96598e237',
+export const bonsaiPayAddress = {
+  11155111: '0xC462788Dc4198C5264b19460F9076DC86A80D99C',
 } as const
 
 /**
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
  */
-export const zrpConfig = { address: zrpAddress, abi: zrpABI } as const
+export const bonsaiPayConfig = {
+  address: bonsaiPayAddress,
+  abi: bonsaiPayABI,
+} as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // erc20
@@ -483,1000 +212,266 @@ export const erc20ABI = [
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link zrpABI}__.
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link bonsaiPayABI}__.
  *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
  */
-export function useZrpRead<
+export function useBonsaiPayRead<
   TFunctionName extends string,
-  TSelectData = ReadContractResult<typeof zrpABI, TFunctionName>,
+  TSelectData = ReadContractResult<typeof bonsaiPayABI, TFunctionName>,
 >(
   config: Omit<
-    UseContractReadConfig<typeof zrpABI, TFunctionName, TSelectData>,
+    UseContractReadConfig<typeof bonsaiPayABI, TFunctionName, TSelectData>,
     'abi' | 'address'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
+  > & { chainId?: keyof typeof bonsaiPayAddress } = {} as any,
 ) {
   return useContractRead({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
+    abi: bonsaiPayABI,
+    address: bonsaiPayAddress[11155111],
     ...config,
-  } as UseContractReadConfig<typeof zrpABI, TFunctionName, TSelectData>)
+  } as UseContractReadConfig<typeof bonsaiPayABI, TFunctionName, TSelectData>)
 }
 
 /**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"calculateFee"`.
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link bonsaiPayABI}__ and `functionName` set to `"claimMem"`.
  *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
  */
-export function useZrpCalculateFee<
-  TFunctionName extends 'calculateFee',
-  TSelectData = ReadContractResult<typeof zrpABI, TFunctionName>,
+export function useBonsaiPayClaimMem<
+  TFunctionName extends 'claimMem',
+  TSelectData = ReadContractResult<typeof bonsaiPayABI, TFunctionName>,
 >(
   config: Omit<
-    UseContractReadConfig<typeof zrpABI, TFunctionName, TSelectData>,
+    UseContractReadConfig<typeof bonsaiPayABI, TFunctionName, TSelectData>,
     'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
+  > & { chainId?: keyof typeof bonsaiPayAddress } = {} as any,
 ) {
   return useContractRead({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    functionName: 'calculateFee',
+    abi: bonsaiPayABI,
+    address: bonsaiPayAddress[11155111],
+    functionName: 'claimMem',
     ...config,
-  } as UseContractReadConfig<typeof zrpABI, TFunctionName, TSelectData>)
+  } as UseContractReadConfig<typeof bonsaiPayABI, TFunctionName, TSelectData>)
 }
 
 /**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"claimBalance"`.
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link bonsaiPayABI}__ and `functionName` set to `"depositMem"`.
  *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
  */
-export function useZrpClaimBalance<
-  TFunctionName extends 'claimBalance',
-  TSelectData = ReadContractResult<typeof zrpABI, TFunctionName>,
+export function useBonsaiPayDepositMem<
+  TFunctionName extends 'depositMem',
+  TSelectData = ReadContractResult<typeof bonsaiPayABI, TFunctionName>,
 >(
   config: Omit<
-    UseContractReadConfig<typeof zrpABI, TFunctionName, TSelectData>,
+    UseContractReadConfig<typeof bonsaiPayABI, TFunctionName, TSelectData>,
     'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
+  > & { chainId?: keyof typeof bonsaiPayAddress } = {} as any,
 ) {
   return useContractRead({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    functionName: 'claimBalance',
+    abi: bonsaiPayABI,
+    address: bonsaiPayAddress[11155111],
+    functionName: 'depositMem',
     ...config,
-  } as UseContractReadConfig<typeof zrpABI, TFunctionName, TSelectData>)
+  } as UseContractReadConfig<typeof bonsaiPayABI, TFunctionName, TSelectData>)
 }
 
 /**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"claimFee"`.
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link bonsaiPayABI}__ and `functionName` set to `"imageId"`.
  *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
  */
-export function useZrpClaimFee<
-  TFunctionName extends 'claimFee',
-  TSelectData = ReadContractResult<typeof zrpABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof zrpABI, TFunctionName, TSelectData>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
-) {
-  return useContractRead({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    functionName: 'claimFee',
-    ...config,
-  } as UseContractReadConfig<typeof zrpABI, TFunctionName, TSelectData>)
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"depositBalance"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function useZrpDepositBalance<
-  TFunctionName extends 'depositBalance',
-  TSelectData = ReadContractResult<typeof zrpABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof zrpABI, TFunctionName, TSelectData>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
-) {
-  return useContractRead({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    functionName: 'depositBalance',
-    ...config,
-  } as UseContractReadConfig<typeof zrpABI, TFunctionName, TSelectData>)
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"getClaimId"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function useZrpGetClaimId<
-  TFunctionName extends 'getClaimId',
-  TSelectData = ReadContractResult<typeof zrpABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof zrpABI, TFunctionName, TSelectData>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
-) {
-  return useContractRead({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    functionName: 'getClaimId',
-    ...config,
-  } as UseContractReadConfig<typeof zrpABI, TFunctionName, TSelectData>)
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"getDepositId"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function useZrpGetDepositId<
-  TFunctionName extends 'getDepositId',
-  TSelectData = ReadContractResult<typeof zrpABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof zrpABI, TFunctionName, TSelectData>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
-) {
-  return useContractRead({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    functionName: 'getDepositId',
-    ...config,
-  } as UseContractReadConfig<typeof zrpABI, TFunctionName, TSelectData>)
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"imageId"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function useZrpImageId<
+export function useBonsaiPayImageId<
   TFunctionName extends 'imageId',
-  TSelectData = ReadContractResult<typeof zrpABI, TFunctionName>,
+  TSelectData = ReadContractResult<typeof bonsaiPayABI, TFunctionName>,
 >(
   config: Omit<
-    UseContractReadConfig<typeof zrpABI, TFunctionName, TSelectData>,
+    UseContractReadConfig<typeof bonsaiPayABI, TFunctionName, TSelectData>,
     'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
+  > & { chainId?: keyof typeof bonsaiPayAddress } = {} as any,
 ) {
   return useContractRead({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
+    abi: bonsaiPayABI,
+    address: bonsaiPayAddress[11155111],
     functionName: 'imageId',
     ...config,
-  } as UseContractReadConfig<typeof zrpABI, TFunctionName, TSelectData>)
+  } as UseContractReadConfig<typeof bonsaiPayABI, TFunctionName, TSelectData>)
 }
 
 /**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"owner"`.
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link bonsaiPayABI}__ and `functionName` set to `"verifier"`.
  *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
  */
-export function useZrpOwner<
-  TFunctionName extends 'owner',
-  TSelectData = ReadContractResult<typeof zrpABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof zrpABI, TFunctionName, TSelectData>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
-) {
-  return useContractRead({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    functionName: 'owner',
-    ...config,
-  } as UseContractReadConfig<typeof zrpABI, TFunctionName, TSelectData>)
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"paused"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function useZrpPaused<
-  TFunctionName extends 'paused',
-  TSelectData = ReadContractResult<typeof zrpABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof zrpABI, TFunctionName, TSelectData>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
-) {
-  return useContractRead({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    functionName: 'paused',
-    ...config,
-  } as UseContractReadConfig<typeof zrpABI, TFunctionName, TSelectData>)
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"verifier"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function useZrpVerifier<
+export function useBonsaiPayVerifier<
   TFunctionName extends 'verifier',
-  TSelectData = ReadContractResult<typeof zrpABI, TFunctionName>,
+  TSelectData = ReadContractResult<typeof bonsaiPayABI, TFunctionName>,
 >(
   config: Omit<
-    UseContractReadConfig<typeof zrpABI, TFunctionName, TSelectData>,
+    UseContractReadConfig<typeof bonsaiPayABI, TFunctionName, TSelectData>,
     'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
+  > & { chainId?: keyof typeof bonsaiPayAddress } = {} as any,
 ) {
   return useContractRead({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
+    abi: bonsaiPayABI,
+    address: bonsaiPayAddress[11155111],
     functionName: 'verifier',
     ...config,
-  } as UseContractReadConfig<typeof zrpABI, TFunctionName, TSelectData>)
+  } as UseContractReadConfig<typeof bonsaiPayABI, TFunctionName, TSelectData>)
 }
 
 /**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zrpABI}__.
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link bonsaiPayABI}__.
  *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
  */
-export function useZrpWrite<
+export function useBonsaiPayWrite<
   TFunctionName extends string,
   TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof zrpAddress,
+  TChainId extends number = keyof typeof bonsaiPayAddress,
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof zrpABI, string>['request']['abi'],
+        PrepareWriteContractResult<
+          typeof bonsaiPayABI,
+          string
+        >['request']['abi'],
         TFunctionName,
         TMode
       > & { address?: Address; chainId?: TChainId }
-    : UseContractWriteConfig<typeof zrpABI, TFunctionName, TMode> & {
+    : UseContractWriteConfig<typeof bonsaiPayABI, TFunctionName, TMode> & {
         abi?: never
         address?: never
         chainId?: TChainId
       } = {} as any,
 ) {
-  return useContractWrite<typeof zrpABI, TFunctionName, TMode>({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
+  return useContractWrite<typeof bonsaiPayABI, TFunctionName, TMode>({
+    abi: bonsaiPayABI,
+    address: bonsaiPayAddress[11155111],
     ...config,
   } as any)
 }
 
 /**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"claim"`.
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link bonsaiPayABI}__ and `functionName` set to `"claim"`.
  *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
  */
-export function useZrpClaim<
+export function useBonsaiPayClaim<
   TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof zrpAddress,
+  TChainId extends number = keyof typeof bonsaiPayAddress,
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof zrpABI, 'claim'>['request']['abi'],
+        PrepareWriteContractResult<
+          typeof bonsaiPayABI,
+          'claim'
+        >['request']['abi'],
         'claim',
         TMode
       > & { address?: Address; chainId?: TChainId; functionName?: 'claim' }
-    : UseContractWriteConfig<typeof zrpABI, 'claim', TMode> & {
+    : UseContractWriteConfig<typeof bonsaiPayABI, 'claim', TMode> & {
         abi?: never
         address?: never
         chainId?: TChainId
         functionName?: 'claim'
       } = {} as any,
 ) {
-  return useContractWrite<typeof zrpABI, 'claim', TMode>({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
+  return useContractWrite<typeof bonsaiPayABI, 'claim', TMode>({
+    abi: bonsaiPayABI,
+    address: bonsaiPayAddress[11155111],
     functionName: 'claim',
     ...config,
   } as any)
 }
 
 /**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"deposit"`.
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link bonsaiPayABI}__ and `functionName` set to `"deposit"`.
  *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
  */
-export function useZrpDeposit<
+export function useBonsaiPayDeposit<
   TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof zrpAddress,
+  TChainId extends number = keyof typeof bonsaiPayAddress,
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof zrpABI, 'deposit'>['request']['abi'],
+        PrepareWriteContractResult<
+          typeof bonsaiPayABI,
+          'deposit'
+        >['request']['abi'],
         'deposit',
         TMode
       > & { address?: Address; chainId?: TChainId; functionName?: 'deposit' }
-    : UseContractWriteConfig<typeof zrpABI, 'deposit', TMode> & {
+    : UseContractWriteConfig<typeof bonsaiPayABI, 'deposit', TMode> & {
         abi?: never
         address?: never
         chainId?: TChainId
         functionName?: 'deposit'
       } = {} as any,
 ) {
-  return useContractWrite<typeof zrpABI, 'deposit', TMode>({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
+  return useContractWrite<typeof bonsaiPayABI, 'deposit', TMode>({
+    abi: bonsaiPayABI,
+    address: bonsaiPayAddress[11155111],
     functionName: 'deposit',
     ...config,
   } as any)
 }
 
 /**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"pause"`.
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link bonsaiPayABI}__.
  *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
  */
-export function useZrpPause<
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof zrpAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof zrpABI, 'pause'>['request']['abi'],
-        'pause',
-        TMode
-      > & { address?: Address; chainId?: TChainId; functionName?: 'pause' }
-    : UseContractWriteConfig<typeof zrpABI, 'pause', TMode> & {
-        abi?: never
-        address?: never
-        chainId?: TChainId
-        functionName?: 'pause'
-      } = {} as any,
-) {
-  return useContractWrite<typeof zrpABI, 'pause', TMode>({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    functionName: 'pause',
-    ...config,
-  } as any)
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"renounceOwnership"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function useZrpRenounceOwnership<
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof zrpAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof zrpABI,
-          'renounceOwnership'
-        >['request']['abi'],
-        'renounceOwnership',
-        TMode
-      > & {
-        address?: Address
-        chainId?: TChainId
-        functionName?: 'renounceOwnership'
-      }
-    : UseContractWriteConfig<typeof zrpABI, 'renounceOwnership', TMode> & {
-        abi?: never
-        address?: never
-        chainId?: TChainId
-        functionName?: 'renounceOwnership'
-      } = {} as any,
-) {
-  return useContractWrite<typeof zrpABI, 'renounceOwnership', TMode>({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    functionName: 'renounceOwnership',
-    ...config,
-  } as any)
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"setFee"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function useZrpSetFee<
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof zrpAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof zrpABI, 'setFee'>['request']['abi'],
-        'setFee',
-        TMode
-      > & { address?: Address; chainId?: TChainId; functionName?: 'setFee' }
-    : UseContractWriteConfig<typeof zrpABI, 'setFee', TMode> & {
-        abi?: never
-        address?: never
-        chainId?: TChainId
-        functionName?: 'setFee'
-      } = {} as any,
-) {
-  return useContractWrite<typeof zrpABI, 'setFee', TMode>({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    functionName: 'setFee',
-    ...config,
-  } as any)
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"setImageId"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function useZrpSetImageId<
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof zrpAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof zrpABI,
-          'setImageId'
-        >['request']['abi'],
-        'setImageId',
-        TMode
-      > & { address?: Address; chainId?: TChainId; functionName?: 'setImageId' }
-    : UseContractWriteConfig<typeof zrpABI, 'setImageId', TMode> & {
-        abi?: never
-        address?: never
-        chainId?: TChainId
-        functionName?: 'setImageId'
-      } = {} as any,
-) {
-  return useContractWrite<typeof zrpABI, 'setImageId', TMode>({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    functionName: 'setImageId',
-    ...config,
-  } as any)
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"setVerifier"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function useZrpSetVerifier<
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof zrpAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof zrpABI,
-          'setVerifier'
-        >['request']['abi'],
-        'setVerifier',
-        TMode
-      > & {
-        address?: Address
-        chainId?: TChainId
-        functionName?: 'setVerifier'
-      }
-    : UseContractWriteConfig<typeof zrpABI, 'setVerifier', TMode> & {
-        abi?: never
-        address?: never
-        chainId?: TChainId
-        functionName?: 'setVerifier'
-      } = {} as any,
-) {
-  return useContractWrite<typeof zrpABI, 'setVerifier', TMode>({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    functionName: 'setVerifier',
-    ...config,
-  } as any)
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"transferOwnership"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function useZrpTransferOwnership<
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof zrpAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof zrpABI,
-          'transferOwnership'
-        >['request']['abi'],
-        'transferOwnership',
-        TMode
-      > & {
-        address?: Address
-        chainId?: TChainId
-        functionName?: 'transferOwnership'
-      }
-    : UseContractWriteConfig<typeof zrpABI, 'transferOwnership', TMode> & {
-        abi?: never
-        address?: never
-        chainId?: TChainId
-        functionName?: 'transferOwnership'
-      } = {} as any,
-) {
-  return useContractWrite<typeof zrpABI, 'transferOwnership', TMode>({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    functionName: 'transferOwnership',
-    ...config,
-  } as any)
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"unpause"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function useZrpUnpause<
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof zrpAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof zrpABI, 'unpause'>['request']['abi'],
-        'unpause',
-        TMode
-      > & { address?: Address; chainId?: TChainId; functionName?: 'unpause' }
-    : UseContractWriteConfig<typeof zrpABI, 'unpause', TMode> & {
-        abi?: never
-        address?: never
-        chainId?: TChainId
-        functionName?: 'unpause'
-      } = {} as any,
-) {
-  return useContractWrite<typeof zrpABI, 'unpause', TMode>({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    functionName: 'unpause',
-    ...config,
-  } as any)
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"withdrawContract"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function useZrpWithdrawContract<
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof zrpAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof zrpABI,
-          'withdrawContract'
-        >['request']['abi'],
-        'withdrawContract',
-        TMode
-      > & {
-        address?: Address
-        chainId?: TChainId
-        functionName?: 'withdrawContract'
-      }
-    : UseContractWriteConfig<typeof zrpABI, 'withdrawContract', TMode> & {
-        abi?: never
-        address?: never
-        chainId?: TChainId
-        functionName?: 'withdrawContract'
-      } = {} as any,
-) {
-  return useContractWrite<typeof zrpABI, 'withdrawContract', TMode>({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    functionName: 'withdrawContract',
-    ...config,
-  } as any)
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"withdrawDeposit"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function useZrpWithdrawDeposit<
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof zrpAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof zrpABI,
-          'withdrawDeposit'
-        >['request']['abi'],
-        'withdrawDeposit',
-        TMode
-      > & {
-        address?: Address
-        chainId?: TChainId
-        functionName?: 'withdrawDeposit'
-      }
-    : UseContractWriteConfig<typeof zrpABI, 'withdrawDeposit', TMode> & {
-        abi?: never
-        address?: never
-        chainId?: TChainId
-        functionName?: 'withdrawDeposit'
-      } = {} as any,
-) {
-  return useContractWrite<typeof zrpABI, 'withdrawDeposit', TMode>({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    functionName: 'withdrawDeposit',
-    ...config,
-  } as any)
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zrpABI}__.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function usePrepareZrpWrite<TFunctionName extends string>(
+export function usePrepareBonsaiPayWrite<TFunctionName extends string>(
   config: Omit<
-    UsePrepareContractWriteConfig<typeof zrpABI, TFunctionName>,
+    UsePrepareContractWriteConfig<typeof bonsaiPayABI, TFunctionName>,
     'abi' | 'address'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
+  > & { chainId?: keyof typeof bonsaiPayAddress } = {} as any,
 ) {
   return usePrepareContractWrite({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
+    abi: bonsaiPayABI,
+    address: bonsaiPayAddress[11155111],
     ...config,
-  } as UsePrepareContractWriteConfig<typeof zrpABI, TFunctionName>)
+  } as UsePrepareContractWriteConfig<typeof bonsaiPayABI, TFunctionName>)
 }
 
 /**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"claim"`.
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link bonsaiPayABI}__ and `functionName` set to `"claim"`.
  *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
  */
-export function usePrepareZrpClaim(
+export function usePrepareBonsaiPayClaim(
   config: Omit<
-    UsePrepareContractWriteConfig<typeof zrpABI, 'claim'>,
+    UsePrepareContractWriteConfig<typeof bonsaiPayABI, 'claim'>,
     'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
+  > & { chainId?: keyof typeof bonsaiPayAddress } = {} as any,
 ) {
   return usePrepareContractWrite({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
+    abi: bonsaiPayABI,
+    address: bonsaiPayAddress[11155111],
     functionName: 'claim',
     ...config,
-  } as UsePrepareContractWriteConfig<typeof zrpABI, 'claim'>)
+  } as UsePrepareContractWriteConfig<typeof bonsaiPayABI, 'claim'>)
 }
 
 /**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"deposit"`.
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link bonsaiPayABI}__ and `functionName` set to `"deposit"`.
  *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xC462788Dc4198C5264b19460F9076DC86A80D99C)
  */
-export function usePrepareZrpDeposit(
+export function usePrepareBonsaiPayDeposit(
   config: Omit<
-    UsePrepareContractWriteConfig<typeof zrpABI, 'deposit'>,
+    UsePrepareContractWriteConfig<typeof bonsaiPayABI, 'deposit'>,
     'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
+  > & { chainId?: keyof typeof bonsaiPayAddress } = {} as any,
 ) {
   return usePrepareContractWrite({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
+    abi: bonsaiPayABI,
+    address: bonsaiPayAddress[11155111],
     functionName: 'deposit',
     ...config,
-  } as UsePrepareContractWriteConfig<typeof zrpABI, 'deposit'>)
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"pause"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function usePrepareZrpPause(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof zrpABI, 'pause'>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    functionName: 'pause',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof zrpABI, 'pause'>)
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"renounceOwnership"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function usePrepareZrpRenounceOwnership(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof zrpABI, 'renounceOwnership'>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    functionName: 'renounceOwnership',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof zrpABI, 'renounceOwnership'>)
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"setFee"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function usePrepareZrpSetFee(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof zrpABI, 'setFee'>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    functionName: 'setFee',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof zrpABI, 'setFee'>)
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"setImageId"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function usePrepareZrpSetImageId(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof zrpABI, 'setImageId'>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    functionName: 'setImageId',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof zrpABI, 'setImageId'>)
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"setVerifier"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function usePrepareZrpSetVerifier(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof zrpABI, 'setVerifier'>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    functionName: 'setVerifier',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof zrpABI, 'setVerifier'>)
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"transferOwnership"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function usePrepareZrpTransferOwnership(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof zrpABI, 'transferOwnership'>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    functionName: 'transferOwnership',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof zrpABI, 'transferOwnership'>)
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"unpause"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function usePrepareZrpUnpause(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof zrpABI, 'unpause'>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    functionName: 'unpause',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof zrpABI, 'unpause'>)
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"withdrawContract"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function usePrepareZrpWithdrawContract(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof zrpABI, 'withdrawContract'>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    functionName: 'withdrawContract',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof zrpABI, 'withdrawContract'>)
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zrpABI}__ and `functionName` set to `"withdrawDeposit"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function usePrepareZrpWithdrawDeposit(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof zrpABI, 'withdrawDeposit'>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    functionName: 'withdrawDeposit',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof zrpABI, 'withdrawDeposit'>)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zrpABI}__.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function useZrpEvent<TEventName extends string>(
-  config: Omit<
-    UseContractEventConfig<typeof zrpABI, TEventName>,
-    'abi' | 'address'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
-) {
-  return useContractEvent({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    ...config,
-  } as UseContractEventConfig<typeof zrpABI, TEventName>)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zrpABI}__ and `eventName` set to `"Claimed"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function useZrpClaimedEvent(
-  config: Omit<
-    UseContractEventConfig<typeof zrpABI, 'Claimed'>,
-    'abi' | 'address' | 'eventName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
-) {
-  return useContractEvent({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    eventName: 'Claimed',
-    ...config,
-  } as UseContractEventConfig<typeof zrpABI, 'Claimed'>)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zrpABI}__ and `eventName` set to `"Deposited"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function useZrpDepositedEvent(
-  config: Omit<
-    UseContractEventConfig<typeof zrpABI, 'Deposited'>,
-    'abi' | 'address' | 'eventName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
-) {
-  return useContractEvent({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    eventName: 'Deposited',
-    ...config,
-  } as UseContractEventConfig<typeof zrpABI, 'Deposited'>)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zrpABI}__ and `eventName` set to `"OwnershipTransferred"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function useZrpOwnershipTransferredEvent(
-  config: Omit<
-    UseContractEventConfig<typeof zrpABI, 'OwnershipTransferred'>,
-    'abi' | 'address' | 'eventName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
-) {
-  return useContractEvent({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    eventName: 'OwnershipTransferred',
-    ...config,
-  } as UseContractEventConfig<typeof zrpABI, 'OwnershipTransferred'>)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zrpABI}__ and `eventName` set to `"Paused"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function useZrpPausedEvent(
-  config: Omit<
-    UseContractEventConfig<typeof zrpABI, 'Paused'>,
-    'abi' | 'address' | 'eventName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
-) {
-  return useContractEvent({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    eventName: 'Paused',
-    ...config,
-  } as UseContractEventConfig<typeof zrpABI, 'Paused'>)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zrpABI}__ and `eventName` set to `"Unpaused"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function useZrpUnpausedEvent(
-  config: Omit<
-    UseContractEventConfig<typeof zrpABI, 'Unpaused'>,
-    'abi' | 'address' | 'eventName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
-) {
-  return useContractEvent({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    eventName: 'Unpaused',
-    ...config,
-  } as UseContractEventConfig<typeof zrpABI, 'Unpaused'>)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zrpABI}__ and `eventName` set to `"Withdrawn"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xE4793Ef0efFF43976b0Bd368B02680F96598e237)
- */
-export function useZrpWithdrawnEvent(
-  config: Omit<
-    UseContractEventConfig<typeof zrpABI, 'Withdrawn'>,
-    'abi' | 'address' | 'eventName'
-  > & { chainId?: keyof typeof zrpAddress } = {} as any,
-) {
-  return useContractEvent({
-    abi: zrpABI,
-    address: zrpAddress[11155111],
-    eventName: 'Withdrawn',
-    ...config,
-  } as UseContractEventConfig<typeof zrpABI, 'Withdrawn'>)
+  } as UsePrepareContractWriteConfig<typeof bonsaiPayABI, 'deposit'>)
 }
 
 /**
