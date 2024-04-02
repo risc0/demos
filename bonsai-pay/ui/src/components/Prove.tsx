@@ -54,9 +54,7 @@ const Prove: React.FC<ProveProps> = ({ disabled, email }) => {
       });
 
       if (response.ok) {
-        const data = await response.body;
-        // Handle your response data here
-        console.log("Success:", data);
+        await response.body;
       } else {
         throw new Error("Response not OK");
       }

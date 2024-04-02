@@ -4,7 +4,7 @@ import { useAccount } from "wagmi";
 declare global {
   interface Window {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    google?: any; // Use a more specific type if available
+    google?: any; 
   }
 }
 
