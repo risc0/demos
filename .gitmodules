@@ -1,0 +1,15 @@
+[submodule "bonsai-pay/lib/forge-std"]
+	path = bonsai-pay/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "bonsai-pay/lib/murky"]
+	path = bonsai-pay/lib/murky
+	url = https://github.com/dmfxyz/murky
+[submodule "bonsai-pay/lib/openzeppelin-contracts"]
+	path = bonsai-pay/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "bonsai-pay/lib/solidity-bytes-utils"]
+	path = bonsai-pay/lib/solidity-bytes-utils
+	url = https://github.com/GNSPS/solidity-bytes-utils
+[submodule "bonsai-pay/lib/risc0-ethereum"]
+	path = bonsai-pay/lib/risc0-ethereum
+	url = https://github.com/risc0/risc0-ethereum
