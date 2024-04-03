@@ -75,8 +75,6 @@ docs/
 # Dotenv file
 .env
 
-# libraries - managed by sol-deps.sh
-lib/
 
 .DS_Store
 node_modules
