@@ -35,16 +35,9 @@ Now you have all the tools you need to develop and deploy an application with [R
 
 ## Quick Start
 
-- Navigate to the repository root directory and install the submodule dependencies.
-
-  ```sh
-  git submodule update --init
-  ```
-
 - Builds for zkVM program, the publisher app, and any other Rust code.
 
   ```sh
-  cd bonsai-pay
   cargo build
   ```
 
