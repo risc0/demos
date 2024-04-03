@@ -94,7 +94,7 @@ contract BonsaiPayTest is RiscZeroCheats, Test {
         vm.prank(charlie);
         bonsaiPay.deposit{value: 3 ether}(bobClaimId);
 
-        assertEq(bonsaiPay.balanceOf(bobClaimId), 1 ether);
+        assertEq(bonsaiPay.balanceOf(bobClaimId), 4 ether);
         assertEq(bonsaiPay.balanceOf(charlieClaimId), 2 ether);
 
         // claim as bob
@@ -110,7 +110,7 @@ contract BonsaiPayTest is RiscZeroCheats, Test {
         vm.prank(bob);
         bonsaiPay.claim(payable(bob), bobClaimId, post_state_digest, seal);
         assertEq(address(bonsaiPay).balance, 2 ether);
-        assertEq(bob.balance, 6 ether);
+        assertEq(bob.balance, 9 ether);
 
         assertEq(bonsaiPay.balanceOf(bobClaimId), 0);
         assertEq(bonsaiPay.balanceOf(charlieClaimId), 2 ether);
@@ -127,7 +127,7 @@ contract BonsaiPayTest is RiscZeroCheats, Test {
         vm.prank(charlie);
         bonsaiPay.claim(payable(charlie), charlieClaimId, charliePostStateDigest, charlieSeal);
         assertEq(address(bonsaiPay).balance, 0);
-        assertEq(charlie.balance, 7 ether);
+        assertEq(charlie.balance, 4 ether);
 
         assertEq(bonsaiPay.balanceOf(bobClaimId), 0);
         assertEq(bonsaiPay.balanceOf(charlieClaimId), 0);
