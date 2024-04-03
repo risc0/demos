@@ -31,6 +31,14 @@ cargo binstall cargo-risczero
 cargo risczero install
 ```
 
+### Google Cloud Platform
+
+This demo requires a Google Cloud Platform account. You will also need an account to generate a client ID to enable Sign-In-With-Google with OIDC via Google Cloud Identity Platform. You can find more information on how to set up Google Sign-In [here](https://developers.google.com/identity/sign-in/web/sign-in) and [here](https://developers.google.com/identity/protocols/oauth2/openid-connect).
+
+### Etherscan API Key
+
+You will need an Etherscan API key to verify the contract's source code. You can get one [here](https://etherscan.io/apis). This is not required, but is helpful for verifying the contract source code and generating the ABI bindings with [`wagmi`](https://wagmi.sh), which is used in the Bonsai Pay UI.
+
 Now you have all the tools you need to develop and deploy an application with [RISC Zero].
 
 ## Quick Start
@@ -47,6 +55,12 @@ Now you have all the tools you need to develop and deploy an application with [R
 
   ```sh
   forge build
+  ```
+
+- Create a `.env` and update the necessary environment variables as shown in the [`.env.example`] file, for the UI.
+
+  ```sh
+  cp ui/.env.example ui/.env
   ```
 
 ### Run the Tests
@@ -77,13 +91,46 @@ export BONSAI_API_URL="BONSAI_URL" # provided with your api key
 
 Now if you run `forge test` with `RISC0_DEV_MODE=false`, the test will run as before, but will additionally use the fully verifying `RiscZeroGroth16Verifier` contract instead of `MockRiscZeroVerifier` and will request a SNARK receipt from Bonsai.
 
-```bash
+```sh
 RISC0_DEV_MODE=false forge test -vvv
 ```
 
-## Deploy
+### Deploying the Bonsai Pay Contract
 
-When you're ready, follow the [deployment guide] to get the application running on [Sepolia].
+To deploy the Bonsai Pay contract, you will need to set the following environment variables. You can read more about deploying with Foundry scripts [here](https://book.getfoundry.sh/tutorials/solidity-scripting?highlight=Deploy#deploying-our-contract). Please note that the contracts are unaudited and should not be used in production chains.
+
+```bash
+export ETH_WALLET_PRIVATE_KEY="YOUR_PRIVATE_KEY"
+```
+
+You can deploy the contract using the forge deploy script. 
+  
+  ```sh
+  forge script script/Deploy.s.sol \ 
+    --rpc-url <YOUR_RPC_URL> \
+    --broadcast \
+    --etherscan-api-key <YOUR_ETHERSCAN_API_KEY> \
+    --verify 
+  ```
+
+### Running the Application
+
+- Start the publisher/subscriber app with the configured variables.
+
+  ```sh
+  cargo run --bin pubsub -- --chain-id <DEPLOYED_CHAIN_ID> \
+    --eth-wallet-private-key <YOUR_PUBLISHER_PRIVATE_KEY> \
+    --rpc-url <YOUR_RPC_PROVIDER> \
+    --contract <DEPLOYED_BONSAI_PAY_CONTRACT_ADDRESS>
+  ```
+
+- Start the UI.
+
+  ```sh
+  cd ui
+  pnpm i 
+  pnpm run dev
+  ```
 
 ## Project Structure
 
@@ -133,8 +180,8 @@ Below are the primary files in the project directory
 [Sepolia]: https://www.alchemy.com/overviews/sepolia-testnet
 [cargo-binstall]: https://github.com/cargo-bins/cargo-binstall#cargo-binaryinstall
 [coprocessor]: https://www.risczero.com/news/a-guide-to-zk-coprocessors-for-scalability
-[deployment guide]: /deployment-guide.md
 [developer FAQ]: https://dev.risczero.com/faq#zkvm-application-design
 [install Rust]: https://doc.rust-lang.org/cargo/getting-started/installation.html
 [zkVM program]: ./methods/guest/
 [Bonsai Foundry Template]: https://github.com/risc0/bonsai-foundry-template
+[`.env.example`]: ./ui/.env.example
