@@ -1,0 +1,13 @@
+[package]
+name = "oidc-validator"
+version = { workspace = true }
+edition = { workspace = true }
+
+[dependencies]
+jwt-compact = { version = "0.7", default-features = false, features = ["rsa"] }
+lazy_static = "1.4.0"
+serde = "1.0"
+serde_json = "1.0"
+thiserror = "1.0"
+alloy-primitives = { version = "0.6", default-features = false, features = ["rlp", "serde", "std"] }
+alloy-sol-types = { version = "0.6" }
