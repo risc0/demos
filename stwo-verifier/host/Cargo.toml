@@ -10,3 +10,4 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 serde = "1.0"
 stwo = { git = "https://github.com/austinabell/stwo", branch = "austin/serde", features = ["serde"] }
 # stwo = { path = "../../../../../../starkware-libs/stwo", features = ["serde"] }
+anyhow = "1.0"
