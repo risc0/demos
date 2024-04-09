@@ -64,9 +64,9 @@ contract EvenNumber {
         bytes32 postStateDigest,
         bytes calldata seal
     ) public {
-        if address(to) == address(0) revert InvalidMint("Invalid recipient address");
-        if claimId == bytes32(0) revert InvalidMint("Empty claimId");
-        if !verifier.verify(seal, imageId, postStateDigest, sha256(abi.encode(to, claimId))) {
+        if (to == address(0)) revert InvalidMint("Invalid recipient address");
+        if (claimId == bytes32(0)) revert InvalidMint("Empty claimId");
+        if (!verifier.verify(seal, imageId, postStateDigest, sha256(abi.encode(to, claimId)))) {
             revert InvalidMint("Invalid proof");
         }
 
