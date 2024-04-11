@@ -21,32 +21,27 @@ const SignInWithIDme = function ({ disabled, onNext, onUserData }) {
       try {
         if (hasRun.current) return;
         hasRun.current = true;
-
+  
         const code = getQueryParam("code");
         if (!code) return;
-
-        const postUrl = "/api/auth"; // Proxy endpoint to exchange code for token
-        const response = await fetch(postUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ code }),
-        });
-
+  
+        const getUrl = `/api/callback?code=${encodeURIComponent(code)}`;
+  
+        const response = await fetch(getUrl);
+  
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-
+  
         const token = Cookies.get("id_token");
         if (!token) {
           throw new Error("Token not found");
         }
-
+  
         const decoded = jwtDecode(token);
         setUserData(decoded);
         onUserData(decoded);
-
+  
         if (token) {
           onNext();
         }
@@ -55,7 +50,7 @@ const SignInWithIDme = function ({ disabled, onNext, onUserData }) {
         setError(error);
       }
     };
-
+  
     authenticateUser();
   }, [onNext, onUserData]);
 

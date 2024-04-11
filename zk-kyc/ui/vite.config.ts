@@ -9,10 +9,10 @@ export default defineConfig({
   plugins: [react(), nodePolyfills()],
   server: {
     proxy: {
-      "/api/auth": {
-        target: "http://0.0.0.0:8181",
+      "/api/callback": {
+        target: "http://0.0.0.0:8080/callback",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/auth/, ""),
+        rewrite: (path) => path.replace(/^\/api\/callback/, ""),
       },
       "/api/attributes": {
         target: "https://api.id.me/api/public/v3/userinfo.json",

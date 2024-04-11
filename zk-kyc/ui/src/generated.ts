@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   useContractRead,
   UseContractReadConfig,
@@ -21,7 +20,7 @@ import {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export const zidABI = [
   {
@@ -29,45 +28,76 @@ export const zidABI = [
     type: 'constructor',
     inputs: [
       {
-        name: 'initVerifier',
+        name: '_verifier',
         internalType: 'contract IRiscZeroVerifier',
         type: 'address',
       },
-      { name: 'initImgId', internalType: 'bytes32', type: 'bytes32' },
+      { name: 'name', internalType: 'string', type: 'string' },
+      { name: 'symbol', internalType: 'string', type: 'string' },
     ],
   },
   {
     type: 'error',
     inputs: [
-      {
-        name: 'proof',
-        internalType: 'struct Types.Proof',
-        type: 'tuple',
-        components: [
-          { name: 'seal', internalType: 'bytes', type: 'bytes' },
-          { name: 'postStateDigest', internalType: 'bytes32', type: 'bytes32' },
-          { name: 'journal', internalType: 'bytes', type: 'bytes' },
-        ],
-      },
+      { name: 'sender', internalType: 'address', type: 'address' },
+      { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
+      { name: 'owner', internalType: 'address', type: 'address' },
     ],
-    name: 'InvalidProof',
+    name: 'ERC721IncorrectOwner',
   },
-  { type: 'error', inputs: [], name: 'NotProofOwner' },
   {
     type: 'error',
     inputs: [
-      { name: 'account', internalType: 'address', type: 'address' },
-      { name: 'id', internalType: 'uint256', type: 'uint256' },
+      { name: 'operator', internalType: 'address', type: 'address' },
+      { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
     ],
+    name: 'ERC721InsufficientApproval',
+  },
+  {
+    type: 'error',
+    inputs: [{ name: 'approver', internalType: 'address', type: 'address' }],
+    name: 'ERC721InvalidApprover',
+  },
+  {
+    type: 'error',
+    inputs: [{ name: 'operator', internalType: 'address', type: 'address' }],
+    name: 'ERC721InvalidOperator',
+  },
+  {
+    type: 'error',
+    inputs: [{ name: 'owner', internalType: 'address', type: 'address' }],
+    name: 'ERC721InvalidOwner',
+  },
+  {
+    type: 'error',
+    inputs: [{ name: 'receiver', internalType: 'address', type: 'address' }],
+    name: 'ERC721InvalidReceiver',
+  },
+  {
+    type: 'error',
+    inputs: [{ name: 'sender', internalType: 'address', type: 'address' }],
+    name: 'ERC721InvalidSender',
+  },
+  {
+    type: 'error',
+    inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
+    name: 'ERC721NonexistentToken',
+  },
+  {
+    type: 'error',
+    inputs: [{ name: 'message', internalType: 'string', type: 'string' }],
+    name: 'InvalidMint',
+  },
+  {
+    type: 'error',
+    inputs: [{ name: 'message', internalType: 'string', type: 'string' }],
     name: 'NotTokenOwner',
   },
-  { type: 'error', inputs: [], name: 'TokenAlreadyMinted' },
   {
     type: 'error',
-    inputs: [{ name: 'id', internalType: 'uint256', type: 'uint256' }],
-    name: 'TokenNotFound',
+    inputs: [{ name: 'message', internalType: 'string', type: 'string' }],
+    name: 'TokenNotTransferable',
   },
-  { type: 'error', inputs: [], name: 'TokenNotTransferable' },
   {
     type: 'event',
     anonymous: false,
@@ -118,29 +148,9 @@ export const zidABI = [
     anonymous: false,
     inputs: [
       {
-        name: '_fromTokenId',
+        name: 'tokenId',
         internalType: 'uint256',
         type: 'uint256',
-        indexed: false,
-      },
-      {
-        name: '_toTokenId',
-        internalType: 'uint256',
-        type: 'uint256',
-        indexed: false,
-      },
-    ],
-    name: 'BatchMetadataUpdate',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'id', internalType: 'uint256', type: 'uint256', indexed: true },
-      {
-        name: 'burner',
-        internalType: 'address',
-        type: 'address',
         indexed: true,
       },
     ],
@@ -150,66 +160,15 @@ export const zidABI = [
     type: 'event',
     anonymous: false,
     inputs: [
+      { name: 'to', internalType: 'address', type: 'address', indexed: true },
       {
-        name: '_tokenId',
-        internalType: 'uint256',
-        type: 'uint256',
-        indexed: false,
-      },
-    ],
-    name: 'MetadataUpdate',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'id', internalType: 'uint256', type: 'uint256', indexed: true },
-      {
-        name: 'minter',
-        internalType: 'address',
-        type: 'address',
+        name: 'claimId',
+        internalType: 'bytes32',
+        type: 'bytes32',
         indexed: true,
-      },
-      {
-        name: 'tokenURI',
-        internalType: 'string',
-        type: 'string',
-        indexed: false,
       },
     ],
     name: 'Minted',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      {
-        name: 'previousOwner',
-        internalType: 'address',
-        type: 'address',
-        indexed: true,
-      },
-      {
-        name: 'newOwner',
-        internalType: 'address',
-        type: 'address',
-        indexed: true,
-      },
-    ],
-    name: 'OwnershipTransferred',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      {
-        name: 'account',
-        internalType: 'address',
-        type: 'address',
-        indexed: false,
-      },
-    ],
-    name: 'Paused',
   },
   {
     type: 'event',
@@ -225,19 +184,6 @@ export const zidABI = [
       },
     ],
     name: 'Transfer',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      {
-        name: 'account',
-        internalType: 'address',
-        type: 'address',
-        indexed: false,
-      },
-    ],
-    name: 'Unpaused',
   },
   {
     stateMutability: 'nonpayable',
@@ -259,7 +205,7 @@ export const zidABI = [
   {
     stateMutability: 'nonpayable',
     type: 'function',
-    inputs: [],
+    inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
     name: 'burn',
     outputs: [],
   },
@@ -269,24 +215,6 @@ export const zidABI = [
     inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
     name: 'getApproved',
     outputs: [{ name: '', internalType: 'address', type: 'address' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: 'owner', internalType: 'address', type: 'address' }],
-    name: 'getProof',
-    outputs: [
-      {
-        name: '',
-        internalType: 'struct Types.Proof',
-        type: 'tuple',
-        components: [
-          { name: 'seal', internalType: 'bytes', type: 'bytes' },
-          { name: 'postStateDigest', internalType: 'bytes32', type: 'bytes32' },
-          { name: 'journal', internalType: 'bytes', type: 'bytes' },
-        ],
-      },
-    ],
   },
   {
     stateMutability: 'view',
@@ -309,8 +237,10 @@ export const zidABI = [
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
-      { name: 'data', internalType: 'bytes', type: 'bytes' },
-      { name: 'tokenURI', internalType: 'string', type: 'string' },
+      { name: 'to', internalType: 'address', type: 'address' },
+      { name: 'claimId', internalType: 'bytes32', type: 'bytes32' },
+      { name: 'postStateDigest', internalType: 'bytes32', type: 'bytes32' },
+      { name: 'seal', internalType: 'bytes', type: 'bytes' },
     ],
     name: 'mint',
     outputs: [],
@@ -325,37 +255,9 @@ export const zidABI = [
   {
     stateMutability: 'view',
     type: 'function',
-    inputs: [],
-    name: 'owner',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
     inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
     name: 'ownerOf',
     outputs: [{ name: '', internalType: 'address', type: 'address' }],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [],
-    name: 'pause',
-    outputs: [],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'paused',
-    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [],
-    name: 'renounceOwnership',
-    outputs: [],
   },
   {
     stateMutability: 'nonpayable',
@@ -391,26 +293,6 @@ export const zidABI = [
     outputs: [],
   },
   {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: 'newImageId', internalType: 'bytes32', type: 'bytes32' }],
-    name: 'setImageId',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      {
-        name: 'newVerifier',
-        internalType: 'contract IRiscZeroVerifier',
-        type: 'address',
-      },
-    ],
-    name: 'setVerifier',
-    outputs: [],
-  },
-  {
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: 'interfaceId', internalType: 'bytes4', type: 'bytes4' }],
@@ -443,37 +325,25 @@ export const zidABI = [
     outputs: [],
   },
   {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: 'newOwner', internalType: 'address', type: 'address' }],
-    name: 'transferOwnership',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
+    stateMutability: 'view',
     type: 'function',
     inputs: [],
-    name: 'unpause',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: 'data', internalType: 'bytes', type: 'bytes' }],
-    name: 'updateProof',
-    outputs: [],
+    name: 'verifier',
+    outputs: [
+      { name: '', internalType: 'contract IRiscZeroVerifier', type: 'address' },
+    ],
   },
 ] as const
 
 /**
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export const zidAddress = {
-  5: '0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e',
+  11155111: '0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8',
 } as const
 
 /**
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export const zidConfig = { address: zidAddress, abi: zidABI } as const
 
@@ -585,7 +455,7 @@ export const erc20ABI = [
 /**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link zidABI}__.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function useZidRead<
   TFunctionName extends string,
@@ -598,7 +468,7 @@ export function useZidRead<
 ) {
   return useContractRead({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     ...config,
   } as UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>)
 }
@@ -606,7 +476,7 @@ export function useZidRead<
 /**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"balanceOf"`.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function useZidBalanceOf<
   TFunctionName extends 'balanceOf',
@@ -619,7 +489,7 @@ export function useZidBalanceOf<
 ) {
   return useContractRead({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     functionName: 'balanceOf',
     ...config,
   } as UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>)
@@ -628,7 +498,7 @@ export function useZidBalanceOf<
 /**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"getApproved"`.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function useZidGetApproved<
   TFunctionName extends 'getApproved',
@@ -641,30 +511,8 @@ export function useZidGetApproved<
 ) {
   return useContractRead({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     functionName: 'getApproved',
-    ...config,
-  } as UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>)
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"getProof"`.
- *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
- */
-export function useZidGetProof<
-  TFunctionName extends 'getProof',
-  TSelectData = ReadContractResult<typeof zidABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return useContractRead({
-    abi: zidABI,
-    address: zidAddress[5],
-    functionName: 'getProof',
     ...config,
   } as UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>)
 }
@@ -672,7 +520,7 @@ export function useZidGetProof<
 /**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"imageId"`.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function useZidImageId<
   TFunctionName extends 'imageId',
@@ -685,7 +533,7 @@ export function useZidImageId<
 ) {
   return useContractRead({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     functionName: 'imageId',
     ...config,
   } as UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>)
@@ -694,7 +542,7 @@ export function useZidImageId<
 /**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"isApprovedForAll"`.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function useZidIsApprovedForAll<
   TFunctionName extends 'isApprovedForAll',
@@ -707,7 +555,7 @@ export function useZidIsApprovedForAll<
 ) {
   return useContractRead({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     functionName: 'isApprovedForAll',
     ...config,
   } as UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>)
@@ -716,7 +564,7 @@ export function useZidIsApprovedForAll<
 /**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"name"`.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function useZidName<
   TFunctionName extends 'name',
@@ -729,30 +577,8 @@ export function useZidName<
 ) {
   return useContractRead({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     functionName: 'name',
-    ...config,
-  } as UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>)
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"owner"`.
- *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
- */
-export function useZidOwner<
-  TFunctionName extends 'owner',
-  TSelectData = ReadContractResult<typeof zidABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return useContractRead({
-    abi: zidABI,
-    address: zidAddress[5],
-    functionName: 'owner',
     ...config,
   } as UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>)
 }
@@ -760,7 +586,7 @@ export function useZidOwner<
 /**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"ownerOf"`.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function useZidOwnerOf<
   TFunctionName extends 'ownerOf',
@@ -773,30 +599,8 @@ export function useZidOwnerOf<
 ) {
   return useContractRead({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     functionName: 'ownerOf',
-    ...config,
-  } as UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>)
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"paused"`.
- *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
- */
-export function useZidPaused<
-  TFunctionName extends 'paused',
-  TSelectData = ReadContractResult<typeof zidABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return useContractRead({
-    abi: zidABI,
-    address: zidAddress[5],
-    functionName: 'paused',
     ...config,
   } as UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>)
 }
@@ -804,7 +608,7 @@ export function useZidPaused<
 /**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"supportsInterface"`.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function useZidSupportsInterface<
   TFunctionName extends 'supportsInterface',
@@ -817,7 +621,7 @@ export function useZidSupportsInterface<
 ) {
   return useContractRead({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     functionName: 'supportsInterface',
     ...config,
   } as UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>)
@@ -826,7 +630,7 @@ export function useZidSupportsInterface<
 /**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"symbol"`.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function useZidSymbol<
   TFunctionName extends 'symbol',
@@ -839,7 +643,7 @@ export function useZidSymbol<
 ) {
   return useContractRead({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     functionName: 'symbol',
     ...config,
   } as UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>)
@@ -848,7 +652,7 @@ export function useZidSymbol<
 /**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"tokenURI"`.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function useZidTokenUri<
   TFunctionName extends 'tokenURI',
@@ -861,8 +665,30 @@ export function useZidTokenUri<
 ) {
   return useContractRead({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     functionName: 'tokenURI',
+    ...config,
+  } as UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>)
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"verifier"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
+ */
+export function useZidVerifier<
+  TFunctionName extends 'verifier',
+  TSelectData = ReadContractResult<typeof zidABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof zidAddress } = {} as any,
+) {
+  return useContractRead({
+    abi: zidABI,
+    address: zidAddress[11155111],
+    functionName: 'verifier',
     ...config,
   } as UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>)
 }
@@ -870,7 +696,7 @@ export function useZidTokenUri<
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zidABI}__.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function useZidWrite<
   TFunctionName extends string,
@@ -891,7 +717,7 @@ export function useZidWrite<
 ) {
   return useContractWrite<typeof zidABI, TFunctionName, TMode>({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     ...config,
   } as any)
 }
@@ -899,7 +725,7 @@ export function useZidWrite<
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"approve"`.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function useZidApprove<
   TMode extends WriteContractMode = undefined,
@@ -920,7 +746,7 @@ export function useZidApprove<
 ) {
   return useContractWrite<typeof zidABI, 'approve', TMode>({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     functionName: 'approve',
     ...config,
   } as any)
@@ -929,7 +755,7 @@ export function useZidApprove<
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"burn"`.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function useZidBurn<
   TMode extends WriteContractMode = undefined,
@@ -950,7 +776,7 @@ export function useZidBurn<
 ) {
   return useContractWrite<typeof zidABI, 'burn', TMode>({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     functionName: 'burn',
     ...config,
   } as any)
@@ -959,7 +785,7 @@ export function useZidBurn<
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"mint"`.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function useZidMint<
   TMode extends WriteContractMode = undefined,
@@ -980,75 +806,8 @@ export function useZidMint<
 ) {
   return useContractWrite<typeof zidABI, 'mint', TMode>({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     functionName: 'mint',
-    ...config,
-  } as any)
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"pause"`.
- *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
- */
-export function useZidPause<
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof zidAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof zidABI, 'pause'>['request']['abi'],
-        'pause',
-        TMode
-      > & { address?: Address; chainId?: TChainId; functionName?: 'pause' }
-    : UseContractWriteConfig<typeof zidABI, 'pause', TMode> & {
-        abi?: never
-        address?: never
-        chainId?: TChainId
-        functionName?: 'pause'
-      } = {} as any,
-) {
-  return useContractWrite<typeof zidABI, 'pause', TMode>({
-    abi: zidABI,
-    address: zidAddress[5],
-    functionName: 'pause',
-    ...config,
-  } as any)
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"renounceOwnership"`.
- *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
- */
-export function useZidRenounceOwnership<
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof zidAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof zidABI,
-          'renounceOwnership'
-        >['request']['abi'],
-        'renounceOwnership',
-        TMode
-      > & {
-        address?: Address
-        chainId?: TChainId
-        functionName?: 'renounceOwnership'
-      }
-    : UseContractWriteConfig<typeof zidABI, 'renounceOwnership', TMode> & {
-        abi?: never
-        address?: never
-        chainId?: TChainId
-        functionName?: 'renounceOwnership'
-      } = {} as any,
-) {
-  return useContractWrite<typeof zidABI, 'renounceOwnership', TMode>({
-    abi: zidABI,
-    address: zidAddress[5],
-    functionName: 'renounceOwnership',
     ...config,
   } as any)
 }
@@ -1056,7 +815,7 @@ export function useZidRenounceOwnership<
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"safeTransferFrom"`.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function useZidSafeTransferFrom<
   TMode extends WriteContractMode = undefined,
@@ -1084,7 +843,7 @@ export function useZidSafeTransferFrom<
 ) {
   return useContractWrite<typeof zidABI, 'safeTransferFrom', TMode>({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     functionName: 'safeTransferFrom',
     ...config,
   } as any)
@@ -1093,7 +852,7 @@ export function useZidSafeTransferFrom<
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"setApprovalForAll"`.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function useZidSetApprovalForAll<
   TMode extends WriteContractMode = undefined,
@@ -1121,78 +880,8 @@ export function useZidSetApprovalForAll<
 ) {
   return useContractWrite<typeof zidABI, 'setApprovalForAll', TMode>({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     functionName: 'setApprovalForAll',
-    ...config,
-  } as any)
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"setImageId"`.
- *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
- */
-export function useZidSetImageId<
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof zidAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof zidABI,
-          'setImageId'
-        >['request']['abi'],
-        'setImageId',
-        TMode
-      > & { address?: Address; chainId?: TChainId; functionName?: 'setImageId' }
-    : UseContractWriteConfig<typeof zidABI, 'setImageId', TMode> & {
-        abi?: never
-        address?: never
-        chainId?: TChainId
-        functionName?: 'setImageId'
-      } = {} as any,
-) {
-  return useContractWrite<typeof zidABI, 'setImageId', TMode>({
-    abi: zidABI,
-    address: zidAddress[5],
-    functionName: 'setImageId',
-    ...config,
-  } as any)
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"setVerifier"`.
- *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
- */
-export function useZidSetVerifier<
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof zidAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof zidABI,
-          'setVerifier'
-        >['request']['abi'],
-        'setVerifier',
-        TMode
-      > & {
-        address?: Address
-        chainId?: TChainId
-        functionName?: 'setVerifier'
-      }
-    : UseContractWriteConfig<typeof zidABI, 'setVerifier', TMode> & {
-        abi?: never
-        address?: never
-        chainId?: TChainId
-        functionName?: 'setVerifier'
-      } = {} as any,
-) {
-  return useContractWrite<typeof zidABI, 'setVerifier', TMode>({
-    abi: zidABI,
-    address: zidAddress[5],
-    functionName: 'setVerifier',
     ...config,
   } as any)
 }
@@ -1200,7 +889,7 @@ export function useZidSetVerifier<
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"transferFrom"`.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function useZidTransferFrom<
   TMode extends WriteContractMode = undefined,
@@ -1228,112 +917,8 @@ export function useZidTransferFrom<
 ) {
   return useContractWrite<typeof zidABI, 'transferFrom', TMode>({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     functionName: 'transferFrom',
-    ...config,
-  } as any)
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"transferOwnership"`.
- *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
- */
-export function useZidTransferOwnership<
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof zidAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof zidABI,
-          'transferOwnership'
-        >['request']['abi'],
-        'transferOwnership',
-        TMode
-      > & {
-        address?: Address
-        chainId?: TChainId
-        functionName?: 'transferOwnership'
-      }
-    : UseContractWriteConfig<typeof zidABI, 'transferOwnership', TMode> & {
-        abi?: never
-        address?: never
-        chainId?: TChainId
-        functionName?: 'transferOwnership'
-      } = {} as any,
-) {
-  return useContractWrite<typeof zidABI, 'transferOwnership', TMode>({
-    abi: zidABI,
-    address: zidAddress[5],
-    functionName: 'transferOwnership',
-    ...config,
-  } as any)
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"unpause"`.
- *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
- */
-export function useZidUnpause<
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof zidAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof zidABI, 'unpause'>['request']['abi'],
-        'unpause',
-        TMode
-      > & { address?: Address; chainId?: TChainId; functionName?: 'unpause' }
-    : UseContractWriteConfig<typeof zidABI, 'unpause', TMode> & {
-        abi?: never
-        address?: never
-        chainId?: TChainId
-        functionName?: 'unpause'
-      } = {} as any,
-) {
-  return useContractWrite<typeof zidABI, 'unpause', TMode>({
-    abi: zidABI,
-    address: zidAddress[5],
-    functionName: 'unpause',
-    ...config,
-  } as any)
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"updateProof"`.
- *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
- */
-export function useZidUpdateProof<
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof zidAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof zidABI,
-          'updateProof'
-        >['request']['abi'],
-        'updateProof',
-        TMode
-      > & {
-        address?: Address
-        chainId?: TChainId
-        functionName?: 'updateProof'
-      }
-    : UseContractWriteConfig<typeof zidABI, 'updateProof', TMode> & {
-        abi?: never
-        address?: never
-        chainId?: TChainId
-        functionName?: 'updateProof'
-      } = {} as any,
-) {
-  return useContractWrite<typeof zidABI, 'updateProof', TMode>({
-    abi: zidABI,
-    address: zidAddress[5],
-    functionName: 'updateProof',
     ...config,
   } as any)
 }
@@ -1341,7 +926,7 @@ export function useZidUpdateProof<
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zidABI}__.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function usePrepareZidWrite<TFunctionName extends string>(
   config: Omit<
@@ -1351,7 +936,7 @@ export function usePrepareZidWrite<TFunctionName extends string>(
 ) {
   return usePrepareContractWrite({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     ...config,
   } as UsePrepareContractWriteConfig<typeof zidABI, TFunctionName>)
 }
@@ -1359,7 +944,7 @@ export function usePrepareZidWrite<TFunctionName extends string>(
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"approve"`.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function usePrepareZidApprove(
   config: Omit<
@@ -1369,7 +954,7 @@ export function usePrepareZidApprove(
 ) {
   return usePrepareContractWrite({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     functionName: 'approve',
     ...config,
   } as UsePrepareContractWriteConfig<typeof zidABI, 'approve'>)
@@ -1378,7 +963,7 @@ export function usePrepareZidApprove(
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"burn"`.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function usePrepareZidBurn(
   config: Omit<
@@ -1388,7 +973,7 @@ export function usePrepareZidBurn(
 ) {
   return usePrepareContractWrite({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     functionName: 'burn',
     ...config,
   } as UsePrepareContractWriteConfig<typeof zidABI, 'burn'>)
@@ -1397,7 +982,7 @@ export function usePrepareZidBurn(
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"mint"`.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function usePrepareZidMint(
   config: Omit<
@@ -1407,54 +992,16 @@ export function usePrepareZidMint(
 ) {
   return usePrepareContractWrite({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     functionName: 'mint',
     ...config,
   } as UsePrepareContractWriteConfig<typeof zidABI, 'mint'>)
 }
 
 /**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"pause"`.
- *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
- */
-export function usePrepareZidPause(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof zidABI, 'pause'>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: zidABI,
-    address: zidAddress[5],
-    functionName: 'pause',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof zidABI, 'pause'>)
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"renounceOwnership"`.
- *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
- */
-export function usePrepareZidRenounceOwnership(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof zidABI, 'renounceOwnership'>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: zidABI,
-    address: zidAddress[5],
-    functionName: 'renounceOwnership',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof zidABI, 'renounceOwnership'>)
-}
-
-/**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"safeTransferFrom"`.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function usePrepareZidSafeTransferFrom(
   config: Omit<
@@ -1464,7 +1011,7 @@ export function usePrepareZidSafeTransferFrom(
 ) {
   return usePrepareContractWrite({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     functionName: 'safeTransferFrom',
     ...config,
   } as UsePrepareContractWriteConfig<typeof zidABI, 'safeTransferFrom'>)
@@ -1473,7 +1020,7 @@ export function usePrepareZidSafeTransferFrom(
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"setApprovalForAll"`.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function usePrepareZidSetApprovalForAll(
   config: Omit<
@@ -1483,54 +1030,16 @@ export function usePrepareZidSetApprovalForAll(
 ) {
   return usePrepareContractWrite({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     functionName: 'setApprovalForAll',
     ...config,
   } as UsePrepareContractWriteConfig<typeof zidABI, 'setApprovalForAll'>)
 }
 
 /**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"setImageId"`.
- *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
- */
-export function usePrepareZidSetImageId(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof zidABI, 'setImageId'>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: zidABI,
-    address: zidAddress[5],
-    functionName: 'setImageId',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof zidABI, 'setImageId'>)
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"setVerifier"`.
- *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
- */
-export function usePrepareZidSetVerifier(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof zidABI, 'setVerifier'>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: zidABI,
-    address: zidAddress[5],
-    functionName: 'setVerifier',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof zidABI, 'setVerifier'>)
-}
-
-/**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"transferFrom"`.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function usePrepareZidTransferFrom(
   config: Omit<
@@ -1540,73 +1049,16 @@ export function usePrepareZidTransferFrom(
 ) {
   return usePrepareContractWrite({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     functionName: 'transferFrom',
     ...config,
   } as UsePrepareContractWriteConfig<typeof zidABI, 'transferFrom'>)
 }
 
 /**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"transferOwnership"`.
- *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
- */
-export function usePrepareZidTransferOwnership(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof zidABI, 'transferOwnership'>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: zidABI,
-    address: zidAddress[5],
-    functionName: 'transferOwnership',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof zidABI, 'transferOwnership'>)
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"unpause"`.
- *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
- */
-export function usePrepareZidUnpause(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof zidABI, 'unpause'>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: zidABI,
-    address: zidAddress[5],
-    functionName: 'unpause',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof zidABI, 'unpause'>)
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"updateProof"`.
- *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
- */
-export function usePrepareZidUpdateProof(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof zidABI, 'updateProof'>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: zidABI,
-    address: zidAddress[5],
-    functionName: 'updateProof',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof zidABI, 'updateProof'>)
-}
-
-/**
  * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zidABI}__.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function useZidEvent<TEventName extends string>(
   config: Omit<
@@ -1616,7 +1068,7 @@ export function useZidEvent<TEventName extends string>(
 ) {
   return useContractEvent({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     ...config,
   } as UseContractEventConfig<typeof zidABI, TEventName>)
 }
@@ -1624,7 +1076,7 @@ export function useZidEvent<TEventName extends string>(
 /**
  * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zidABI}__ and `eventName` set to `"Approval"`.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function useZidApprovalEvent(
   config: Omit<
@@ -1634,7 +1086,7 @@ export function useZidApprovalEvent(
 ) {
   return useContractEvent({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     eventName: 'Approval',
     ...config,
   } as UseContractEventConfig<typeof zidABI, 'Approval'>)
@@ -1643,7 +1095,7 @@ export function useZidApprovalEvent(
 /**
  * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zidABI}__ and `eventName` set to `"ApprovalForAll"`.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function useZidApprovalForAllEvent(
   config: Omit<
@@ -1653,35 +1105,16 @@ export function useZidApprovalForAllEvent(
 ) {
   return useContractEvent({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     eventName: 'ApprovalForAll',
     ...config,
   } as UseContractEventConfig<typeof zidABI, 'ApprovalForAll'>)
 }
 
 /**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zidABI}__ and `eventName` set to `"BatchMetadataUpdate"`.
- *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
- */
-export function useZidBatchMetadataUpdateEvent(
-  config: Omit<
-    UseContractEventConfig<typeof zidABI, 'BatchMetadataUpdate'>,
-    'abi' | 'address' | 'eventName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return useContractEvent({
-    abi: zidABI,
-    address: zidAddress[5],
-    eventName: 'BatchMetadataUpdate',
-    ...config,
-  } as UseContractEventConfig<typeof zidABI, 'BatchMetadataUpdate'>)
-}
-
-/**
  * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zidABI}__ and `eventName` set to `"Burned"`.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function useZidBurnedEvent(
   config: Omit<
@@ -1691,35 +1124,16 @@ export function useZidBurnedEvent(
 ) {
   return useContractEvent({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     eventName: 'Burned',
     ...config,
   } as UseContractEventConfig<typeof zidABI, 'Burned'>)
 }
 
 /**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zidABI}__ and `eventName` set to `"MetadataUpdate"`.
- *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
- */
-export function useZidMetadataUpdateEvent(
-  config: Omit<
-    UseContractEventConfig<typeof zidABI, 'MetadataUpdate'>,
-    'abi' | 'address' | 'eventName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return useContractEvent({
-    abi: zidABI,
-    address: zidAddress[5],
-    eventName: 'MetadataUpdate',
-    ...config,
-  } as UseContractEventConfig<typeof zidABI, 'MetadataUpdate'>)
-}
-
-/**
  * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zidABI}__ and `eventName` set to `"Minted"`.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function useZidMintedEvent(
   config: Omit<
@@ -1729,54 +1143,16 @@ export function useZidMintedEvent(
 ) {
   return useContractEvent({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     eventName: 'Minted',
     ...config,
   } as UseContractEventConfig<typeof zidABI, 'Minted'>)
 }
 
 /**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zidABI}__ and `eventName` set to `"OwnershipTransferred"`.
- *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
- */
-export function useZidOwnershipTransferredEvent(
-  config: Omit<
-    UseContractEventConfig<typeof zidABI, 'OwnershipTransferred'>,
-    'abi' | 'address' | 'eventName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return useContractEvent({
-    abi: zidABI,
-    address: zidAddress[5],
-    eventName: 'OwnershipTransferred',
-    ...config,
-  } as UseContractEventConfig<typeof zidABI, 'OwnershipTransferred'>)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zidABI}__ and `eventName` set to `"Paused"`.
- *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
- */
-export function useZidPausedEvent(
-  config: Omit<
-    UseContractEventConfig<typeof zidABI, 'Paused'>,
-    'abi' | 'address' | 'eventName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return useContractEvent({
-    abi: zidABI,
-    address: zidAddress[5],
-    eventName: 'Paused',
-    ...config,
-  } as UseContractEventConfig<typeof zidABI, 'Paused'>)
-}
-
-/**
  * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zidABI}__ and `eventName` set to `"Transfer"`.
  *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
  */
 export function useZidTransferEvent(
   config: Omit<
@@ -1786,29 +1162,10 @@ export function useZidTransferEvent(
 ) {
   return useContractEvent({
     abi: zidABI,
-    address: zidAddress[5],
+    address: zidAddress[11155111],
     eventName: 'Transfer',
     ...config,
   } as UseContractEventConfig<typeof zidABI, 'Transfer'>)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zidABI}__ and `eventName` set to `"Unpaused"`.
- *
- * [__View Contract on Goerli Etherscan__](https://goerli.etherscan.io/address/0x28C7dDC12b3F7b81D2a4C73eC06d1d8C1a78B24e)
- */
-export function useZidUnpausedEvent(
-  config: Omit<
-    UseContractEventConfig<typeof zidABI, 'Unpaused'>,
-    'abi' | 'address' | 'eventName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return useContractEvent({
-    abi: zidABI,
-    address: zidAddress[5],
-    eventName: 'Unpaused',
-    ...config,
-  } as UseContractEventConfig<typeof zidABI, 'Unpaused'>)
 }
 
 /**

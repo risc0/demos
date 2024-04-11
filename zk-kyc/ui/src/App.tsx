@@ -1,4 +1,4 @@
-import { WagmiConfig, createConfig } from "wagmi";
+import { WagmiConfig, createConfig, sepolia } from "wagmi";
 import {
   ConnectKitProvider,
   ConnectKitButton,
@@ -7,7 +7,6 @@ import {
 import { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import Steps from "./components/Steps";
-import { goerli } from "wagmi/chains";
 import "react-toastify/dist/ReactToastify.css";
 import { clearCookies } from "./libs/utils";
 
@@ -18,7 +17,7 @@ const config = createConfig(
     alchemyId: VITE_ALCHEMY_ID,
     walletConnectProjectId: VITE_WALLET_CONNECT_ID,
     appName: "zk-KYC",
-    chains: [goerli],
+    chains: [sepolia],
   })
 );
 

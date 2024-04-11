@@ -1,12 +1,11 @@
 import React, { useState, useCallback } from "react";
-import Cookies from "js-cookie";
 
 interface ProveProps {
   disabled: boolean;
   onNext: () => void;
 }
 
-const Prove: React.FC<ProveProps> = ({ disabled, onNext }) => {
+const Prove: React.FC<ProveProps> = ({ disabled }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { VITE_API_HOST } = import.meta.env;
@@ -14,46 +13,35 @@ const Prove: React.FC<ProveProps> = ({ disabled, onNext }) => {
   const handleClick = useCallback(async () => {
     setIsLoading(true);
 
-    // Initialize a WebSocket connection
-    const socket = new WebSocket(VITE_API_HOST);
-    const idToken = Cookies.get("id_token");
+    const jwtCookie = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("id_token="));
+    const jwt = jwtCookie?.split("=")[1];
 
-    const jwt = idToken;
-    const openHandler = () => {
-      const message = JSON.stringify({ jwt });
-      socket.send(message);
-    };
-
-    const messageHandler = (event: MessageEvent) => {
-      document.cookie = `snark=${event.data}`;
-      onNext();
+    if (!jwt) {
+      console.error("JWT not found");
       setIsLoading(false);
-    };
+      return;
+    }
 
-    const errorHandler = (event: Event) => {
-      console.error("WebSocket error: ", event);
-      setIsLoading(false); // Set loading state to false if an error occurs
-    };
+    try {
+      const response = await fetch(`${VITE_API_HOST}/authenticate`, {
+        method: "GET",
+        headers: {
+          "X-Auth-Token": jwt,
+        },
+      });
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const closeHandler = (_event: CloseEvent) => {
-      socket.close();
-      setIsLoading(false); // Set loading state to false when the socket is closed
-    };
-
-    // Setup WebSocket event listeners
-    socket.addEventListener("open", openHandler);
-    socket.addEventListener("message", messageHandler);
-    socket.addEventListener("error", errorHandler);
-    socket.addEventListener("close", closeHandler);
-
-    // Clean up the event listeners when the component unmounts or if the WebSocket closes
-    return () => {
-      socket.removeEventListener("open", openHandler);
-      socket.removeEventListener("message", messageHandler);
-      socket.removeEventListener("error", errorHandler);
-      socket.removeEventListener("close", closeHandler);
-    };
+      if (response.ok) {
+        await response.body;
+      } else {
+        throw new Error("Response not OK");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setIsLoading(false);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
