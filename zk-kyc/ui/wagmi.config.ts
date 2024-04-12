@@ -25,7 +25,7 @@ export default defineConfig({
       chainId: sepolia.id,
       contracts: [
         {
-          name: "ZID",
+          name: "zkKYC",
           address: {
             [sepolia.id]: process.env.VITE_CUSTODY_ADDRESS as `0x${string}`,
           },

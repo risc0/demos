@@ -2,12 +2,12 @@ import {
   useContractRead,
   UseContractReadConfig,
   useContractWrite,
-  Address,
   UseContractWriteConfig,
   usePrepareContractWrite,
   UsePrepareContractWriteConfig,
   useContractEvent,
   UseContractEventConfig,
+  Address,
 } from 'wagmi'
 import {
   ReadContractResult,
@@ -16,13 +16,114 @@ import {
 } from 'wagmi/actions'
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// ZID
+// erc20
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const erc20ABI = [
+  {
+    type: 'event',
+    inputs: [
+      { name: 'owner', type: 'address', indexed: true },
+      { name: 'spender', type: 'address', indexed: true },
+      { name: 'value', type: 'uint256', indexed: false },
+    ],
+    name: 'Approval',
+  },
+  {
+    type: 'event',
+    inputs: [
+      { name: 'from', type: 'address', indexed: true },
+      { name: 'to', type: 'address', indexed: true },
+      { name: 'value', type: 'uint256', indexed: false },
+    ],
+    name: 'Transfer',
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [
+      { name: 'owner', type: 'address' },
+      { name: 'spender', type: 'address' },
+    ],
+    name: 'allowance',
+    outputs: [{ name: '', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'spender', type: 'address' },
+      { name: 'amount', type: 'uint256' },
+    ],
+    name: 'approve',
+    outputs: [{ name: '', type: 'bool' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: 'account', type: 'address' }],
+    name: 'balanceOf',
+    outputs: [{ name: '', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'decimals',
+    outputs: [{ name: '', type: 'uint8' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'name',
+    outputs: [{ name: '', type: 'string' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'symbol',
+    outputs: [{ name: '', type: 'string' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'totalSupply',
+    outputs: [{ name: '', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'recipient', type: 'address' },
+      { name: 'amount', type: 'uint256' },
+    ],
+    name: 'transfer',
+    outputs: [{ name: '', type: 'bool' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'sender', type: 'address' },
+      { name: 'recipient', type: 'address' },
+      { name: 'amount', type: 'uint256' },
+    ],
+    name: 'transferFrom',
+    outputs: [{ name: '', type: 'bool' }],
+  },
+] as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// zkKYC
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
  */
-export const zidABI = [
+export const zkKycABI = [
   {
     stateMutability: 'nonpayable',
     type: 'constructor',
@@ -336,837 +437,20 @@ export const zidABI = [
 ] as const
 
 /**
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
  */
-export const zidAddress = {
-  11155111: '0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8',
+export const zkKycAddress = {
+  11155111: '0xFB10BdFc968ab4434362109a9110A21b03bF99d5',
 } as const
 
 /**
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
  */
-export const zidConfig = { address: zidAddress, abi: zidABI } as const
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// erc20
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-export const erc20ABI = [
-  {
-    type: 'event',
-    inputs: [
-      { name: 'owner', type: 'address', indexed: true },
-      { name: 'spender', type: 'address', indexed: true },
-      { name: 'value', type: 'uint256', indexed: false },
-    ],
-    name: 'Approval',
-  },
-  {
-    type: 'event',
-    inputs: [
-      { name: 'from', type: 'address', indexed: true },
-      { name: 'to', type: 'address', indexed: true },
-      { name: 'value', type: 'uint256', indexed: false },
-    ],
-    name: 'Transfer',
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [
-      { name: 'owner', type: 'address' },
-      { name: 'spender', type: 'address' },
-    ],
-    name: 'allowance',
-    outputs: [{ name: '', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: 'spender', type: 'address' },
-      { name: 'amount', type: 'uint256' },
-    ],
-    name: 'approve',
-    outputs: [{ name: '', type: 'bool' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: 'account', type: 'address' }],
-    name: 'balanceOf',
-    outputs: [{ name: '', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'decimals',
-    outputs: [{ name: '', type: 'uint8' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'name',
-    outputs: [{ name: '', type: 'string' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'symbol',
-    outputs: [{ name: '', type: 'string' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'totalSupply',
-    outputs: [{ name: '', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: 'recipient', type: 'address' },
-      { name: 'amount', type: 'uint256' },
-    ],
-    name: 'transfer',
-    outputs: [{ name: '', type: 'bool' }],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: 'sender', type: 'address' },
-      { name: 'recipient', type: 'address' },
-      { name: 'amount', type: 'uint256' },
-    ],
-    name: 'transferFrom',
-    outputs: [{ name: '', type: 'bool' }],
-  },
-] as const
+export const zkKycConfig = { address: zkKycAddress, abi: zkKycABI } as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // React
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link zidABI}__.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function useZidRead<
-  TFunctionName extends string,
-  TSelectData = ReadContractResult<typeof zidABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>,
-    'abi' | 'address'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return useContractRead({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    ...config,
-  } as UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>)
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"balanceOf"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function useZidBalanceOf<
-  TFunctionName extends 'balanceOf',
-  TSelectData = ReadContractResult<typeof zidABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return useContractRead({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    functionName: 'balanceOf',
-    ...config,
-  } as UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>)
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"getApproved"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function useZidGetApproved<
-  TFunctionName extends 'getApproved',
-  TSelectData = ReadContractResult<typeof zidABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return useContractRead({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    functionName: 'getApproved',
-    ...config,
-  } as UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>)
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"imageId"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function useZidImageId<
-  TFunctionName extends 'imageId',
-  TSelectData = ReadContractResult<typeof zidABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return useContractRead({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    functionName: 'imageId',
-    ...config,
-  } as UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>)
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"isApprovedForAll"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function useZidIsApprovedForAll<
-  TFunctionName extends 'isApprovedForAll',
-  TSelectData = ReadContractResult<typeof zidABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return useContractRead({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    functionName: 'isApprovedForAll',
-    ...config,
-  } as UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>)
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"name"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function useZidName<
-  TFunctionName extends 'name',
-  TSelectData = ReadContractResult<typeof zidABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return useContractRead({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    functionName: 'name',
-    ...config,
-  } as UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>)
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"ownerOf"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function useZidOwnerOf<
-  TFunctionName extends 'ownerOf',
-  TSelectData = ReadContractResult<typeof zidABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return useContractRead({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    functionName: 'ownerOf',
-    ...config,
-  } as UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>)
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"supportsInterface"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function useZidSupportsInterface<
-  TFunctionName extends 'supportsInterface',
-  TSelectData = ReadContractResult<typeof zidABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return useContractRead({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    functionName: 'supportsInterface',
-    ...config,
-  } as UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>)
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"symbol"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function useZidSymbol<
-  TFunctionName extends 'symbol',
-  TSelectData = ReadContractResult<typeof zidABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return useContractRead({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    functionName: 'symbol',
-    ...config,
-  } as UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>)
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"tokenURI"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function useZidTokenUri<
-  TFunctionName extends 'tokenURI',
-  TSelectData = ReadContractResult<typeof zidABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return useContractRead({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    functionName: 'tokenURI',
-    ...config,
-  } as UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>)
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"verifier"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function useZidVerifier<
-  TFunctionName extends 'verifier',
-  TSelectData = ReadContractResult<typeof zidABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return useContractRead({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    functionName: 'verifier',
-    ...config,
-  } as UseContractReadConfig<typeof zidABI, TFunctionName, TSelectData>)
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zidABI}__.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function useZidWrite<
-  TFunctionName extends string,
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof zidAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof zidABI, string>['request']['abi'],
-        TFunctionName,
-        TMode
-      > & { address?: Address; chainId?: TChainId }
-    : UseContractWriteConfig<typeof zidABI, TFunctionName, TMode> & {
-        abi?: never
-        address?: never
-        chainId?: TChainId
-      } = {} as any,
-) {
-  return useContractWrite<typeof zidABI, TFunctionName, TMode>({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    ...config,
-  } as any)
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"approve"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function useZidApprove<
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof zidAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof zidABI, 'approve'>['request']['abi'],
-        'approve',
-        TMode
-      > & { address?: Address; chainId?: TChainId; functionName?: 'approve' }
-    : UseContractWriteConfig<typeof zidABI, 'approve', TMode> & {
-        abi?: never
-        address?: never
-        chainId?: TChainId
-        functionName?: 'approve'
-      } = {} as any,
-) {
-  return useContractWrite<typeof zidABI, 'approve', TMode>({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    functionName: 'approve',
-    ...config,
-  } as any)
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"burn"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function useZidBurn<
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof zidAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof zidABI, 'burn'>['request']['abi'],
-        'burn',
-        TMode
-      > & { address?: Address; chainId?: TChainId; functionName?: 'burn' }
-    : UseContractWriteConfig<typeof zidABI, 'burn', TMode> & {
-        abi?: never
-        address?: never
-        chainId?: TChainId
-        functionName?: 'burn'
-      } = {} as any,
-) {
-  return useContractWrite<typeof zidABI, 'burn', TMode>({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    functionName: 'burn',
-    ...config,
-  } as any)
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"mint"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function useZidMint<
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof zidAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof zidABI, 'mint'>['request']['abi'],
-        'mint',
-        TMode
-      > & { address?: Address; chainId?: TChainId; functionName?: 'mint' }
-    : UseContractWriteConfig<typeof zidABI, 'mint', TMode> & {
-        abi?: never
-        address?: never
-        chainId?: TChainId
-        functionName?: 'mint'
-      } = {} as any,
-) {
-  return useContractWrite<typeof zidABI, 'mint', TMode>({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    functionName: 'mint',
-    ...config,
-  } as any)
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"safeTransferFrom"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function useZidSafeTransferFrom<
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof zidAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof zidABI,
-          'safeTransferFrom'
-        >['request']['abi'],
-        'safeTransferFrom',
-        TMode
-      > & {
-        address?: Address
-        chainId?: TChainId
-        functionName?: 'safeTransferFrom'
-      }
-    : UseContractWriteConfig<typeof zidABI, 'safeTransferFrom', TMode> & {
-        abi?: never
-        address?: never
-        chainId?: TChainId
-        functionName?: 'safeTransferFrom'
-      } = {} as any,
-) {
-  return useContractWrite<typeof zidABI, 'safeTransferFrom', TMode>({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    functionName: 'safeTransferFrom',
-    ...config,
-  } as any)
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"setApprovalForAll"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function useZidSetApprovalForAll<
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof zidAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof zidABI,
-          'setApprovalForAll'
-        >['request']['abi'],
-        'setApprovalForAll',
-        TMode
-      > & {
-        address?: Address
-        chainId?: TChainId
-        functionName?: 'setApprovalForAll'
-      }
-    : UseContractWriteConfig<typeof zidABI, 'setApprovalForAll', TMode> & {
-        abi?: never
-        address?: never
-        chainId?: TChainId
-        functionName?: 'setApprovalForAll'
-      } = {} as any,
-) {
-  return useContractWrite<typeof zidABI, 'setApprovalForAll', TMode>({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    functionName: 'setApprovalForAll',
-    ...config,
-  } as any)
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"transferFrom"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function useZidTransferFrom<
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof zidAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof zidABI,
-          'transferFrom'
-        >['request']['abi'],
-        'transferFrom',
-        TMode
-      > & {
-        address?: Address
-        chainId?: TChainId
-        functionName?: 'transferFrom'
-      }
-    : UseContractWriteConfig<typeof zidABI, 'transferFrom', TMode> & {
-        abi?: never
-        address?: never
-        chainId?: TChainId
-        functionName?: 'transferFrom'
-      } = {} as any,
-) {
-  return useContractWrite<typeof zidABI, 'transferFrom', TMode>({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    functionName: 'transferFrom',
-    ...config,
-  } as any)
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zidABI}__.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function usePrepareZidWrite<TFunctionName extends string>(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof zidABI, TFunctionName>,
-    'abi' | 'address'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof zidABI, TFunctionName>)
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"approve"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function usePrepareZidApprove(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof zidABI, 'approve'>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    functionName: 'approve',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof zidABI, 'approve'>)
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"burn"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function usePrepareZidBurn(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof zidABI, 'burn'>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    functionName: 'burn',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof zidABI, 'burn'>)
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"mint"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function usePrepareZidMint(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof zidABI, 'mint'>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    functionName: 'mint',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof zidABI, 'mint'>)
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"safeTransferFrom"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function usePrepareZidSafeTransferFrom(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof zidABI, 'safeTransferFrom'>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    functionName: 'safeTransferFrom',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof zidABI, 'safeTransferFrom'>)
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"setApprovalForAll"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function usePrepareZidSetApprovalForAll(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof zidABI, 'setApprovalForAll'>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    functionName: 'setApprovalForAll',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof zidABI, 'setApprovalForAll'>)
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zidABI}__ and `functionName` set to `"transferFrom"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function usePrepareZidTransferFrom(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof zidABI, 'transferFrom'>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    functionName: 'transferFrom',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof zidABI, 'transferFrom'>)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zidABI}__.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function useZidEvent<TEventName extends string>(
-  config: Omit<
-    UseContractEventConfig<typeof zidABI, TEventName>,
-    'abi' | 'address'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return useContractEvent({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    ...config,
-  } as UseContractEventConfig<typeof zidABI, TEventName>)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zidABI}__ and `eventName` set to `"Approval"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function useZidApprovalEvent(
-  config: Omit<
-    UseContractEventConfig<typeof zidABI, 'Approval'>,
-    'abi' | 'address' | 'eventName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return useContractEvent({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    eventName: 'Approval',
-    ...config,
-  } as UseContractEventConfig<typeof zidABI, 'Approval'>)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zidABI}__ and `eventName` set to `"ApprovalForAll"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function useZidApprovalForAllEvent(
-  config: Omit<
-    UseContractEventConfig<typeof zidABI, 'ApprovalForAll'>,
-    'abi' | 'address' | 'eventName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return useContractEvent({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    eventName: 'ApprovalForAll',
-    ...config,
-  } as UseContractEventConfig<typeof zidABI, 'ApprovalForAll'>)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zidABI}__ and `eventName` set to `"Burned"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function useZidBurnedEvent(
-  config: Omit<
-    UseContractEventConfig<typeof zidABI, 'Burned'>,
-    'abi' | 'address' | 'eventName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return useContractEvent({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    eventName: 'Burned',
-    ...config,
-  } as UseContractEventConfig<typeof zidABI, 'Burned'>)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zidABI}__ and `eventName` set to `"Minted"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function useZidMintedEvent(
-  config: Omit<
-    UseContractEventConfig<typeof zidABI, 'Minted'>,
-    'abi' | 'address' | 'eventName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return useContractEvent({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    eventName: 'Minted',
-    ...config,
-  } as UseContractEventConfig<typeof zidABI, 'Minted'>)
-}
-
-/**
- * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zidABI}__ and `eventName` set to `"Transfer"`.
- *
- * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0x2e42DD957B1C5529FF94DC474FdAdc5afBD031D8)
- */
-export function useZidTransferEvent(
-  config: Omit<
-    UseContractEventConfig<typeof zidABI, 'Transfer'>,
-    'abi' | 'address' | 'eventName'
-  > & { chainId?: keyof typeof zidAddress } = {} as any,
-) {
-  return useContractEvent({
-    abi: zidABI,
-    address: zidAddress[11155111],
-    eventName: 'Transfer',
-    ...config,
-  } as UseContractEventConfig<typeof zidABI, 'Transfer'>)
-}
 
 /**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link erc20ABI}__.
@@ -1509,4 +793,723 @@ export function useErc20TransferEvent(
     eventName: 'Transfer',
     ...config,
   } as UseContractEventConfig<typeof erc20ABI, 'Transfer'>)
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link zkKycABI}__.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function useZkKycRead<
+  TFunctionName extends string,
+  TSelectData = ReadContractResult<typeof zkKycABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof zkKycABI, TFunctionName, TSelectData>,
+    'abi' | 'address'
+  > & { chainId?: keyof typeof zkKycAddress } = {} as any,
+) {
+  return useContractRead({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    ...config,
+  } as UseContractReadConfig<typeof zkKycABI, TFunctionName, TSelectData>)
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link zkKycABI}__ and `functionName` set to `"balanceOf"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function useZkKycBalanceOf<
+  TFunctionName extends 'balanceOf',
+  TSelectData = ReadContractResult<typeof zkKycABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof zkKycABI, TFunctionName, TSelectData>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof zkKycAddress } = {} as any,
+) {
+  return useContractRead({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    functionName: 'balanceOf',
+    ...config,
+  } as UseContractReadConfig<typeof zkKycABI, TFunctionName, TSelectData>)
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link zkKycABI}__ and `functionName` set to `"getApproved"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function useZkKycGetApproved<
+  TFunctionName extends 'getApproved',
+  TSelectData = ReadContractResult<typeof zkKycABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof zkKycABI, TFunctionName, TSelectData>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof zkKycAddress } = {} as any,
+) {
+  return useContractRead({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    functionName: 'getApproved',
+    ...config,
+  } as UseContractReadConfig<typeof zkKycABI, TFunctionName, TSelectData>)
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link zkKycABI}__ and `functionName` set to `"imageId"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function useZkKycImageId<
+  TFunctionName extends 'imageId',
+  TSelectData = ReadContractResult<typeof zkKycABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof zkKycABI, TFunctionName, TSelectData>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof zkKycAddress } = {} as any,
+) {
+  return useContractRead({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    functionName: 'imageId',
+    ...config,
+  } as UseContractReadConfig<typeof zkKycABI, TFunctionName, TSelectData>)
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link zkKycABI}__ and `functionName` set to `"isApprovedForAll"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function useZkKycIsApprovedForAll<
+  TFunctionName extends 'isApprovedForAll',
+  TSelectData = ReadContractResult<typeof zkKycABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof zkKycABI, TFunctionName, TSelectData>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof zkKycAddress } = {} as any,
+) {
+  return useContractRead({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    functionName: 'isApprovedForAll',
+    ...config,
+  } as UseContractReadConfig<typeof zkKycABI, TFunctionName, TSelectData>)
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link zkKycABI}__ and `functionName` set to `"name"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function useZkKycName<
+  TFunctionName extends 'name',
+  TSelectData = ReadContractResult<typeof zkKycABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof zkKycABI, TFunctionName, TSelectData>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof zkKycAddress } = {} as any,
+) {
+  return useContractRead({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    functionName: 'name',
+    ...config,
+  } as UseContractReadConfig<typeof zkKycABI, TFunctionName, TSelectData>)
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link zkKycABI}__ and `functionName` set to `"ownerOf"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function useZkKycOwnerOf<
+  TFunctionName extends 'ownerOf',
+  TSelectData = ReadContractResult<typeof zkKycABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof zkKycABI, TFunctionName, TSelectData>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof zkKycAddress } = {} as any,
+) {
+  return useContractRead({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    functionName: 'ownerOf',
+    ...config,
+  } as UseContractReadConfig<typeof zkKycABI, TFunctionName, TSelectData>)
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link zkKycABI}__ and `functionName` set to `"supportsInterface"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function useZkKycSupportsInterface<
+  TFunctionName extends 'supportsInterface',
+  TSelectData = ReadContractResult<typeof zkKycABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof zkKycABI, TFunctionName, TSelectData>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof zkKycAddress } = {} as any,
+) {
+  return useContractRead({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    functionName: 'supportsInterface',
+    ...config,
+  } as UseContractReadConfig<typeof zkKycABI, TFunctionName, TSelectData>)
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link zkKycABI}__ and `functionName` set to `"symbol"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function useZkKycSymbol<
+  TFunctionName extends 'symbol',
+  TSelectData = ReadContractResult<typeof zkKycABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof zkKycABI, TFunctionName, TSelectData>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof zkKycAddress } = {} as any,
+) {
+  return useContractRead({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    functionName: 'symbol',
+    ...config,
+  } as UseContractReadConfig<typeof zkKycABI, TFunctionName, TSelectData>)
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link zkKycABI}__ and `functionName` set to `"tokenURI"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function useZkKycTokenUri<
+  TFunctionName extends 'tokenURI',
+  TSelectData = ReadContractResult<typeof zkKycABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof zkKycABI, TFunctionName, TSelectData>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof zkKycAddress } = {} as any,
+) {
+  return useContractRead({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    functionName: 'tokenURI',
+    ...config,
+  } as UseContractReadConfig<typeof zkKycABI, TFunctionName, TSelectData>)
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link zkKycABI}__ and `functionName` set to `"verifier"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function useZkKycVerifier<
+  TFunctionName extends 'verifier',
+  TSelectData = ReadContractResult<typeof zkKycABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof zkKycABI, TFunctionName, TSelectData>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof zkKycAddress } = {} as any,
+) {
+  return useContractRead({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    functionName: 'verifier',
+    ...config,
+  } as UseContractReadConfig<typeof zkKycABI, TFunctionName, TSelectData>)
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zkKycABI}__.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function useZkKycWrite<
+  TFunctionName extends string,
+  TMode extends WriteContractMode = undefined,
+  TChainId extends number = keyof typeof zkKycAddress,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof zkKycABI, string>['request']['abi'],
+        TFunctionName,
+        TMode
+      > & { address?: Address; chainId?: TChainId }
+    : UseContractWriteConfig<typeof zkKycABI, TFunctionName, TMode> & {
+        abi?: never
+        address?: never
+        chainId?: TChainId
+      } = {} as any,
+) {
+  return useContractWrite<typeof zkKycABI, TFunctionName, TMode>({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    ...config,
+  } as any)
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zkKycABI}__ and `functionName` set to `"approve"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function useZkKycApprove<
+  TMode extends WriteContractMode = undefined,
+  TChainId extends number = keyof typeof zkKycAddress,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<
+          typeof zkKycABI,
+          'approve'
+        >['request']['abi'],
+        'approve',
+        TMode
+      > & { address?: Address; chainId?: TChainId; functionName?: 'approve' }
+    : UseContractWriteConfig<typeof zkKycABI, 'approve', TMode> & {
+        abi?: never
+        address?: never
+        chainId?: TChainId
+        functionName?: 'approve'
+      } = {} as any,
+) {
+  return useContractWrite<typeof zkKycABI, 'approve', TMode>({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    functionName: 'approve',
+    ...config,
+  } as any)
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zkKycABI}__ and `functionName` set to `"burn"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function useZkKycBurn<
+  TMode extends WriteContractMode = undefined,
+  TChainId extends number = keyof typeof zkKycAddress,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof zkKycABI, 'burn'>['request']['abi'],
+        'burn',
+        TMode
+      > & { address?: Address; chainId?: TChainId; functionName?: 'burn' }
+    : UseContractWriteConfig<typeof zkKycABI, 'burn', TMode> & {
+        abi?: never
+        address?: never
+        chainId?: TChainId
+        functionName?: 'burn'
+      } = {} as any,
+) {
+  return useContractWrite<typeof zkKycABI, 'burn', TMode>({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    functionName: 'burn',
+    ...config,
+  } as any)
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zkKycABI}__ and `functionName` set to `"mint"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function useZkKycMint<
+  TMode extends WriteContractMode = undefined,
+  TChainId extends number = keyof typeof zkKycAddress,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof zkKycABI, 'mint'>['request']['abi'],
+        'mint',
+        TMode
+      > & { address?: Address; chainId?: TChainId; functionName?: 'mint' }
+    : UseContractWriteConfig<typeof zkKycABI, 'mint', TMode> & {
+        abi?: never
+        address?: never
+        chainId?: TChainId
+        functionName?: 'mint'
+      } = {} as any,
+) {
+  return useContractWrite<typeof zkKycABI, 'mint', TMode>({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    functionName: 'mint',
+    ...config,
+  } as any)
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zkKycABI}__ and `functionName` set to `"safeTransferFrom"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function useZkKycSafeTransferFrom<
+  TMode extends WriteContractMode = undefined,
+  TChainId extends number = keyof typeof zkKycAddress,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<
+          typeof zkKycABI,
+          'safeTransferFrom'
+        >['request']['abi'],
+        'safeTransferFrom',
+        TMode
+      > & {
+        address?: Address
+        chainId?: TChainId
+        functionName?: 'safeTransferFrom'
+      }
+    : UseContractWriteConfig<typeof zkKycABI, 'safeTransferFrom', TMode> & {
+        abi?: never
+        address?: never
+        chainId?: TChainId
+        functionName?: 'safeTransferFrom'
+      } = {} as any,
+) {
+  return useContractWrite<typeof zkKycABI, 'safeTransferFrom', TMode>({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    functionName: 'safeTransferFrom',
+    ...config,
+  } as any)
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zkKycABI}__ and `functionName` set to `"setApprovalForAll"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function useZkKycSetApprovalForAll<
+  TMode extends WriteContractMode = undefined,
+  TChainId extends number = keyof typeof zkKycAddress,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<
+          typeof zkKycABI,
+          'setApprovalForAll'
+        >['request']['abi'],
+        'setApprovalForAll',
+        TMode
+      > & {
+        address?: Address
+        chainId?: TChainId
+        functionName?: 'setApprovalForAll'
+      }
+    : UseContractWriteConfig<typeof zkKycABI, 'setApprovalForAll', TMode> & {
+        abi?: never
+        address?: never
+        chainId?: TChainId
+        functionName?: 'setApprovalForAll'
+      } = {} as any,
+) {
+  return useContractWrite<typeof zkKycABI, 'setApprovalForAll', TMode>({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    functionName: 'setApprovalForAll',
+    ...config,
+  } as any)
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link zkKycABI}__ and `functionName` set to `"transferFrom"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function useZkKycTransferFrom<
+  TMode extends WriteContractMode = undefined,
+  TChainId extends number = keyof typeof zkKycAddress,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<
+          typeof zkKycABI,
+          'transferFrom'
+        >['request']['abi'],
+        'transferFrom',
+        TMode
+      > & {
+        address?: Address
+        chainId?: TChainId
+        functionName?: 'transferFrom'
+      }
+    : UseContractWriteConfig<typeof zkKycABI, 'transferFrom', TMode> & {
+        abi?: never
+        address?: never
+        chainId?: TChainId
+        functionName?: 'transferFrom'
+      } = {} as any,
+) {
+  return useContractWrite<typeof zkKycABI, 'transferFrom', TMode>({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    functionName: 'transferFrom',
+    ...config,
+  } as any)
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zkKycABI}__.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function usePrepareZkKycWrite<TFunctionName extends string>(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof zkKycABI, TFunctionName>,
+    'abi' | 'address'
+  > & { chainId?: keyof typeof zkKycAddress } = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof zkKycABI, TFunctionName>)
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zkKycABI}__ and `functionName` set to `"approve"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function usePrepareZkKycApprove(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof zkKycABI, 'approve'>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof zkKycAddress } = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    functionName: 'approve',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof zkKycABI, 'approve'>)
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zkKycABI}__ and `functionName` set to `"burn"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function usePrepareZkKycBurn(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof zkKycABI, 'burn'>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof zkKycAddress } = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    functionName: 'burn',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof zkKycABI, 'burn'>)
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zkKycABI}__ and `functionName` set to `"mint"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function usePrepareZkKycMint(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof zkKycABI, 'mint'>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof zkKycAddress } = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    functionName: 'mint',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof zkKycABI, 'mint'>)
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zkKycABI}__ and `functionName` set to `"safeTransferFrom"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function usePrepareZkKycSafeTransferFrom(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof zkKycABI, 'safeTransferFrom'>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof zkKycAddress } = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    functionName: 'safeTransferFrom',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof zkKycABI, 'safeTransferFrom'>)
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zkKycABI}__ and `functionName` set to `"setApprovalForAll"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function usePrepareZkKycSetApprovalForAll(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof zkKycABI, 'setApprovalForAll'>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof zkKycAddress } = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    functionName: 'setApprovalForAll',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof zkKycABI, 'setApprovalForAll'>)
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link zkKycABI}__ and `functionName` set to `"transferFrom"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function usePrepareZkKycTransferFrom(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof zkKycABI, 'transferFrom'>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof zkKycAddress } = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    functionName: 'transferFrom',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof zkKycABI, 'transferFrom'>)
+}
+
+/**
+ * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zkKycABI}__.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function useZkKycEvent<TEventName extends string>(
+  config: Omit<
+    UseContractEventConfig<typeof zkKycABI, TEventName>,
+    'abi' | 'address'
+  > & { chainId?: keyof typeof zkKycAddress } = {} as any,
+) {
+  return useContractEvent({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    ...config,
+  } as UseContractEventConfig<typeof zkKycABI, TEventName>)
+}
+
+/**
+ * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zkKycABI}__ and `eventName` set to `"Approval"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function useZkKycApprovalEvent(
+  config: Omit<
+    UseContractEventConfig<typeof zkKycABI, 'Approval'>,
+    'abi' | 'address' | 'eventName'
+  > & { chainId?: keyof typeof zkKycAddress } = {} as any,
+) {
+  return useContractEvent({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    eventName: 'Approval',
+    ...config,
+  } as UseContractEventConfig<typeof zkKycABI, 'Approval'>)
+}
+
+/**
+ * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zkKycABI}__ and `eventName` set to `"ApprovalForAll"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function useZkKycApprovalForAllEvent(
+  config: Omit<
+    UseContractEventConfig<typeof zkKycABI, 'ApprovalForAll'>,
+    'abi' | 'address' | 'eventName'
+  > & { chainId?: keyof typeof zkKycAddress } = {} as any,
+) {
+  return useContractEvent({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    eventName: 'ApprovalForAll',
+    ...config,
+  } as UseContractEventConfig<typeof zkKycABI, 'ApprovalForAll'>)
+}
+
+/**
+ * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zkKycABI}__ and `eventName` set to `"Burned"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function useZkKycBurnedEvent(
+  config: Omit<
+    UseContractEventConfig<typeof zkKycABI, 'Burned'>,
+    'abi' | 'address' | 'eventName'
+  > & { chainId?: keyof typeof zkKycAddress } = {} as any,
+) {
+  return useContractEvent({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    eventName: 'Burned',
+    ...config,
+  } as UseContractEventConfig<typeof zkKycABI, 'Burned'>)
+}
+
+/**
+ * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zkKycABI}__ and `eventName` set to `"Minted"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function useZkKycMintedEvent(
+  config: Omit<
+    UseContractEventConfig<typeof zkKycABI, 'Minted'>,
+    'abi' | 'address' | 'eventName'
+  > & { chainId?: keyof typeof zkKycAddress } = {} as any,
+) {
+  return useContractEvent({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    eventName: 'Minted',
+    ...config,
+  } as UseContractEventConfig<typeof zkKycABI, 'Minted'>)
+}
+
+/**
+ * Wraps __{@link useContractEvent}__ with `abi` set to __{@link zkKycABI}__ and `eventName` set to `"Transfer"`.
+ *
+ * [__View Contract on Sepolia Etherscan__](https://sepolia.etherscan.io/address/0xFB10BdFc968ab4434362109a9110A21b03bF99d5)
+ */
+export function useZkKycTransferEvent(
+  config: Omit<
+    UseContractEventConfig<typeof zkKycABI, 'Transfer'>,
+    'abi' | 'address' | 'eventName'
+  > & { chainId?: keyof typeof zkKycAddress } = {} as any,
+) {
+  return useContractEvent({
+    abi: zkKycABI,
+    address: zkKycAddress[11155111],
+    eventName: 'Transfer',
+    ...config,
+  } as UseContractEventConfig<typeof zkKycABI, 'Transfer'>)
 }
