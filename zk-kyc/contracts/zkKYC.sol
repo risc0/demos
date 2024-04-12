@@ -37,8 +37,9 @@ contract zkKYC is ERC721 {
     }
 
     function mint(address to, bytes32 claimId, bytes32 postStateDigest, bytes calldata seal) public {
-        if (to == address(0)) revert InvalidMint("Invalid recipient address");
-        if (claimId == bytes32(0)) revert InvalidMint("Empty claimId");
+        if (to == address(0)) revert InvalidMint("mint::Invalid recipient address");
+        if (claimId == bytes32(0)) revert InvalidMint("mint::Empty claimId");
+        if (balanceOf(to) != 0) revert InvalidMint("mint::Already Minted");
         if (!verifier.verify(seal, imageId, postStateDigest, sha256(abi.encode(to, claimId)))) {
             revert InvalidMint("mint::Invalid proof");
         }

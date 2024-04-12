@@ -160,4 +160,41 @@ contract EvenNumberTest is RiscZeroCheats, Test {
 
         kyc.mint(msg.sender, keccak256(abi.encodePacked("test")), post_state_digest, seal);
     }
+
+    function testFail_MintMany() public {
+        string memory jwt =
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ijg3OTJlN2MyYTJiN2MxYWI5MjRlMTU4YTRlYzRjZjUxIn0.eyJlbWFpbCI6ImJvYkBlbWFpbC5jb20iLCJub25jZSI6IjB4MUQ5NkYyZjZCZUYxMjAyRTRDZTFGZjZEYWQwYzJDQjAwMjg2MWQzZSJ9.Ad3Hr5SOo0uDQ-uOldnXVhlkJIClfWJE6UsnWWDTgFNGEYqAYpbqIqPSrUIMPMy9ZHZhnQGJJcED0krQTlys5UfN6K9THo-CnIa72EhHWtALJC3XcuaFZ-iNCbFYQtaL6M7Bu4NtdlllcsUYU9V3Q2h6xOGlMjGmwOr0xQjwnI-qpny5ctzlAjGsa4E9Y2_Hu_iBQ483Yv01g31H34efGamPf8rqBDXtHobsX2W7FGYnOWLLP4nZD8obn3g-6ny5joIlx3IklAE0t7M5E98kNVKc5P7_J7e3LdEQ-0AzYcBvPvx3F29kyYa4mevPTulU2kxtCKue8EMFu7nFE0VZHQ";
+        uint256 id_provider = 1;
+
+        Input memory input = Input({id_provider: id_provider, jwt: jwt});
+
+        (bytes memory journal, bytes32 post_state_digest, bytes memory seal) =
+            prove(Elf.JWT_VALIDATOR_PATH, abi.encode(input));
+
+        vm.prank(alice);
+        kyc.mint(alice, keccak256(abi.encodePacked("test")), post_state_digest, seal);
+
+        vm.prank(alice);
+        kyc.mint(alice, keccak256(abi.encodePacked("test_agian")), post_state_digest, seal);
+    }
+
+    function test_MintBurnMint() public {
+        string memory jwt =
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ijg3OTJlN2MyYTJiN2MxYWI5MjRlMTU4YTRlYzRjZjUxIn0.eyJlbWFpbCI6ImJvYkBlbWFpbC5jb20iLCJub25jZSI6IjB4MUQ5NkYyZjZCZUYxMjAyRTRDZTFGZjZEYWQwYzJDQjAwMjg2MWQzZSJ9.Ad3Hr5SOo0uDQ-uOldnXVhlkJIClfWJE6UsnWWDTgFNGEYqAYpbqIqPSrUIMPMy9ZHZhnQGJJcED0krQTlys5UfN6K9THo-CnIa72EhHWtALJC3XcuaFZ-iNCbFYQtaL6M7Bu4NtdlllcsUYU9V3Q2h6xOGlMjGmwOr0xQjwnI-qpny5ctzlAjGsa4E9Y2_Hu_iBQ483Yv01g31H34efGamPf8rqBDXtHobsX2W7FGYnOWLLP4nZD8obn3g-6ny5joIlx3IklAE0t7M5E98kNVKc5P7_J7e3LdEQ-0AzYcBvPvx3F29kyYa4mevPTulU2kxtCKue8EMFu7nFE0VZHQ";
+        uint256 id_provider = 1;
+
+        Input memory input = Input({id_provider: id_provider, jwt: jwt});
+
+        (bytes memory journal, bytes32 post_state_digest, bytes memory seal) =
+            prove(Elf.JWT_VALIDATOR_PATH, abi.encode(input));
+
+        vm.prank(alice);
+        kyc.mint(alice, keccak256(abi.encodePacked("test")), post_state_digest, seal);
+
+        vm.prank(alice); 
+        kyc.burn(uint256(keccak256(abi.encodePacked("test"))));
+
+        vm.prank(alice);
+        kyc.mint(alice, keccak256(abi.encodePacked("test")), post_state_digest, seal);
+    }
 }
