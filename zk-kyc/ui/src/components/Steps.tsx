@@ -8,7 +8,7 @@ interface ClaimProps {}
 
 const Steps: React.FC<ClaimProps> = () => {
   const { isConnected } = useAccount();
-  const [jwtExists, ] = useState<boolean>(false);
+  const [jwtExists] = useState<boolean>(false);
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [userData, setUserData] = useState(null);
 
@@ -40,12 +40,11 @@ const Steps: React.FC<ClaimProps> = () => {
   useEffect(() => {
     if (!isConnected) {
       setCurrentStep(1);
-    } 
+    }
     if (isConnected) {
       setCurrentStep(2);
     }
   }, [isConnected]);
-
 
   const renderCurrentStep = () => {
     switch (currentStep) {
@@ -63,7 +62,6 @@ const Steps: React.FC<ClaimProps> = () => {
           </>
         );
       case 3:
-        console.log(userData);
         return (
           <>
             <h4>Prove Identity</h4>

@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from "react";
+import { useZkKycMintedEvent } from "../generated";
 
 interface ProveProps {
   disabled: boolean;
@@ -7,8 +8,15 @@ interface ProveProps {
 
 const Prove: React.FC<ProveProps> = ({ disabled }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isMinted, setIsMinted] = useState(false);
 
   const { VITE_API_HOST } = import.meta.env;
+
+  useZkKycMintedEvent({
+    listener: () => {
+      setIsMinted(true);
+    },
+  });
 
   const handleClick = useCallback(async () => {
     setIsLoading(true);
@@ -47,8 +55,11 @@ const Prove: React.FC<ProveProps> = ({ disabled }) => {
 
   return (
     <>
-      <button onClick={handleClick} disabled={isLoading || disabled}>
-        {isLoading ? "Proving..." : "Prove with Bonsai™"}
+      <button
+        onClick={handleClick}
+        disabled={isMinted || isLoading || disabled}
+      >
+        {isMinted ? "Minted" : isLoading ? "Proving..." : "Prove with Bonsai™"}
       </button>
       {isLoading && <p>This will take a couple of minutes...</p>}
     </>
