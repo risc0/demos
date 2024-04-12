@@ -1,10 +1,10 @@
 # Publisher/Subscriber Application
 
-The Publisher/Subscriber application is a simple application that listens for incoming JWT tokens, sends a proof request to the [Bonsai] proving service, and publishes the received proofs to a deployed Bonsai Pay contract on Ethereum. This application is useful for integrating the Bonsai proving service with a deployed Bonsai Pay contract and UI. 
+The Publisher/Subscriber application is a simple application that listens for incoming JWT tokens, sends a proof request to the [Bonsai] proving service, and publishes the received proofs to a deployed zk-KYC contract on Ethereum. This application is useful for integrating the Bonsai proving service with a deployed zk-KYC contract and UI. 
 
 ## Getting Started
 
-The [`pubsub` CLI][pubsub], is an application that listens for JWT tokens via HTTP, sends an off-chain proof request to the [Bonsai] proving service, and publishes the received proofs to the deployed Bonsai Pay contract.
+The [`pubsub` CLI][pubsub], is an application that listens for JWT tokens via HTTP, sends an off-chain proof request to the [Bonsai] proving service, and publishes the received proofs to the deployed zk-KYC contract.
 
 ### Usage
 
@@ -27,7 +27,7 @@ Options:
       --rpc-url <RPC_URL>
           Ethereum Node endpoint
       --contract <CONTRACT>
-          Bonsai Pay's contract address on Ethereum
+          zkKYC's contract address on Ethereum
   -h, --help
           Print help
   -V, --version

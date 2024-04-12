@@ -1,7 +1,7 @@
 # Solidity Contracts
 
 This directory contains the Solidity contracts for an application with [RISC Zero] on Ethereum.
-The example contract included within the template is [`EvenNumber.sol`](./EvenNumber.sol).
+The example contract included within the template is [`zkKYC.sol`](./zkKYC.sol).
 It holds a number, guaranteed to be even.
 
 The Solidity libraries for RISC Zero can be found at [github.com/risc0/risc0-ethereum].

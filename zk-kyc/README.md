@@ -1,27 +1,19 @@
-# RISC Zero Foundry Template
+# zk-KYC Demonstration Application
+> WARNING: this project is experimental and should not be used for any production use cases. Use at your own risk.
+
+The zk-KYC demo application allows individuals to verify and mint their identity as an NFT enabling onchain identity verification with zero-knowledge proofs.
+
+This demo leverages [ID.me](https://www.id.me/) to generate a client authentication token. The token includes a nonce that is associated with the user's connected wallet address, employing principles from the [OpenPubkey: Augmenting OpenID Connect with User held Signing Keys](https://eprint.iacr.org/2023/296) paper. The JWT's integrity is then verified within the guest using ID.me's public RS256 signing [certificates](https://api.id.me/oidc/.well-known/jwks). Subsequently, the guest generates a cryptographic proof of the JWT's integrity and issues a receipt. This receipt, containing the SNARK, an obfuscated identifier, and the user's address, can be validated on the onchain for ERC721 token minting or other transactions, if valid.
+
+For detailed information about the RISC Zero zkVM, refer to our developer [documentation](https://dev.risczero.com/api).
 
 > **Note: This software is not production ready. Do not use in production.**
 
-> Note: This template was recently updated to work without the relay.
-> If you'd like the relay version, head over to the [relay branch](https://github.com/risc0/bonsai-foundry-template/tree/relay)
+This is based on the [Bonsai Foundry Template] for writing an application using [RISC Zero] and Ethereum.
 
-Starter template for writing an application using [RISC Zero] and Ethereum.
+This repository implements the application on Ethereum utilizing RISC Zero as a [coprocessor] to the smart contract application. Prove computation with the [RISC Zero zkVM] and verify the results in your Ethereum contract. 
 
-This repository implements an application on Ethereum utilizing RISC Zero as a [coprocessor] to the smart contract application.
-It provides a starting point for building powerful new applications on Ethereum that offload computationally intensive (i.e. gas expensive), or would be difficult to implement Solidity (e.g. ed25519 signature verification, or HTML parsing).
-
-Prove computation with the [RISC Zero zkVM] and verify the results in your Ethereum contract.
-
-## Overview
-
-Here is a simplified overview of how devs can integrate RISC Zero, with [Bonsai] proving, into their Ethereum smart contracts:
-
-![RISC Zero Foundry Template Diagram](images/risc0-foundry-template.png)
-
-1. Run your application logic in the [RISC Zero zkVM]. The provided [publisher] app sends an off-chain proof request to the [Bonsai] proving service.
-2. [Bonsai] generates the program result, written to the [journal], and a SNARK proof of its correctness.
-3. The [publisher] app submits this proof and journal on-chain to your app contract for validation.
-4. Your app contract calls the [RISC Zero Verifier] to validate the proof. If the verification is successful, the journal is deemed trustworthy and can be safely used.
+Check out the [developer FAQ] for more information on zkVM application design.
 
 ## Dependencies
 
@@ -44,28 +36,19 @@ cargo binstall cargo-risczero
 cargo risczero install
 ```
 
+### ID.me Developer Account
+
+This demo requires a ID.me developer account. You will also need an account to generate a client ID and secret to enable Sign-In-With-ID.me with OIDC. You can find more information about ID.me integration [here](https://developers.id.me/documentation) and the corresponding OIDC documentation [here](https://developers.id.me/documentation/federated-protocols/oidc).
+
+### Etherscan API Key
+
+You will need an Etherscan API key to verify the contract's source code. You can get one [here](https://etherscan.io/apis). This is not required, but is helpful for verifying the contract source code and generating the ABI bindings with [`wagmi`](https://wagmi.sh), which is used in the zk-KYC UI.
+
 Now you have all the tools you need to develop and deploy an application with [RISC Zero].
 
+
+
 ## Quick Start
-
-First, install the RISC Zero toolchain using the [instructions above](#dependencies).
-
-Now, you can initialize a new RISC Zero project at a location of your choosing:
-
-```sh
-forge init -t risc0/bonsai-foundry-template ./my-project
-```
-
-Congratulations! You've just started your first RISC Zero project.
-
-Your new project consists of:
-
-- a [zkVM program] (written in Rust), which specifies a computation that will be proven;
-- a [app contract] (written in Solidity), which uses the proven results;
-- a [publisher] which makes proving requests to [Bonsai] and posts the proof to Ethereum.
-  We provide an example implementation, but your dApp interface or application servers could act as the publisher.
-
-### Build the Code
 
 - Builds for zkVM program, the publisher app, and any other Rust code.
 
@@ -79,6 +62,12 @@ Your new project consists of:
 
   ```sh
   forge build
+  ```
+
+- Create a `.env` and update the necessary environment variables as shown in the [`.env.example`] file, for the UI.
+
+  ```sh
+  cp ui/.env.example ui/.env
   ```
 
 ### Run the Tests
@@ -95,14 +84,6 @@ Your new project consists of:
   RISC0_DEV_MODE=true forge test -vvv 
   ```
 
-## Develop Your Application
-
-To build your application, you'll need to make changes in three folders:
-
-- write the code you want proven in the [methods/guest](./methods/guest/) folder.
-- write the on-chain part of your project in the [contracts](./contracts/) folder.
-- adjust the publisher example in the [apps](./apps/) folder.
-
 ### Configuring Bonsai
 
 ***Note:*** *To request an API key [complete the form here](https://bonsai.xyz/apply).*
@@ -117,72 +98,60 @@ export BONSAI_API_URL="BONSAI_URL" # provided with your api key
 
 Now if you run `forge test` with `RISC0_DEV_MODE=false`, the test will run as before, but will additionally use the fully verifying `RiscZeroGroth16Verifier` contract instead of `MockRiscZeroVerifier` and will request a SNARK receipt from Bonsai.
 
-```bash
+```sh
 RISC0_DEV_MODE=false forge test -vvv
 ```
 
-### Deterministic Builds
+### Deploying the zk-KYC Contract
 
-By setting the environment variable `RISC0_USE_DOCKER` a containerized build process via Docker will ensure that all builds of your guest code, regardless of the machine or local environment, will produce the same [image ID][image-id].
-The [image ID][image-id], and its importance to security, is explained in more detail in our [developer FAQ].
+To deploy the zk-KYC contract, you will need to set the following environment variables. You can read more about deploying with Foundry scripts [here](https://book.getfoundry.sh/tutorials/solidity-scripting?highlight=Deploy#deploying-our-contract). Please note that the contracts are unaudited and should not be used in production chains.
 
 ```bash
-RISC0_USE_DOCKER=1 cargo build
+export ETH_WALLET_PRIVATE_KEY="YOUR_PRIVATE_KEY"
 ```
 
-> ***Note:*** *This requires having Docker installed and in your PATH. To install Docker see [Get Docker].*
+You can deploy the contract using the forge deploy script. 
+  
+  ```sh
+  forge script script/Deploy.s.sol \ 
+    --rpc-url <YOUR_RPC_URL> \
+    --broadcast \
+    --etherscan-api-key <YOUR_ETHERSCAN_API_KEY> \
+    --verify 
+  ```
 
-## Deploy Your Application
+### Running the Application
 
-When you're ready, follow the [deployment guide] to get your application running on [Sepolia].
+- Start the publisher/subscriber app with the configured variables.
 
-## Project Structure
+  ```sh
+  cargo run --bin pubsub -- --chain-id <DEPLOYED_CHAIN_ID> \
+    --eth-wallet-private-key <YOUR_PUBLISHER_PRIVATE_KEY> \
+    --rpc-url <YOUR_RPC_PROVIDER> \
+    --contract <DEPLOYED_BONSAI_PAY_CONTRACT_ADDRESS>
+  ```
 
-Below are the primary files in the project directory
+- Start the UI.
 
-```text
-.
-├── Cargo.toml                      // Configuration for Cargo and Rust
-├── foundry.toml                    // Configuration for Foundry
-├── apps
-│   ├── Cargo.toml
-│   └── src
-│       └── lib.rs                  // Utility functions
-│       └── bin                     
-│           └── publisher.rs        // Example app to publish program results into your app contract 
-├── contracts
-│   ├── EvenNumber.sol              // Basic example contract for you to modify
-│   └── ImageID.sol                 // Generated contract with the image ID for your zkVM program
-├── methods
-│   ├── Cargo.toml
-│   ├── guest
-│   │   ├── Cargo.toml
-│   │   └── src
-│   │       └── bin                 // You can add additionally guest prgrams to this folder
-│   │           └── is_even.rs      // Example guest program for cheking if a number is even
-│   └── src
-│       └── lib.rs                  // Compiled image IDs and tests for your guest programs
-└── tests
-    ├── EvenNumber.t.sol            // Tests for the basic example contract
-    └── Elf.sol                     // Generated contract with paths the guest program ELF files.
-```
+  ```sh
+  cd ui
+  pnpm i 
+  pnpm run dev
+  ```
 
 [Bonsai]: https://dev.bonsai.xyz/
 [Foundry]: https://getfoundry.sh/
-[Get Docker]: https://docs.docker.com/get-docker/
 [Groth16 SNARK proof]: https://www.risczero.com/news/on-chain-verification
 [RISC Zero Verifier]: https://github.com/risc0/risc0/blob/release-0.21/bonsai/ethereum/contracts/IRiscZeroVerifier.sol
 [RISC Zero installation]: https://dev.risczero.com/api/zkvm/install
 [RISC Zero zkVM]: https://dev.risczero.com/zkvm
 [RISC Zero]: https://www.risczero.com/
 [Sepolia]: https://www.alchemy.com/overviews/sepolia-testnet
-[app contract]: ./contracts/
 [cargo-binstall]: https://github.com/cargo-bins/cargo-binstall#cargo-binaryinstall
 [coprocessor]: https://www.risczero.com/news/a-guide-to-zk-coprocessors-for-scalability
-[deployment guide]: /deployment-guide.md
 [developer FAQ]: https://dev.risczero.com/faq#zkvm-application-design
-[image-id]: https://dev.risczero.com/terminology#image-id
 [install Rust]: https://doc.rust-lang.org/cargo/getting-started/installation.html
-[journal]: https://dev.risczero.com/terminology#journal
-[publisher]: ./apps/README.md
 [zkVM program]: ./methods/guest/
+[Bonsai Foundry Template]: https://github.com/risc0/bonsai-foundry-template
+[`.env.example`]: ./ui/.env.example
+
