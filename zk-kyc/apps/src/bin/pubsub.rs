@@ -24,7 +24,7 @@ use warp::{reject::Reject, reply::with_header, Filter, Rejection};
 
 sol! {
     interface IzkKYC {
-        function mint(address payable to, bytes32 claim_id, bytes32 post_state_digest, bytes calldata seal);
+        function mint(address to, bytes32 claim_id, bytes32 post_state_digest, bytes calldata seal);
     }
 
     struct Input {
