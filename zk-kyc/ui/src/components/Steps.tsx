@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Prove from "./Prove";
-import Mint from "./Mint";
 
 import { useAccount } from "wagmi";
 import SignInWithIDme from "./SignInWithIDme";
@@ -10,7 +9,6 @@ interface ClaimProps {}
 const Steps: React.FC<ClaimProps> = () => {
   const { isConnected } = useAccount();
   const [jwtExists, ] = useState<boolean>(false);
-  const [email, ] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [userData, setUserData] = useState(null);
 
@@ -21,8 +19,7 @@ const Steps: React.FC<ClaimProps> = () => {
   const stepDescriptions = [
     "Connect Wallet",
     "Verify Identity",
-    "Generate Proof",
-    "Mint Identity",
+    "Prove & Mint",
   ];
 
   const renderStepIndicator = () => {
@@ -72,14 +69,6 @@ const Steps: React.FC<ClaimProps> = () => {
             <h4>Prove Identity</h4>
             {userData.fname && <h5>{`Welcome, ${userData.fname}`}</h5>}
             <Prove disabled={false} onNext={next} />
-          </>
-        );
-      case 4:
-        return (
-          <>
-            <h4>Mint your Identity Token</h4>
-            {email && <h5>{`You have proven account ownership.`}</h5>}
-            <Mint />
           </>
         );
       default:
