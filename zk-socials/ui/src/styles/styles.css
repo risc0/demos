@@ -52,11 +52,24 @@ html {
 
 /* Clerk */
 /* hide sign up button */
+.cl-header,
 .cl-footer {
   display: none;
 }
 
+.cl-signIn-start {
+  padding: 0;
+  margin: 0;
+  background: transparent;
+}
+
 /* hide powered by clerk tab */
 .cl-card > div:last-child {
+  display: none;
+}
+
+/* hide clerk's metamask button */
+.cl-socialButtonsIconButton__metamask,
+.cl-socialButtonsBlockButton__metamask {
   display: none;
 }

@@ -33,8 +33,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
 				baseTheme: dark,
 				variables: { colorPrimary: "#fdff9d" },
 				layout: {
-					logoImageUrl: "/risczero.svg",
-					socialButtonsVariant: "blockButton",
+					socialButtonsVariant: "iconButton",
 				},
 			}}
 		>

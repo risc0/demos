@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@risc0/ui/button";
+import { VerifiedIcon } from "lucide-react";
 import type React from "react";
 import { useCallback, useState } from "react";
 import { useZkKycMintedEvent } from "~/generated";
@@ -57,9 +58,13 @@ export const Prove = () => {
 			<Button
 				isLoading={isLoading}
 				onClick={handleClick}
+				startIcon={<VerifiedIcon />}
+				size="lg"
+				autoFocus
+				className="w-full"
 				disabled={isMinted || isLoading}
 			>
-				{isMinted ? "Minted" : "Prove with Bonsai™"}
+				{isMinted ? "Minted" : "Prove with Bonsai"}
 			</Button>
 
 			{isLoading && <p>This will take a couple of minutes...</p>}
