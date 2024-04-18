@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { ThemeToggle } from "~/client/theme/theme-toggle";
 
 export default function Home() {
@@ -7,6 +8,13 @@ export default function Home() {
 				<h1 className="title">Proof of Account</h1>
 				<ThemeToggle />
 			</div>
+
+			<Image
+				src="/image.jpeg"
+				alt="Proof of Account"
+				width={400}
+				height={400}
+			/>
 		</div>
 	);
 }
