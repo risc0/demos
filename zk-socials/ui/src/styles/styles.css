@@ -52,11 +52,49 @@ html {
 
 /* Clerk */
 /* hide sign up button */
+.cl-navbar,
 .cl-header,
+.cl-profileSectionContent__profile,
+.cl-profileSection__danger,
+.cl-profileSection__activeDevices,
+.cl-profileSectionTitle__profile,
+.cl-profileSection__connectedAccounts,
+.cl-profileSectionTitle,
+.userProfile.web3WalletPage.subtitle__availableWallets,
+p[data-localization-key="userProfile.web3WalletPage.subtitle__availableWallets"],
+button[data-localization-key="userProfile.formButtonReset"],
+.cl-navbarMobileMenuRow,
 .cl-footer {
   display: none;
 }
 
+.cl-page {
+  min-height: unset;
+  margin-bottom: -2rem;
+  overflow: unset;
+}
+
+.cl-scrollBox  {
+  border-radius: 0;
+}
+
+.cl-scrollBox,
+.cl-pageScrollBox {
+  padding: 0;
+  overflow: unset;
+}
+
+button[data-localization-key="userProfile.formButtonPrimary__finish"] {
+background: transparent
+}
+
+
+.cl-rootBox,
+.cl-card {
+  width: 100%;
+}
+
+.cl-card,
 .cl-signIn-start {
   padding: 0;
   margin: 0;

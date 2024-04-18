@@ -4,47 +4,61 @@ import { cn } from "@risc0/ui/cn";
 import { Highlight, themes } from "prism-react-renderer";
 
 const codeBlock = `
+use alloy_primitives::{Address, FixedBytes};
+use alloy_sol_types::SolValue;
+use oidc_validator::IdentityProvider;
+use risc0_zkvm::guest::env;
+use risc0_zkvm::sha::rust_crypto::{Digest as _, Sha256};
+use std::io::Read;
+
+alloy_sol_types::sol! {
+    struct ClaimsData {
+        address msg_sender;
+        bytes32 claim_id;
+    }
+    struct Input {
+        uint256 identity_provider;
+        string jwt;
+    }
+}
+
 fn main() {
-  // Variables can be type annotated.
-  let logical: bool = true;
+    let mut input_bytes = Vec::u8::new();
+    env::stdin().read_to_end(&mut input_bytes).unwrap();
 
-  let a_float: f64 = 1.0;  // Regular annotation
-  let an_integer   = 5i32; // Suffix annotation
+    let input: Input = Input::abi_decode(&input_bytes, true).unwrap();
 
-  // Or a default will be used.
-  let default_float   = 3.0; // f64
-  let default_integer = 7;   // i32
+    let identity_provider: IdentityProvider = input.identity_provider.into();
+    let jwt: String = input.jwt;
 
-  // A type can also be inferred from context.
-  let mut inferred_type = 12; // Type i64 is inferred from another line.
-  inferred_type = 4294967296i64;
+    let (claim_id, msg_sender) = identity_provider.validate(&jwt).unwrap();
+    let msg_sender: Address = Address::parse_checksummed(msg_sender, None).unwrap();
+    let claim_id: FixedBytes32 =
+        FixedBytes::from_slice(Sha256::digest(claim_id.as_bytes()).as_slice());
+    let output = ClaimsData {
+        msg_sender,
+        claim_id,
+    };
+    let output = output.abi_encode();
 
-  // A mutable variable's value can be changed.
-  let mut mutable = 12; // Mutable i32
-  mutable = 21;
-
-  // Error! The type of a variable can't be changed.
-  mutable = true;
-
-  // Variables can be overwritten with shadowing.
-  let mutable = true;
+    env::commit_slice(&output);
 }
 `;
 
 export function CodePreview() {
-  return (
-    <Highlight theme={themes.shadesOfPurple} code={codeBlock} language="typescript">
-      {({ className, tokens, getLineProps, getTokenProps }) => (
-        <pre className={cn(className, "overflow-x-auto text-xs")}>
-          {tokens.map((line, index) => (
-            <div key={`row-${index}`} {...getLineProps({ line })}>
-              {line.map((token, index) => (
-                <span key={`token-${index}`} {...getTokenProps({ token })} />
-              ))}
-            </div>
-          ))}
-        </pre>
-      )}
-    </Highlight>
-  );
+	return (
+		<Highlight theme={themes.vsDark} code={codeBlock} language="typescript">
+			{({ className, tokens, getLineProps, getTokenProps }) => (
+				<pre className={cn(className, "overflow-x-auto text-[10px]")}>
+					{tokens.map((line, index) => (
+						<div key={`row-${index}`} {...getLineProps({ line })}>
+							{line.map((token, index) => (
+								<span key={`token-${index}`} {...getTokenProps({ token })} />
+							))}
+						</div>
+					))}
+				</pre>
+			)}
+		</Highlight>
+	);
 }

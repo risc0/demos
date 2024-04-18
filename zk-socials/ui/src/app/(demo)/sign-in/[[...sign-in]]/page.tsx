@@ -1,30 +1,26 @@
 import { SignIn, SignedIn, SignedOut, currentUser } from "@clerk/nextjs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@risc0/ui/card";
 import { Progress } from "@risc0/ui/progress";
+import ConnectWalletButton from "../../_components/connect-wallet-button";
 import { AMOUNT_OF_STEPS, calculateCompletionPercentage } from "../../_utils/calculate-completion-percentage";
-import ConnectWalletButton from "./_components/connect-wallet-button";
 
-export default async function SignInPage() {
-  const user = await currentUser();
-  const currentStep = user ? 1 : 0;
-
+export default function SignInPage() {
   return (
     <Card>
       <CardHeader>
-        <Progress className="mb-4" value={calculateCompletionPercentage(currentStep, AMOUNT_OF_STEPS)} />
+        <Progress className="mb-4" value={calculateCompletionPercentage(0, AMOUNT_OF_STEPS)} />
 
-        <CardTitle>{currentStep === 0 ? "Connect your Wallet" : "Pick a social account"}</CardTitle>
-        <CardDescription>
-          Step {currentStep + 1} / {AMOUNT_OF_STEPS}
-        </CardDescription>
+        <CardTitle>Pick a social account</CardTitle>
+        <CardDescription>Step 1 / {AMOUNT_OF_STEPS}</CardDescription>
       </CardHeader>
+
       <CardContent>
         <SignedIn>
-          <SignIn />
+          <ConnectWalletButton />
         </SignedIn>
 
         <SignedOut>
-          <ConnectWalletButton />
+          <SignIn />
         </SignedOut>
       </CardContent>
     </Card>
