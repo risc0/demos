@@ -1,4 +1,4 @@
-import { SignIn, SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs";
 import { Button } from "@risc0/ui/button";
 import {
 	Card,
@@ -7,9 +7,13 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@risc0/ui/card";
+import { SignOutButton } from "./_components/sign-out-button";
 import WalletConnect from "./_components/wallet-connect";
 
 export default function AppPage() {
+	const { ...rest } = auth();
+
+	console.log("rest", rest);
 	//const { user } = useUser();
 
 	//console.log("user", user);
@@ -21,7 +25,7 @@ export default function AppPage() {
 					<CardTitle>Proof of Account</CardTitle>
 				</CardHeader>
 				<CardContent>
-					<SignOutButton>Sign Out</SignOutButton>
+					<SignOutButton />
 
 					<WalletConnect />
 				</CardContent>
