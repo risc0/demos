@@ -32,23 +32,19 @@ fn main() {
 `;
 
 export function CodePreview() {
-	return (
-		<Highlight
-			theme={themes.shadesOfPurple}
-			code={codeBlock}
-			language="typescript"
-		>
-			{({ className, tokens, getLineProps, getTokenProps }) => (
-				<pre className={cn(className, "text-xs overflow-x-auto")}>
-					{tokens.map((line, index) => (
-						<div key={`row-${index}`} {...getLineProps({ line })}>
-							{line.map((token, index) => (
-								<span key={`token-${index}`} {...getTokenProps({ token })} />
-							))}
-						</div>
-					))}
-				</pre>
-			)}
-		</Highlight>
-	);
+  return (
+    <Highlight theme={themes.shadesOfPurple} code={codeBlock} language="typescript">
+      {({ className, tokens, getLineProps, getTokenProps }) => (
+        <pre className={cn(className, "overflow-x-auto text-xs")}>
+          {tokens.map((line, index) => (
+            <div key={`row-${index}`} {...getLineProps({ line })}>
+              {line.map((token, index) => (
+                <span key={`token-${index}`} {...getTokenProps({ token })} />
+              ))}
+            </div>
+          ))}
+        </pre>
+      )}
+    </Highlight>
+  );
 }
