@@ -4,7 +4,7 @@ import { coinbaseWallet, injected } from "wagmi/connectors";
 
 export const config = createConfig({
 	chains: [mainnet, sepolia],
-	connectors: [injected(), coinbaseWallet({ appName: "zkSocials" })],
+	connectors: [injected(), coinbaseWallet({ appName: "zk-socials" })],
 	ssr: true,
 	transports: {
 		[mainnet.id]: http(),

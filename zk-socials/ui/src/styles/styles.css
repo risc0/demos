@@ -49,3 +49,14 @@ html {
   /* bigger stroke for ALL icons */
   stroke-width: 1.75px !important;
 }
+
+/* Clerk */
+/* hide sign up button */
+.cl-footer {
+  display: none;
+}
+
+/* hide powered by clerk tab */
+.cl-card > div:last-child {
+  display: none;
+}

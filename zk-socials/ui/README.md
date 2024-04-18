@@ -1,4 +1,4 @@
-# zkSocials
+# zk-socials
 
 ## Getting Started 🚀
 
