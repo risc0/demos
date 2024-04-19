@@ -18,14 +18,10 @@ import {
 } from "./_utils/calculate-completion-percentage";
 
 export default async function AppPage() {
-	const { getToken, sessionClaims, ...rest } = auth();
+	const { getToken, sessionClaims } = auth();
 	const user = await currentUser();
 	const token = await getToken();
 	const currentStep = sessionClaims?.nonce ? 3 : 2;
-
-	console.log("user", user);
-	console.log("rest", rest);
-	console.log("sessionClaims", sessionClaims);
 
 	if (!token) {
 		redirect("/sign-in");
@@ -66,7 +62,10 @@ export default async function AppPage() {
 									className="bg-neutral-900 p-5 flex flex-row gap-4 items-center"
 								>
 									<Avatar className="size-16">
-										<AvatarImage src={imageUrl} alt={username} />
+										<AvatarImage
+											src={imageUrl}
+											alt={username ?? "user avatar"}
+										/>
 									</Avatar>
 									<AlertDescription>
 										<p className="font-bold text-xl">{username}</p>
@@ -78,6 +77,10 @@ export default async function AppPage() {
 								</Alert>
 							),
 						)}
+
+						<code className="text-[8px] break-all">
+							{JSON.stringify(sessionClaims)}
+						</code>
 
 						<div className="mt-8">
 							<Prove />

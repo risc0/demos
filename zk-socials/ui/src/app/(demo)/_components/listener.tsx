@@ -1,11 +1,9 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { revalidateUser } from "../_actions/revalidate-user";
 
 export function Listener({ children }) {
-	const router = useRouter();
-
 	const observeAndClick = (selector: string, callback: () => void) => {
 		const observer = new MutationObserver((mutationsList) => {
 			let foundElement = false;
@@ -73,8 +71,7 @@ export function Listener({ children }) {
 	useEffect(() => {
 		// listen for success message and navigate away
 		const successMessageCallback = () => {
-			console.log("FOUND SUCCESS MESSAGE");
-			router.push("/");
+			revalidateUser();
 		};
 
 		return observeAndClick(
