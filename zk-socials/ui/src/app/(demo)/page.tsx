@@ -1,4 +1,4 @@
-import { UserProfile, auth, clerkClient, currentUser } from "@clerk/nextjs";
+import { auth, currentUser } from "@clerk/nextjs";
 import { Alert, AlertDescription } from "@risc0/ui/alert";
 import { Avatar, AvatarImage } from "@risc0/ui/avatar";
 import {
@@ -11,7 +11,6 @@ import {
 import { Progress } from "@risc0/ui/progress";
 import { redirect } from "next/navigation";
 import { CreateWalletLinking } from "./_components/create-wallet-linking";
-import { Listener } from "./_components/listener";
 import { Prove } from "./_components/prove";
 import {
 	AMOUNT_OF_STEPS,
@@ -19,12 +18,10 @@ import {
 } from "./_utils/calculate-completion-percentage";
 
 export default async function AppPage() {
-	const { getToken, sessionClaims } = auth();
+	const { getToken, sessionClaims, userId } = auth();
 	const user = await currentUser();
 	const token = await getToken();
 	const currentStep = sessionClaims?.nonce ? 3 : 2;
-
-	console.log("HERE!", user);
 	console.log("sessionClaims!", sessionClaims);
 
 	if (!token) {
@@ -49,9 +46,7 @@ export default async function AppPage() {
 
 			<CardContent>
 				{currentStep === 2 ? (
-					<Listener>
-						<UserProfile />
-					</Listener>
+					<CreateWalletLinking userId={userId} />
 				) : (
 					<>
 						<p className="mb-3 break-all text-xs">
