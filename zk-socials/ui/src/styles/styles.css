@@ -62,6 +62,7 @@ html {
 .cl-profileSectionTitle,
 .cl-profileSection__profile,
 .userProfile.web3WalletPage.subtitle__availableWallets,
+p[data-localization-key="userProfile.web3WalletPage.successMessage"],
 p[data-localization-key="userProfile.web3WalletPage.subtitle__availableWallets"],
 button[data-localization-key="userProfile.formButtonReset"],
 button[data-localization-key="userProfile.formButtonPrimary__finish"],
