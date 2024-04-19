@@ -29,8 +29,8 @@ const fontMono = JetBrains_Mono({
 export default function RootLayout({ children }: PropsWithChildren) {
 	return (
 		<ClerkProvider
-			afterSignInUrl="/#/web3-wallet"
-			afterSignUpUrl="/#/web3-wallet"
+			afterSignInUrl="/web3-wallet"
+			afterSignUpUrl="/web3-wallet"
 			appearance={{
 				baseTheme: dark,
 				variables: { colorPrimary: "#fdff9d" },

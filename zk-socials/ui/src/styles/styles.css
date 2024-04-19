@@ -60,9 +60,11 @@ html {
 .cl-profileSectionTitle__profile,
 .cl-profileSection__connectedAccounts,
 .cl-profileSectionTitle,
+.cl-profileSection__profile,
 .userProfile.web3WalletPage.subtitle__availableWallets,
 p[data-localization-key="userProfile.web3WalletPage.subtitle__availableWallets"],
 button[data-localization-key="userProfile.formButtonReset"],
+button[data-localization-key="userProfile.formButtonPrimary__finish"],
 .cl-navbarMobileMenuRow,
 .cl-footer {
   display: none;

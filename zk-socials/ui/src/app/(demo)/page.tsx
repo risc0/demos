@@ -1,6 +1,6 @@
 import { UserProfile, auth, currentUser } from "@clerk/nextjs";
-import { Alert, AlertDescription, AlertTitle } from "@risc0/ui/alert";
-import { Avatar, AvatarFallback, AvatarImage } from "@risc0/ui/avatar";
+import { Alert, AlertDescription } from "@risc0/ui/alert";
+import { Avatar, AvatarImage } from "@risc0/ui/avatar";
 import {
 	Card,
 	CardContent,
@@ -9,8 +9,8 @@ import {
 	CardTitle,
 } from "@risc0/ui/card";
 import { Progress } from "@risc0/ui/progress";
-import { RocketIcon } from "lucide-react";
 import { redirect } from "next/navigation";
+import { Listener } from "./_components/listener";
 import { Prove } from "./_components/prove";
 import {
 	AMOUNT_OF_STEPS,
@@ -48,7 +48,9 @@ export default async function AppPage() {
 			</CardHeader>
 			<CardContent>
 				{currentStep === 2 ? (
-					<UserProfile />
+					<Listener>
+						<UserProfile />
+					</Listener>
 				) : (
 					<>
 						<p className="text-xs mb-3 break-all">
@@ -58,15 +60,11 @@ export default async function AppPage() {
 						</p>
 
 						{user?.externalAccounts.map(
-							({
-								imageUrl,
-								firstName,
-								username,
-								id,
-								provider,
-								emailAddress,
-							}) => (
-								<Alert key={id} className="flex flex-row gap-4 items-center">
+							({ imageUrl, username, id, provider, emailAddress }) => (
+								<Alert
+									key={id}
+									className="bg-neutral-900 p-5 flex flex-row gap-4 items-center"
+								>
 									<Avatar className="size-16">
 										<AvatarImage src={imageUrl} alt={username} />
 									</Avatar>
