@@ -11,9 +11,9 @@ import { Progress } from "@risc0/ui/progress";
 import { Skeleton } from "@risc0/ui/skeleton";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import { Prove } from "./_components/prove";
+import { ConnectWalletButton } from "./_components/connect-wallet-button";
+import { ProveButton } from "./_components/prove-button";
 import SignInButton from "./_components/sign-in-button";
-import { WalletOptions } from "./_components/wallet-options";
 import { useLocalStorage } from "./_hooks/useLocalStorage";
 import {
 	AMOUNT_OF_STEPS,
@@ -84,9 +84,9 @@ export default function AppPage() {
 					(currentStep === 1 ? (
 						<SignInButton />
 					) : currentStep === 2 ? (
-						<WalletOptions />
+						<ConnectWalletButton />
 					) : (
-						<Prove />
+						<ProveButton />
 					))}
 			</CardContent>
 		</Card>

@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useAccount } from "wagmi";
 import { useZkKycMintedEvent } from "~/generated";
 
-export const Prove = () => {
+export function ProveButton() {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [isMinted, _setIsMinted] = useState<boolean>(false);
 	const { address } = useAccount();
@@ -100,4 +100,4 @@ export const Prove = () => {
 			</div>
 		</>
 	) : null;
-};
+}
