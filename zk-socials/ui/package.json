@@ -6,6 +6,7 @@
   "scripts": {
     "build": "next build",
     "check": "cd ../.. && bunx @biomejs/biome check --apply-unsafe zk-socials/ui",
+    "codegen": "wagmi generate",
     "dev": "next dev --turbo",
     "start": "next start",
     "test": "bun test spec",
@@ -21,7 +22,9 @@
     "@types/node": "20.12.7",
     "@types/react": "18.2.79",
     "@types/react-dom": "18.2.25",
+    "@wagmi/cli": "2.1.4",
     "deepmerge": "4.3.1",
+    "dotenv": "16.4.5",
     "jwt-decode": "3.1.2",
     "lucide-react": "0.372.0",
     "next": "canary",
@@ -33,7 +36,7 @@
     "sharp": "0.33.3",
     "string-ts": "2.1.0",
     "typescript": "5.4.5",
-    "viem": "2.x",
+    "viem": "2.9.25",
     "wagmi": "2.5.20",
     "zod": "3.23.0"
   }

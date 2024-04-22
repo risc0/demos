@@ -4,7 +4,7 @@ import { Button } from "@risc0/ui/button";
 import { VerifiedIcon } from "lucide-react";
 import { useState } from "react";
 import { useAccount } from "wagmi";
-import { useZkKycMintedEvent } from "~/generated";
+//import { useZkKycMintedEvent } from "~/generated";
 import { useLocalStorage } from "../_hooks/useLocalStorage";
 import { UserInfos } from "./user-infos";
 
@@ -27,10 +27,9 @@ export function ProveButton() {
     if (!userToken) {
       console.error("JWT not found");
       setIsLoading(false);
+
       return;
     }
-
-    console.log("userToken", userToken);
 
     try {
       const response = await fetch("http://127.0.0.1:8080/authenticate", {
@@ -41,7 +40,7 @@ export function ProveButton() {
       });
 
       if (response.ok) {
-        await response.body;
+        const _result = await response.json();
       } else {
         throw new Error("Response not OK");
       }

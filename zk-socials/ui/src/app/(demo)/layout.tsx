@@ -18,7 +18,7 @@ export default function SharedLayout({ children }) {
       </div>
       <Separator className="mb-8" />
 
-      <div className="flex flex-col-reverse lg:flex-row flex-1  gap-8 lg:gap-16">
+      <div className="flex flex-1 flex-col-reverse gap-8 lg:flex-row lg:gap-16">
         <div className="flex flex-1 flex-col overflow-auto">
           <div className="flex flex-row items-baseline gap-4 pb-2">
             <h2 className="subtitle">The Code</h2>
