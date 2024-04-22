@@ -71,7 +71,7 @@ export function ProveButton() {
           {isMinted ? "Minted" : "Prove with Bonsai™"}
         </Button>
 
-        {isLoading && <p>This will take a couple of minutes...</p>}
+        {isLoading && <p className="mt-2">This will take a couple of minutes… Hang tight…</p>}
       </div>
     </>
   ) : null;
