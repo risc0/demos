@@ -17,7 +17,7 @@ export default function SharedLayout({ children }) {
       </div>
       <Separator className="mb-8" />
 
-      <div className="grid flex-1 grid-cols-5 gap-16">
+      <div className="grid flex-1 grid-cols-1 gap-8 lg:grid-cols-5 lg:gap-16">
         <div className="col-span-3">
           <div className="flex flex-row items-baseline gap-4 pb-2">
             <h2 className="subtitle">The Code</h2>

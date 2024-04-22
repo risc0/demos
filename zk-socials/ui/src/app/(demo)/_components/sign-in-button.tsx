@@ -1,63 +1,34 @@
 "use client";
 
-import { useGoogleLogin } from "@react-oauth/google";
-import { Button } from "@risc0/ui/button";
+import { GoogleLogin } from "@react-oauth/google";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useAccount } from "wagmi";
 import { useLocalStorage } from "~/app/(demo)/_hooks/useLocalStorage";
 
 export default function SignInButton() {
-  const [signingIn, setSigningIn] = useState<boolean>(false);
-  const [googleUser, setGoogleUser] = useState<any>();
-  const [user, setUser] = useLocalStorage("google-profile", null);
+  const [userToken, setUserToken] = useLocalStorage<string | null>("google-token", null);
   const router = useRouter();
-
-  const login = useGoogleLogin({
-    onSuccess: (codeResponse) => {
-      setGoogleUser(codeResponse);
-      setSigningIn(false);
-    },
-    onError: (error) => {
-      console.error("Login Failed:", error);
-      setSigningIn(false);
-    },
-  });
+  const { address } = useAccount();
 
   // if already logged in
   useEffect(() => {
-    if (user) {
+    if (userToken) {
       router.push("/");
     }
-  }, [router.push, user]);
-
-  useEffect(() => {
-    if (googleUser) {
-      fetch(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${googleUser.access_token}`, {
-        headers: {
-          Authorization: `Bearer ${googleUser.access_token}`,
-          Accept: "application/json",
-        },
-      })
-        .then(async (res) => {
-          const result = await res.json();
-          setUser(result);
-        })
-        .catch(console.error);
-    }
-  }, [setUser, googleUser]);
+  }, [router.push, userToken]);
 
   return (
-    <Button
-      isLoading={signingIn}
-      disabled={signingIn}
-      size="lg"
-      className="w-full"
-      onClick={() => {
-        setSigningIn(true);
-        login();
+    <GoogleLogin
+      auto_select
+      theme="filled_black"
+      shape="rectangular"
+      nonce={address}
+      onSuccess={(response) => {
+        if (response.credential) {
+          setUserToken(response.credential);
+        }
       }}
-    >
-      Sign In with Google
-    </Button>
+    />
   );
 }
