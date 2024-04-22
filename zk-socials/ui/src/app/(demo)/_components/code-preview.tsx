@@ -46,19 +46,31 @@ fn main() {
 `;
 
 export function CodePreview() {
-  return (
-    <Highlight theme={themes.vsDark} code={codeBlock} language="typescript">
-      {({ className, tokens, getLineProps, getTokenProps }) => (
-        <pre className={cn(className, "overflow-x-auto text-[10px]")}>
-          {tokens.map((line, index) => (
-            <div key={`row-${index}`} {...getLineProps({ line })}>
-              {line.map((token, index) => (
-                <span key={`token-${index}`} {...getTokenProps({ token })} />
-              ))}
-            </div>
-          ))}
-        </pre>
-      )}
-    </Highlight>
-  );
+	return (
+		<Highlight theme={themes.vsDark} code={codeBlock} language="typescript">
+			{({ className, tokens, getLineProps, getTokenProps }) => (
+				<pre className={cn(className, "overflow-x-auto text-[10px]")}>
+					{tokens.map((line, index) => (
+						<div
+							key={`row-${
+								// biome-ignore lint/suspicious/noArrayIndexKey: ignore
+								index
+							}`}
+							{...getLineProps({ line })}
+						>
+							{line.map((token, index) => (
+								<span
+									key={`token-${
+										// biome-ignore lint/suspicious/noArrayIndexKey: ignore
+										index
+									}`}
+									{...getTokenProps({ token })}
+								/>
+							))}
+						</div>
+					))}
+				</pre>
+			)}
+		</Highlight>
+	);
 }

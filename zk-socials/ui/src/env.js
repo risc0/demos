@@ -1,5 +1,5 @@
 import { createEnv } from "@t3-oss/env-nextjs";
-import { z } from "~/app/(demo)/sign-in/[[...sign-in]]/zod";
+import { z } from "zod";
 
 const env = createEnv({
 	/**

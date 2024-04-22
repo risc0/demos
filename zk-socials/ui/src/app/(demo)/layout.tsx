@@ -24,7 +24,7 @@ export default function SharedLayout({ children }) {
 						<h2 className="subtitle">The Code</h2>
 						<h3 className="text-muted-foreground text-xs">- zkvm guest code</h3>
 					</div>
-					<Card>
+					<Card className="dark:bg-inherit bg-neutral-950">
 						<CardContent>
 							<CodePreview />
 						</CardContent>
