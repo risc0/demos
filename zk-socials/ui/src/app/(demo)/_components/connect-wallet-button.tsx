@@ -22,7 +22,11 @@ export function ConnectWalletButton() {
           key={connector.uid}
           onClick={() => connect({ connector })}
           startIcon={
-            connector.icon ? <Image src={connector.icon} alt={connector.name} width={20} height={20} /> : undefined
+            connector.icon ? (
+              <Image src={connector.icon} alt={connector.name} width={20} height={20} />
+            ) : (
+              <Image className="rounded" src={`/${connector.id}.svg`} alt={connector.name} width={20} height={20} />
+            )
           }
         >
           Connect Using {connector.name}

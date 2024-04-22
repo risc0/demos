@@ -6,7 +6,6 @@ import { useState } from "react";
 import { useAccount, useWatchContractEvent } from "wagmi";
 import { zkKycABI } from "~/abi/zk-kyc.abi";
 import env from "~/env";
-//import { useZkKycMintedEvent } from "~/generated";
 import { useLocalStorage } from "../_hooks/use-local-storage";
 import { UserInfos } from "./user-infos";
 
