@@ -38,27 +38,6 @@ sol! {
     }
 }
 
-/// Arguments of the publisher CLI.
-#[derive(Parser, Debug)]
-#[clap(author, version, about, long_about = None)]
-struct Args {
-    /// Ethereum chain ID
-    #[clap(long)]
-    chain_id: u64,
-
-    /// Ethereum Node endpoint.
-    #[clap(long, env)]
-    eth_wallet_private_key: String,
-
-    /// Ethereum Node endpoint.
-    #[clap(long)]
-    rpc_url: String,
-
-    /// Application's contract address on Ethereum
-    #[clap(long)]
-    contract: String,
-}
-
 #[derive(Debug, Deserialize)]
 struct AuthorizationCodeRequest {
     code: String,
@@ -106,12 +85,11 @@ async fn jwt_authentication_handler(token: String) -> Result<impl warp::Reply, R
 
     info!("Token received: {}", token);
 
-    let args = Args::parse();
     let (tx, rx) = oneshot::channel();
 
     // Spawn a new thread for the Bonsai Prover computation
     std::thread::spawn(move || {
-        prove_and_send_transaction(args, token, tx);
+        prove_and_send_transaction(token, tx);
     });
 
     match rx.await {
@@ -173,7 +151,6 @@ async fn authorization_code_handler(
 }
 
 fn prove_and_send_transaction(
-    args: Args,
     token: String,
     tx: oneshot::Sender<(Vec<u8>, FixedBytes<32>, Vec<u8>)>,
 ) {
@@ -186,37 +163,12 @@ fn prove_and_send_transaction(
         BonsaiProver::prove(JWT_VALIDATOR_ELF, &input.abi_encode())
             .expect("Failed to prove on Bonsai");
 
-    let tx_sender = TxSender::new(
-        args.chain_id,
-        &args.rpc_url,
-        &args.eth_wallet_private_key,
-        &args.contract,
-    )
-    .expect("Failed to create tx sender");
-
     let claims = ClaimsData::abi_decode(&journal, true)
         .context("Decoding journal data")
         .expect("Failed to decode");
 
     info!("Claim ID: {:?}", claims.claim_id);
     info!("Msg Sender: {:?}", claims.msg_sender);
-
-    let calldata = IzkKYC::IzkKYCCalls::mint(IzkKYC::mintCall {
-        to: claims.msg_sender,
-        claim_id: claims.claim_id,
-        post_state_digest,
-        seal: seal.clone(),
-    })
-    .abi_encode();
-
-    // Send the calldata to Ethereum.
-    let runtime = tokio::runtime::Runtime::new().expect("Failed to start new tokio runtime");
-    runtime
-        .block_on(tx_sender.send(calldata))
-        .expect("Failed to send tx");
-
-    tx.send((journal, post_state_digest, seal))
-        .expect("Failed to send over channel");
 }
 
 fn jwt_authentication_filter() -> impl Filter<Extract = (impl warp::Reply,), Error = Rejection> + Clone {
