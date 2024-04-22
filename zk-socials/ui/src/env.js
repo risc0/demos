@@ -15,7 +15,9 @@ const env = createEnv({
 	 * Specify client-side environment variables schema here.
 	 * To expose them to the client, prefix them with `NEXT_PUBLIC_`.
 	 */
-	client: {},
+	client: {
+		NEXT_PUBLIC_GOOGLE_CLIENT_ID: z.string(),
+	},
 
 	/**
 	 * You can't destruct `process.env` as a regular object in the Next.js edge runtimes
@@ -23,6 +25,7 @@ const env = createEnv({
 	 */
 	runtimeEnv: {
 		NODE_ENV: process.env.NODE_ENV,
+		NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
 	},
 	/**
 	 * Makes it so that empty strings are treated as undefined.

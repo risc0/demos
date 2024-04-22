@@ -93,7 +93,7 @@ export const Prove = () => {
 					className="w-full"
 					disabled={isMinted || isLoading}
 				>
-					{isMinted ? "Minted" : "Prove with Bonsai"}
+					{isMinted ? "Minted" : "Prove with Bonsai™"}
 				</Button>
 
 				{isLoading && <p>This will take a couple of minutes...</p>}
