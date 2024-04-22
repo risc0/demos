@@ -6,11 +6,11 @@ import { erc20Abi } from "viem";
 import { sepolia } from "wagmi/chains";
 
 if (!process.env.ETHERSCAN_APIKEY) {
-  throw new Error("Missing ETHERSCAN_API_KEY");
+  throw new Error("Missing ETHERSCAN_APIKEY");
 }
 
-if (!process.env.CUSTODY_ADDRESS) {
-  throw new Error("Missing ZID_ADDRESS");
+if (!process.env.NEXT_PUBLIC_CONTRACT_ADDRESS) {
+  throw new Error("Missing NEXT_PUBLIC_CONTRACT_ADDRESS");
 }
 
 export default defineConfig({
@@ -29,7 +29,7 @@ export default defineConfig({
         {
           name: "zkKYC",
           address: {
-            [sepolia.id]: process.env.CUSTODY_ADDRESS as `0x${string}`,
+            [sepolia.id]: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as `0x${string}`,
           },
         },
       ],

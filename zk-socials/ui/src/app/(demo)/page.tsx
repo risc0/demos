@@ -8,7 +8,7 @@ import { useAccount } from "wagmi";
 import { ConnectWalletButton } from "./_components/connect-wallet-button";
 import { ProveButton } from "./_components/prove-button";
 import SignInButton from "./_components/sign-in-button";
-import { useLocalStorage } from "./_hooks/useLocalStorage";
+import { useLocalStorage } from "./_hooks/use-local-storage";
 import { AMOUNT_OF_STEPS, calculateCompletionPercentage } from "./_utils/calculate-completion-percentage";
 
 export default function AppPage() {

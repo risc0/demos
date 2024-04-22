@@ -1,7 +1,7 @@
 import { isEqual, isFunction, isNil } from "lodash-es";
 import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from "react";
-import { parseJSON } from "../_utils/parseJSON";
-import { useEventListener } from "./useEventListener";
+import { parseJSON } from "../_utils/parse-json";
+import { useEventListener } from "./use-event-listener";
 
 export type SetValue<T> = Dispatch<SetStateAction<T>>;
 

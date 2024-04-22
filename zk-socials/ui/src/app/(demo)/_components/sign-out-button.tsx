@@ -3,7 +3,7 @@
 import { Button } from "@risc0/ui/button";
 import { LogOutIcon } from "lucide-react";
 import { useAccount, useDisconnect } from "wagmi";
-import { useLocalStorage } from "../_hooks/useLocalStorage";
+import { useLocalStorage } from "../_hooks/use-local-storage";
 
 export default function SignOutButton() {
   const { address } = useAccount();

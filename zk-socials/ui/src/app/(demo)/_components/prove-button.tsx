@@ -3,9 +3,11 @@
 import { Button } from "@risc0/ui/button";
 import { VerifiedIcon } from "lucide-react";
 import { useState } from "react";
-import { useAccount } from "wagmi";
+import { useAccount, useWatchContractEvent } from "wagmi";
+import { zkKycABI } from "~/abi/zk-kyc.abi";
+import env from "~/env";
 //import { useZkKycMintedEvent } from "~/generated";
-import { useLocalStorage } from "../_hooks/useLocalStorage";
+import { useLocalStorage } from "../_hooks/use-local-storage";
 import { UserInfos } from "./user-infos";
 
 export function ProveButton() {
@@ -15,11 +17,14 @@ export function ProveButton() {
   const [userToken] = useLocalStorage<string | null>("google-token", null);
   const [userInfos] = useLocalStorage<any | null>("google-infos", null);
 
-  /*useZkKycMintedEvent({
-		listener: () => {
-			setIsMinted(true);
-		},
-	});*/
+  useWatchContractEvent({
+    address: env.NEXT_PUBLIC_CONTRACT_ADDRESS,
+    abi: zkKycABI,
+    eventName: "Minted",
+    onLogs(logs) {
+      console.log("New logs!", logs);
+    },
+  });
 
   const handleClick = async () => {
     setIsLoading(true);

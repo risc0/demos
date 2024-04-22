@@ -5,7 +5,7 @@ import jwtDecode from "jwt-decode";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useAccount } from "wagmi";
-import { useLocalStorage } from "~/app/(demo)/_hooks/useLocalStorage";
+import { useLocalStorage } from "../_hooks/use-local-storage";
 
 export default function SignInButton() {
   const [userInfos, setUserInfos] = useLocalStorage<any | null>("google-infos", null);
