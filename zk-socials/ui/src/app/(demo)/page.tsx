@@ -18,24 +18,22 @@ export default function AppPage() {
   const [currentStep, setCurrentStep] = useState<number>(1);
 
   useEffect(() => {
-    if (address && currentStep === 2) {
-      setCurrentStep(3);
-    } else if (!address && currentStep === 3) {
-      setCurrentStep(2);
+    if (!address) {
+      setCurrentStep(1);
+      return;
     }
-  }, [address, currentStep]);
+
+    if (!user) {
+      setCurrentStep(2);
+      return;
+    }
+
+    setCurrentStep(3);
+  }, [address, user]);
 
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  useEffect(() => {
-    if (user && currentStep === 1) {
-      setCurrentStep(2);
-    } else if (!user && currentStep !== 1) {
-      setCurrentStep(1);
-    }
-  }, [user, currentStep]);
 
   return (
     <Card>
@@ -48,9 +46,9 @@ export default function AppPage() {
         {mounted ? (
           <CardTitle>
             {currentStep === 1
-              ? "Sign In with Social Account"
+              ? "Connect your Wallet"
               : currentStep === 2
-                ? "Connect your Wallet"
+                ? "Sign In with Social Account"
                 : "Prove with Bonsai™"}
           </CardTitle>
         ) : (
@@ -68,7 +66,7 @@ export default function AppPage() {
 
       <CardContent>
         {mounted &&
-          (currentStep === 1 ? <SignInButton /> : currentStep === 2 ? <ConnectWalletButton /> : <ProveButton />)}
+          (currentStep === 1 ? <ConnectWalletButton /> : currentStep === 2 ? <SignInButton /> : <ProveButton />)}
       </CardContent>
     </Card>
   );
