@@ -18,8 +18,8 @@ export default function SharedLayout({ children }) {
       </div>
       <Separator className="mb-8" />
 
-      <div className="grid flex-1 grid-cols-1 gap-8 lg:grid-cols-5 lg:gap-16">
-        <div className="col-span-3">
+      <div className="flex flex-col-reverse lg:flex-row flex-1  gap-8 lg:gap-16">
+        <div className="flex flex-1 flex-col overflow-auto">
           <div className="flex flex-row items-baseline gap-4 pb-2">
             <h2 className="subtitle">The Code</h2>
             <h3 className="text-muted-foreground text-xs">- zkvm guest code</h3>
@@ -31,7 +31,7 @@ export default function SharedLayout({ children }) {
           </Card>
         </div>
 
-        <div className="col-span-2">
+        <div className="w-full max-w-unset lg:max-w-[380px]">
           <div className="flex flex-row items-center justify-between gap-4 pb-2">
             <div className="flex flex-row items-baseline gap-4">
               <h2 className="subtitle">The Demo</h2>

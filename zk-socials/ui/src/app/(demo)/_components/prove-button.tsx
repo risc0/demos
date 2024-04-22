@@ -30,6 +30,8 @@ export function ProveButton() {
       return;
     }
 
+    console.log("userToken", userToken);
+
     try {
       const response = await fetch("http://127.0.0.1:8080/authenticate", {
         method: "GET",
