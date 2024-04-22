@@ -1,22 +1,33 @@
 "use client";
 
 import { GoogleLogin } from "@react-oauth/google";
+import jwtDecode from "jwt-decode";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useAccount } from "wagmi";
 import { useLocalStorage } from "~/app/(demo)/_hooks/useLocalStorage";
 
 export default function SignInButton() {
+  const [userInfos, setUserInfos] = useLocalStorage<any | null>("google-infos", null);
   const [userToken, setUserToken] = useLocalStorage<string | null>("google-token", null);
   const router = useRouter();
   const { address } = useAccount();
 
   // if already logged in
   useEffect(() => {
-    if (userToken) {
+    if (userInfos) {
       router.push("/");
     }
-  }, [router.push, userToken]);
+  }, [router.push, userInfos]);
+
+  useEffect(() => {
+    if (!userToken) {
+      return;
+    }
+
+    const decoded = jwtDecode(userToken);
+    setUserInfos(decoded);
+  }, [userToken, setUserInfos]);
 
   return (
     <GoogleLogin

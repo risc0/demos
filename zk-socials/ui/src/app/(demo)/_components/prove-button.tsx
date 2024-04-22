@@ -5,11 +5,15 @@ import { VerifiedIcon } from "lucide-react";
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import { useZkKycMintedEvent } from "~/generated";
+import { useLocalStorage } from "../_hooks/useLocalStorage";
+import { UserInfos } from "./user-infos";
 
 export function ProveButton() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isMinted, _setIsMinted] = useState<boolean>(false);
   const { address } = useAccount();
+  const [userToken] = useLocalStorage<string | null>("google-token", null);
+  const [userInfos] = useLocalStorage<any | null>("google-infos", null);
 
   /*useZkKycMintedEvent({
 		listener: () => {
@@ -20,10 +24,7 @@ export function ProveButton() {
   const handleClick = async () => {
     setIsLoading(true);
 
-    const jwtCookie = document.cookie.split("; ").find((row) => row.startsWith("__session="));
-    const jwtToken = jwtCookie?.split("=")[1];
-
-    if (!jwtToken) {
+    if (!userToken) {
       console.error("JWT not found");
       setIsLoading(false);
       return;
@@ -33,7 +34,7 @@ export function ProveButton() {
       const response = await fetch("http://127.0.0.1:8080/authenticate", {
         method: "GET",
         headers: {
-          "X-Auth-Token": jwtToken,
+          "X-Auth-Token": userToken,
         },
       });
 
@@ -55,30 +56,7 @@ export function ProveButton() {
         You are about to prove that address <strong>{address}</strong> owns the following social account(s):
       </p>
 
-      <div className="space-y-3">
-        {/*user?.externalAccounts.map(
-								({ imageUrl, username, id, provider, emailAddress }) => (
-									<Alert
-										key={id}
-										className="flex flex-row items-center gap-4 bg-neutral-900 p-5"
-									>
-										<Avatar className="size-16">
-											<AvatarImage
-												src={imageUrl}
-												alt={username ?? "user avatar"}
-											/>
-										</Avatar>
-										<AlertDescription>
-											<p className="font-bold text-xl">{username}</p>
-											<p className="text-muted-foreground text-sm">
-												{emailAddress}
-											</p>
-											<p className="font-mono text-[10px]">{provider}</p>
-										</AlertDescription>
-									</Alert>
-								),
-							)*/}
-      </div>
+      {userInfos && <UserInfos userInfos={userInfos} />}
 
       <div className="mt-8">
         <Button

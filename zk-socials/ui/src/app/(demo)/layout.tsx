@@ -3,6 +3,7 @@ import { Separator } from "@risc0/ui/separator";
 import { CodePreview } from "./_components/code-preview";
 import { Footer } from "./_components/footer";
 import { Header } from "./_components/header";
+import SignOutButton from "./_components/sign-out-button";
 
 export default function SharedLayout({ children }) {
   return (
@@ -31,9 +32,13 @@ export default function SharedLayout({ children }) {
         </div>
 
         <div className="col-span-2">
-          <div className="flex flex-row items-baseline gap-4 pb-2">
-            <h2 className="subtitle">The Demo</h2>
-            <h3 className="text-muted-foreground text-xs">- the fun part</h3>
+          <div className="flex flex-row items-center justify-between gap-4 pb-2">
+            <div className="flex flex-row items-baseline gap-4">
+              <h2 className="subtitle">The Demo</h2>
+              <h3 className="text-muted-foreground text-xs">- the fun part</h3>
+            </div>
+
+            <SignOutButton />
           </div>
 
           {children}

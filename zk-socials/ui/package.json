@@ -31,6 +31,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "sharp": "0.33.3",
+    "string-ts": "2.1.0",
     "typescript": "5.4.5",
     "viem": "2.x",
     "wagmi": "2.5.20",

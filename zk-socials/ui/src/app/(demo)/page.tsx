@@ -38,10 +38,7 @@ export default function AppPage() {
   return (
     <Card>
       <CardHeader>
-        <Progress
-          className="mb-4"
-          value={mounted ? calculateCompletionPercentage(currentStep - 1, AMOUNT_OF_STEPS) : 0}
-        />
+        <Progress className="mb-4" value={mounted ? calculateCompletionPercentage(currentStep, AMOUNT_OF_STEPS) : 0} />
 
         {mounted ? (
           <CardTitle>
