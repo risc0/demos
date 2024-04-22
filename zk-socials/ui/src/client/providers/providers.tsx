@@ -10,21 +10,15 @@ import { config } from "~/wagmi";
 const queryClient = new QueryClient();
 
 export function Providers({ children }) {
-	return (
-		<GoogleOAuthProvider clientId={env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
-			<WagmiProvider config={config}>
-				<QueryClientProvider client={queryClient}>
-					<ThemeProvider
-						attribute="class"
-						defaultTheme="dark"
-						disableTransitionOnChange
-						enableSystem
-						enableColorScheme
-					>
-						{children}
-					</ThemeProvider>
-				</QueryClientProvider>
-			</WagmiProvider>
-		</GoogleOAuthProvider>
-	);
+  return (
+    <GoogleOAuthProvider clientId={env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange enableSystem enableColorScheme>
+            {children}
+          </ThemeProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
+    </GoogleOAuthProvider>
+  );
 }

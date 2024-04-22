@@ -2,7 +2,8 @@
   "$schema": "https://biomejs.dev/schemas/1.7.0/schema.json",
   "files": {
     "ignore": [".next", ".vercel", "*.spec.*", "*.test.*", "build", "dist", "node_modules"],
-    "ignoreUnknown": true
+    "ignoreUnknown": true,
+    "include": ["zk-socials/ui"]
   },
   "linter": {
     "enabled": true,
