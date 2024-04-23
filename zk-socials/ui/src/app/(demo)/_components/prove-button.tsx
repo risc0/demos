@@ -12,7 +12,7 @@ import { UserInfos } from "./user-infos";
 export function ProveButton() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isMinted, _setIsMinted] = useState<boolean>(false);
-  const [error, setError] = useState<{ message?: string; status: number }>();
+  const [error, _setError] = useState<{ message?: string; status: number }>();
   const { address } = useAccount();
   const [userInfos] = useLocalStorage<any | null>("google-infos", null);
   const [userToken] = useLocalStorage<string | null>("google-token", null);
@@ -49,7 +49,7 @@ export function ProveButton() {
 
   return address ? (
     <>
-      <p className="mb-3 break-all text-xs">
+      <p className="mb-3 break-words text-xs">
         You are about to prove that address <strong>{address}</strong> owns the following social account(s):
       </p>
 
@@ -59,7 +59,7 @@ export function ProveButton() {
         <Button
           isLoading={isLoading}
           onClick={async () => {
-            const result = await checkUserValidity({ email: userInfos.email });
+            /*const result = await checkUserValidity({ email: userInfos.email });
 
             if (result.status === 200) {
               // success
@@ -67,7 +67,8 @@ export function ProveButton() {
             } else {
               // error
               setError(result);
-            }
+            }*/
+            handleClick(); //TODO: turn on to prevent abuse
           }}
           startIcon={<VerifiedIcon />}
           size="lg"

@@ -9,17 +9,16 @@ export function ConnectWalletButton() {
   const { address } = useAccount();
 
   return address ? null : (
-    <div className="space-y-2">
+    <div className="flex flex-row gap-2">
       {connectors.map((connector) => (
         <Button
           isLoading={
             // @ts-expect-error -- ignore typing error
             variables?.connector.id === connector.id && isPending
           }
-          size="lg"
           disabled={isPending}
-          className="w-full"
           key={connector.uid}
+          className="w-full"
           onClick={() => connect({ connector })}
           startIcon={
             connector.icon ? (
@@ -29,7 +28,7 @@ export function ConnectWalletButton() {
             )
           }
         >
-          Connect Using {connector.name}
+          {connector.name}
         </Button>
       ))}
     </div>
