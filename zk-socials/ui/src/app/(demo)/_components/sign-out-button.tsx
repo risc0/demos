@@ -8,12 +8,11 @@ import { useLocalStorage } from "../_hooks/use-local-storage";
 export default function SignOutButton() {
   const { address } = useAccount();
   const { disconnectAsync } = useDisconnect();
-  const [_userToken, setUserToken] = useLocalStorage<string | null | undefined>("google-token", null);
-  const [userInfos, setUserInfos] = useLocalStorage<any | null | undefined>("google-infos", null);
+  const [userInfos] = useLocalStorage<any | null | undefined>("google-infos", null);
 
   async function signOut() {
-    setUserToken(undefined);
-    setUserInfos(undefined);
+    localStorage.removeItem("google-infos");
+    localStorage.removeItem("google-token");
     await disconnectAsync(); // Disconnect the user's wallet
   }
 

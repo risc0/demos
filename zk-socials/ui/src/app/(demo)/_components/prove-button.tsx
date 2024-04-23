@@ -1,18 +1,21 @@
 "use client";
 
+import { Alert, AlertDescription, AlertTitle } from "@risc0/ui/alert";
 import { Button } from "@risc0/ui/button";
-import { VerifiedIcon } from "lucide-react";
+import { AlertTriangleIcon, VerifiedIcon } from "lucide-react";
 import { useState } from "react";
 import { useAccount } from "wagmi";
+import { checkUserValidity } from "../_actions/check-user-validity";
 import { useLocalStorage } from "../_hooks/use-local-storage";
 import { UserInfos } from "./user-infos";
 
 export function ProveButton() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isMinted, _setIsMinted] = useState<boolean>(false);
+  const [error, setError] = useState<{ message?: string; status: number }>();
   const { address } = useAccount();
-  const [userToken] = useLocalStorage<string | null>("google-token", null);
   const [userInfos] = useLocalStorage<any | null>("google-infos", null);
+  const [userToken] = useLocalStorage<string | null>("google-token", null);
 
   const handleClick = async () => {
     setIsLoading(true);
@@ -55,17 +58,36 @@ export function ProveButton() {
       <div className="mt-8">
         <Button
           isLoading={isLoading}
-          onClick={handleClick}
+          onClick={async () => {
+            const result = await checkUserValidity({ email: userInfos.email });
+
+            if (result.status === 200) {
+              // success
+              handleClick();
+            } else {
+              // error
+              setError(result);
+            }
+          }}
           startIcon={<VerifiedIcon />}
           size="lg"
           autoFocus
           className="w-full"
-          disabled={isMinted || isLoading}
+          disabled={!!error || isMinted || isLoading}
         >
           {isMinted ? "Minted" : "Prove with Bonsai™"}
         </Button>
 
-        {isLoading && <p className="mt-2">This will take a couple of minutes… Hang tight…</p>}
+        {error && (
+          <Alert variant="destructive" className="mt-4">
+            <AlertTriangleIcon className="size-4" />
+
+            <AlertTitle>Error {error.status}</AlertTitle>
+            <AlertDescription>{error.message}</AlertDescription>
+          </Alert>
+        )}
+
+        {isLoading && <p className="mt-2">This Will Take a Couple of Minutes… Hang Tight…</p>}
       </div>
     </>
   ) : null;

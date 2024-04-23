@@ -1,7 +1,10 @@
 import { createEnv } from "@t3-oss/env-nextjs";
+import { vercel } from "@t3-oss/env-nextjs/presets";
 import { z } from "zod";
 
 const env = createEnv({
+  extends: [vercel()],
+
   /**
    * Specify server-side environment variables schema here.
    */
