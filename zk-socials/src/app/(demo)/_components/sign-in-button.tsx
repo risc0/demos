@@ -50,7 +50,7 @@ export default function SignInButton() {
   useAsync(async () => {
     if (code && !facebookUserToken) {
       await fetch(
-        `https://graph.facebook.com/v11.0/oauth/access_token?client_id=${env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID}&redirect_uri=https://${env.VERCEL_URL}/&code_verifier=${codeVerifier}&code=${code}`,
+        `https://graph.facebook.com/v11.0/oauth/access_token?client_id=${env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID}&redirect_uri=https://${env.NEXT_PUBLIC_VERCEL_URL}/&code_verifier=${codeVerifier}&code=${code}`,
       )
         .then(async (res) => {
           const resJson = await res.json();
@@ -83,7 +83,7 @@ export default function SignInButton() {
       />
 
       <Link
-        href={`https://www.facebook.com/v11.0/dialog/oauth?client_id=${env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID}&scope=openid&response_type=code&redirect_uri=https://${env.VERCEL_URL}/&code_challenge=${codeVerifier}&code_challenge_method=plain&nonce=${address}`}
+        href={`https://www.facebook.com/v11.0/dialog/oauth?client_id=${env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID}&scope=openid&response_type=code&redirect_uri=https://${env.NEXT_PUBLIC_VERCEL_URL}/&code_challenge=${codeVerifier}&code_challenge_method=plain&nonce=${address}`}
       >
         <Button
           className="relative flex min-h-10 flex-row justify-start gap-4 rounded-lg bg-[#202124] pr-6 pl-0 font-bold text-white [&>svg]:hidden hover:bg-neutral-600"
