@@ -20,6 +20,7 @@ const env = createEnv({
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: z.string(),
     NEXT_PUBLIC_FACEBOOK_CLIENT_ID: z.string(),
     NEXT_PUBLIC_VERCEL_URL: z.string(),
+    NEXT_PUBLIC_VERCEL_BRANCH_URL: z.string(),
   },
 
   /**
@@ -31,6 +32,7 @@ const env = createEnv({
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
     NEXT_PUBLIC_FACEBOOK_CLIENT_ID: process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID,
     NEXT_PUBLIC_VERCEL_URL: process.env.NEXT_PUBLIC_VERCEL_URL,
+    NEXT_PUBLIC_VERCEL_BRANCH_URL: process.env.NEXT_PUBLIC_VERCEL_BRANCH_URL,
   },
   /**
    * Makes it so that empty strings are treated as undefined.
