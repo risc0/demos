@@ -64,7 +64,8 @@ export function ProveButton() {
         <Button
           isLoading={isLoading}
           onClick={async () => {
-            const result = await checkUserValidity({ emailOrId: googleUserInfos?.email ?? facebookUserInfos?.id });
+            // TODO: put back when ready
+            /*const result = await checkUserValidity({ emailOrId: googleUserInfos?.email ?? facebookUserInfos?.id });
 
             if (result.status === 200) {
               // success
@@ -72,7 +73,7 @@ export function ProveButton() {
             } else {
               // error
               setError(result);
-            }
+            }*/
             handleClick(); //TODO: turn on to prevent abuse
           }}
           startIcon={<VerifiedIcon />}
