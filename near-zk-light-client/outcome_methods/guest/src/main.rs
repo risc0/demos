@@ -25,6 +25,7 @@ fn inclusion_proof_verify(
 
     block_hash_matches && outcome_verified && block_verified
 }
+
 pub fn verify_outcome<'a>(
     outcome_hash: &CryptoHash,
     outcome_proof: impl Iterator<Item = &'a MerklePathItem>,
@@ -71,7 +72,7 @@ fn verify_hash<'a>(
     path: impl Iterator<Item = &'a MerklePathItem>,
     item_hash: MerkleHash,
 ) -> bool {
-    compute_root_from_path(path, item_hash) == root
+    dbg!(compute_root_from_path(path, item_hash)) == dbg!(root)
 }
 
 fn main() {
@@ -90,11 +91,15 @@ fn main() {
         "Block guest ID from recursive proof does not match expected"
     );
 
-    let block_hash = new_block_lite.hash();
+    // TODO sporatically, the calculated merkle root will match the block hash for some reason?
+    // let block_hash = new_block_lite.hash();
+    let block_merkle_root = new_block_lite.inner_lite.block_merkle_root;
     assert!(
-        inclusion_proof_verify(block_hash, &proof),
+        inclusion_proof_verify(block_merkle_root, &proof),
         "Invalid inclusion proof"
     );
+
+    let block_hash = new_block_lite.hash();
 
     // Commit the tx hash and transaction outcome
     let commit_data = (
