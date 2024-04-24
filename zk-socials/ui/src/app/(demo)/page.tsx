@@ -13,7 +13,8 @@ import { AMOUNT_OF_STEPS, calculateCompletionPercentage } from "./_utils/calcula
 
 export default function AppPage() {
   const { address } = useAccount();
-  const [userToken] = useLocalStorage("google-token", null);
+  const [googleUserToken] = useLocalStorage("google-token", null);
+  const [facebookUserToken] = useLocalStorage("facebook-token", null);
   const [mounted, setMounted] = useState<boolean>(false);
   const [currentStep, setCurrentStep] = useState<number>(1);
 
@@ -23,13 +24,14 @@ export default function AppPage() {
       return;
     }
 
-    if (!userToken) {
+    if (!googleUserToken && !facebookUserToken) {
       setCurrentStep(2);
       return;
     }
 
     setCurrentStep(3);
-  }, [address, userToken]);
+    localStorage.removeItem("code-verifier");
+  }, [address, googleUserToken, facebookUserToken]);
 
   useEffect(() => {
     setMounted(true);

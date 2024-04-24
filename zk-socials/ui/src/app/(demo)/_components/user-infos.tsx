@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@risc0/ui/avatar";
 import Image from "next/image";
 import { getAvatarInitials } from "../_utils/get-avatar-initials";
 
-export function UserInfos({ userInfos }) {
+export function UserInfos({ userInfos, type }: { userInfos: any; type: "google" | "facebook" }) {
   return (
     <Alert className="flex flex-row items-center gap-4 bg-neutral-50 p-5 dark:bg-neutral-900">
       <Avatar className="size-16">
@@ -17,8 +17,17 @@ export function UserInfos({ userInfos }) {
         <p title={userInfos.email} className="truncate text-muted-foreground text-sm">
           {userInfos.email}
         </p>
-        <p className="flex flex-row gap-1 font-mono text-[10px]">
-          <Image src="/google.svg" width={12} height={12} alt="Google" /> Google
+        <p className="flex flex-row gap-2 mt-1 font-mono text-[10px]">
+          {type === "google" && (
+            <>
+              <Image src="/google.svg" width={16} height={16} alt="Google" /> Google
+            </>
+          )}
+          {type === "facebook" && (
+            <>
+              <Image src="/facebook.png" width={16} height={16} alt="Facebook" /> Facebook
+            </>
+          )}
         </p>
       </AlertDescription>
     </Alert>

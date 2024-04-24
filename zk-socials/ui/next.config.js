@@ -6,7 +6,11 @@ const config = {
     ignoreDuringBuilds: true,
   },
   reactStrictMode: true,
+  swcMinify: true,
   transpilePackages: ["@risc0/ui"],
+  experimental: {
+    caseSensitiveRoutes: true,
+  },
 };
 
 export default config;

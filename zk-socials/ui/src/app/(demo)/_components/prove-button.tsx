@@ -14,7 +14,8 @@ export function ProveButton() {
   const [isMinted, _setIsMinted] = useState<boolean>(false);
   const [error, _setError] = useState<{ message?: string; status: number }>();
   const { address } = useAccount();
-  const [userInfos] = useLocalStorage<any | null>("google-infos", null);
+  const [facebookUserInfos] = useLocalStorage<any | null>("facebook-infos", null);
+  const [googleUserInfos] = useLocalStorage<any | null>("google-infos", null);
   const [userToken] = useLocalStorage<string | null>("google-token", null);
 
   const handleClick = async () => {
@@ -53,7 +54,8 @@ export function ProveButton() {
         You are about to prove that address <strong>{address}</strong> owns the following social account(s):
       </p>
 
-      {userInfos && <UserInfos userInfos={userInfos} />}
+      {googleUserInfos && <UserInfos type="google" userInfos={googleUserInfos} />}
+      {facebookUserInfos && <UserInfos type="facebook" userInfos={facebookUserInfos} />}
 
       <div className="mt-8">
         <Button
