@@ -15,11 +15,11 @@ import { generateRandomString } from "../_utils/generate-random-string";
 
 export default function SignInButton() {
   const [facebookUserId, setFacebookUserId] = useState<string>();
-  const [facebookUserInfos, setFacebookUserInfos] = useLocalStorage<any | null>("facebook-infos", null);
-  const [facebookUserToken, setFacebookUserToken] = useLocalStorage<string | null>("facebook-token", null);
-  const [googleUserInfos, setGoogleUserInfos] = useLocalStorage<any | null>("google-infos", null);
-  const [googleUserToken, setGoogleUserToken] = useLocalStorage<string | null>("google-token", null);
-  const [codeVerifier, setCodeVerifier] = useLocalStorage<string | null>("code-verifier", null);
+  const [facebookUserInfos, setFacebookUserInfos] = useLocalStorage<any | undefined>("facebook-infos", undefined);
+  const [facebookUserToken, setFacebookUserToken] = useLocalStorage<string | undefined>("facebook-token", undefined);
+  const [googleUserInfos, setGoogleUserInfos] = useLocalStorage<any | undefined>("google-infos", undefined);
+  const [googleUserToken, setGoogleUserToken] = useLocalStorage<string | undefined>("google-token", undefined);
+  const [codeVerifier, setCodeVerifier] = useLocalStorage<string | undefined>("code-verifier", undefined);
   const router = useRouter();
   const { address } = useAccount();
   const searchParams = useSearchParams();

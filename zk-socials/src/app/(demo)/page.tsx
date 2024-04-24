@@ -17,6 +17,7 @@ export default function AppPage() {
   const [facebookUserToken] = useLocalStorage("facebook-token", null);
   const [mounted, setMounted] = useState<boolean>(false);
   const [currentStep, setCurrentStep] = useState<number>(1);
+  const [_codeVerifier, setCodeVerifier] = useLocalStorage<string | undefined>("code-verifier", undefined);
 
   useEffect(() => {
     if (!address) {
@@ -30,8 +31,8 @@ export default function AppPage() {
     }
 
     setCurrentStep(3);
-    localStorage.removeItem("code-verifier");
-  }, [address, googleUserToken, facebookUserToken]);
+    setCodeVerifier(undefined);
+  }, [address, googleUserToken, facebookUserToken, setCodeVerifier]);
 
   useEffect(() => {
     setMounted(true);

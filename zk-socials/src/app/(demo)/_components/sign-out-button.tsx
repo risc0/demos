@@ -8,14 +8,16 @@ import { useLocalStorage } from "../_hooks/use-local-storage";
 export default function SignOutButton() {
   const { address } = useAccount();
   const { disconnectAsync } = useDisconnect();
-  const [googleUserInfos] = useLocalStorage<any | null | undefined>("google-infos", null);
-  const [facebookUserInfos] = useLocalStorage<any | null | undefined>("facebook-infos", null);
+  const [_googleUserToken, setGoogleUserToken] = useLocalStorage<string | undefined>("google-token", undefined);
+  const [googleUserInfos, setGoogleUserInfos] = useLocalStorage<any | undefined>("google-infos", undefined);
+  const [_facebookUserToken, setFacebookUserToken] = useLocalStorage<string | undefined>("facebook-token", undefined);
+  const [facebookUserInfos, setFacebookUserInfos] = useLocalStorage<any | undefined>("facebook-infos", undefined);
 
   async function signOut() {
-    localStorage.removeItem("google-infos");
-    localStorage.removeItem("google-token");
-    localStorage.removeItem("facebook-infos");
-    localStorage.removeItem("facebook-token");
+    setGoogleUserToken(undefined);
+    setGoogleUserInfos(undefined);
+    setFacebookUserToken(undefined);
+    setFacebookUserInfos(undefined);
     await disconnectAsync(); // Disconnect the user's wallet
   }
 

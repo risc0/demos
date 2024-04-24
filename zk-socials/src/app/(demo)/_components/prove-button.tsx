@@ -14,10 +14,10 @@ export function ProveButton() {
   const [isMinted, _setIsMinted] = useState<boolean>(false);
   const [error, setError] = useState<{ message?: string; status: number }>();
   const { address } = useAccount();
-  const [facebookUserInfos] = useLocalStorage<any | null>("facebook-infos", null);
-  const [facebookUserToken] = useLocalStorage<string | null>("facebook-token", null);
-  const [googleUserInfos] = useLocalStorage<any | null>("google-infos", null);
-  const [googleUserToken] = useLocalStorage<string | null>("google-token", null);
+  const [facebookUserInfos] = useLocalStorage<any | undefined>("facebook-infos", undefined);
+  const [facebookUserToken] = useLocalStorage<string | undefined>("facebook-token", undefined);
+  const [googleUserInfos] = useLocalStorage<any | undefined>("google-infos", undefined);
+  const [googleUserToken] = useLocalStorage<string | undefined>("google-token", undefined);
 
   const handleClick = async () => {
     setIsLoading(true);
