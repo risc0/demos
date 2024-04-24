@@ -12,23 +12,26 @@ import { UserInfos } from "./user-infos";
 export function ProveButton() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isMinted, _setIsMinted] = useState<boolean>(false);
-  const [error, _setError] = useState<{ message?: string; status: number }>();
+  const [error, setError] = useState<{ message?: string; status: number }>();
   const { address } = useAccount();
   const [facebookUserInfos] = useLocalStorage<any | null>("facebook-infos", null);
+  const [facebookUserToken] = useLocalStorage<string | null>("facebook-token", null);
   const [googleUserInfos] = useLocalStorage<any | null>("google-infos", null);
-  const [userToken] = useLocalStorage<string | null>("google-token", null);
+  const [googleUserToken] = useLocalStorage<string | null>("google-token", null);
 
   const handleClick = async () => {
     setIsLoading(true);
 
-    if (!userToken) {
+    if (!facebookUserToken && !googleUserToken) {
       console.error("JWT not found");
       setIsLoading(false);
 
       return;
     }
 
-    try {
+    setIsLoading(false);
+
+    /*try {
       const response = await fetch("http://127.0.0.1:8080/authenticate", {
         method: "GET",
         headers: {
@@ -45,7 +48,7 @@ export function ProveButton() {
       console.error("Error fetching data:", error);
     } finally {
       setIsLoading(false);
-    }
+    }*/
   };
 
   return address ? (
@@ -61,7 +64,7 @@ export function ProveButton() {
         <Button
           isLoading={isLoading}
           onClick={async () => {
-            /*const result = await checkUserValidity({ email: userInfos.email });
+            const result = await checkUserValidity({ emailOrId: googleUserInfos?.email ?? facebookUserInfos?.id });
 
             if (result.status === 200) {
               // success
@@ -69,7 +72,7 @@ export function ProveButton() {
             } else {
               // error
               setError(result);
-            }*/
+            }
             handleClick(); //TODO: turn on to prevent abuse
           }}
           startIcon={<VerifiedIcon />}
