@@ -17,7 +17,7 @@ export function UserInfos({ userInfos, type }: { userInfos: any; type: "google" 
         <p title={userInfos.email} className="truncate text-muted-foreground text-sm">
           {userInfos.email}
         </p>
-        <p className="flex flex-row gap-2 mt-1 font-mono text-[10px]">
+        <p className="mt-1 flex flex-row gap-2 font-mono text-[10px]">
           {type === "google" && (
             <>
               <Image src="/google.svg" width={16} height={16} alt="Google" /> Google

@@ -9,6 +9,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { useAsync } from "react-use";
 import { useAccount } from "wagmi";
+import env from "~/env";
 import { useLocalStorage } from "../_hooks/use-local-storage";
 import { generateRandomString } from "../_utils/generate-random-string";
 
@@ -49,7 +50,7 @@ export default function SignInButton() {
   useAsync(async () => {
     if (code && !facebookUserToken) {
       await fetch(
-        `https://graph.facebook.com/v11.0/oauth/access_token?client_id=461759156201993&redirect_uri=http://localhost:3000/&code_verifier=${codeVerifier}&code=${code}`,
+        `https://graph.facebook.com/v11.0/oauth/access_token?client_id=${env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID}&redirect_uri=http://localhost:3000/&code_verifier=${codeVerifier}&code=${code}`,
       )
         .then(async (res) => {
           const resJson = await res.json();
@@ -82,14 +83,14 @@ export default function SignInButton() {
       />
 
       <Link
-        href={`https://www.facebook.com/v11.0/dialog/oauth?client_id=461759156201993&scope=openid&response_type=code&redirect_uri=http://localhost:3000/&code_challenge=${codeVerifier}&code_challenge_method=plain&nonce=${address}`}
+        href={`https://www.facebook.com/v11.0/dialog/oauth?client_id=${env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID}&scope=openid&response_type=code&redirect_uri=http://localhost:3000/&code_challenge=${codeVerifier}&code_challenge_method=plain&nonce=${address}`}
       >
         <Button
-          className="rounded-lg relative flex text-white flex-row gap-4 justify-start [&>svg]:hidden pl-0 pr-6 bg-[#202124] hover:bg-neutral-600 min-h-10 font-bold"
+          className="relative flex min-h-10 flex-row justify-start gap-4 rounded-lg bg-[#202124] pr-6 pl-0 font-bold text-white [&>svg]:hidden hover:bg-neutral-600"
           size="sm"
           variant="secondary"
         >
-          <div className="rounded-s-md bg-white size-9 flex ml-0.5 items-center justify-center">
+          <div className="ml-0.5 flex size-9 items-center justify-center rounded-s-md bg-white">
             <Image src="/facebook.png" alt="Facebook" width={20} height={20} />
           </div>
           Sign In with Facebook
