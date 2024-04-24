@@ -130,6 +130,9 @@ fn main() {
             "Next block producers hash doesn't match"
         );
 
+
+        // NOTE: this has the assumption that only one block per epoch will be validated. If it's
+        //       necessary to validate multiple blocks per epoch, this should be changed.
         // Update block producers to be committed.
         block_producers = next_bps;
     }
