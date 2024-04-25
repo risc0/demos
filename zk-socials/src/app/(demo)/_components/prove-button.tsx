@@ -2,6 +2,7 @@
 
 import { Alert, AlertDescription, AlertTitle } from "@risc0/ui/alert";
 import { Button } from "@risc0/ui/button";
+import { Loader } from "@risc0/ui/loader";
 import { AlertTriangleIcon, VerifiedIcon } from "lucide-react";
 import { useState } from "react";
 import { useAccount } from "wagmi";
@@ -11,7 +12,7 @@ import { useLocalStorage } from "../_hooks/use-local-storage";
 import { UserInfos } from "./user-infos";
 
 export function ProveButton() {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [_starkResults, setStarkResults] = useLocalStorage<any | undefined>("stark-results", undefined);
   const [_snarkResults, setSnarkResults] = useLocalStorage<any | undefined>("snark-results", undefined);
   const [error, setError] = useState<any>();
@@ -55,7 +56,7 @@ export function ProveButton() {
       {googleUserInfos && <UserInfos type="google" userInfos={googleUserInfos} />}
       {facebookUserInfos && <UserInfos type="facebook" userInfos={facebookUserInfos} />}
 
-      <div className="mt-8">
+      <div className="mt-6">
         <Button
           isLoading={isLoading}
           onClick={async () => {
@@ -74,11 +75,13 @@ export function ProveButton() {
           startIcon={<VerifiedIcon />}
           size="lg"
           autoFocus
-          className="w-full"
+          className="mb-4 w-full"
           disabled={!!error || isLoading}
         >
           Prove with Bonsai™
         </Button>
+
+        {isLoading && <Loader loadingText="This will take a couple of minutes… Do not close your browser…" />}
 
         {error && (
           <Alert variant="destructive" className="mt-4">
@@ -88,8 +91,6 @@ export function ProveButton() {
             <AlertDescription>{error.message}</AlertDescription>
           </Alert>
         )}
-
-        {isLoading && <p className="mt-2">This will take a couple of minutes… Do not close your browser…</p>}
       </div>
     </>
   ) : null;

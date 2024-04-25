@@ -14,7 +14,13 @@ export function Providers({ children }) {
     <GoogleOAuthProvider clientId={env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
-          <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange enableSystem enableColorScheme>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            disableTransitionOnChange
+            enableSystem
+            enableColorScheme
+          >
             {children}
           </ThemeProvider>
         </QueryClientProvider>

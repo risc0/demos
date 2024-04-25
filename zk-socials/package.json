@@ -15,7 +15,7 @@
     "@biomejs/biome": "1.7.1",
     "@poppinss/intl-formatter": "3.0.2",
     "@react-oauth/google": "0.12.1",
-    "@risc0/ui": "0.0.51",
+    "@risc0/ui": "0.0.52",
     "@t3-oss/env-nextjs": "0.10.1",
     "@tanstack/react-query": "5.32.0",
     "@types/jest": "29.5.12",

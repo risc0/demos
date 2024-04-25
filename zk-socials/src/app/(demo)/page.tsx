@@ -21,7 +21,7 @@ export default function AppPage() {
   const [facebookUserToken] = useLocalStorage("facebook-token", null);
   const [mounted, setMounted] = useState<boolean>(false);
   const [currentStep, setCurrentStep] = useState<number>(1);
-  const [_codeVerifier, setCodeVerifier] = useLocalStorage<string | undefined>("code-verifier", undefined);
+  const [codeVerifier, setCodeVerifier] = useLocalStorage<string | undefined>("code-verifier", undefined);
   const [starkResults] = useLocalStorage<any | undefined>("stark-results", undefined);
   const [snarkResults] = useLocalStorage<any | undefined>("snark-results", undefined);
 
@@ -42,8 +42,13 @@ export default function AppPage() {
     }
 
     setCurrentStep(3);
-    setCodeVerifier(undefined);
-  }, [address, googleUserToken, facebookUserToken, setCodeVerifier, starkResults, snarkResults]);
+  }, [address, googleUserToken, facebookUserToken, starkResults, snarkResults]);
+
+  useEffect(() => {
+    if (currentStep === 3 && codeVerifier) {
+      setCodeVerifier(undefined);
+    }
+  }, [currentStep, codeVerifier, setCodeVerifier]);
 
   useEffect(() => {
     setMounted(true);
@@ -98,7 +103,7 @@ export default function AppPage() {
                 {starkResults && (
                   <Alert className="border-none px-0">
                     <AlertTitle>STARK Results</AlertTitle>
-                    <AlertDescription className="rounded border bg-neutral-900">
+                    <AlertDescription className="rounded border bg-neutral-50 dark:bg-neutral-900">
                       <StarkTable starkData={starkResults} />
                     </AlertDescription>
                   </Alert>
@@ -107,7 +112,7 @@ export default function AppPage() {
                 {snarkResults && (
                   <Alert className="border-none px-0 pb-0">
                     <AlertTitle>SNARK Results</AlertTitle>
-                    <AlertDescription className="rounded border bg-neutral-900">
+                    <AlertDescription className="rounded border bg-neutral-50 dark:bg-neutral-900">
                       <SnarkTable snarkData={snarkResults} />
                     </AlertDescription>
                   </Alert>
