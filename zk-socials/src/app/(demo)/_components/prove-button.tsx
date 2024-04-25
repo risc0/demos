@@ -2,25 +2,28 @@
 
 import { Alert, AlertDescription, AlertTitle } from "@risc0/ui/alert";
 import { Button } from "@risc0/ui/button";
+import { cn } from "@risc0/ui/cn";
 import { Loader } from "@risc0/ui/loader";
 import { AlertTriangleIcon, VerifiedIcon } from "lucide-react";
 import { useState } from "react";
 import { useAccount } from "wagmi";
+import type { FacebookUserInfos } from "~/types/facebook";
+import type { GoogleUserInfos } from "~/types/google";
 import { bonsaiProving } from "../_actions/bonsai-proving";
 import { checkUserValidity } from "../_actions/check-user-validity";
 import { useLocalStorage } from "../_hooks/use-local-storage";
 import { UserInfos } from "./user-infos";
 
 export function ProveButton() {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [_starkResults, setStarkResults] = useLocalStorage<any | undefined>("stark-results", undefined);
   const [_snarkResults, setSnarkResults] = useLocalStorage<any | undefined>("snark-results", undefined);
+  const [facebookUserInfos] = useLocalStorage<FacebookUserInfos | undefined>("facebook-infos", undefined);
+  const [facebookUserToken] = useLocalStorage<string | undefined>("facebook-token", undefined);
+  const [googleUserInfos] = useLocalStorage<GoogleUserInfos | undefined>("google-infos", undefined);
+  const [googleUserToken] = useLocalStorage<string | undefined>("google-token", undefined);
   const [error, setError] = useState<any>();
   const { address } = useAccount();
-  const [facebookUserInfos] = useLocalStorage<any | undefined>("facebook-infos", undefined);
-  const [facebookUserToken] = useLocalStorage<string | undefined>("facebook-token", undefined);
-  const [googleUserInfos] = useLocalStorage<any | undefined>("google-infos", undefined);
-  const [googleUserToken] = useLocalStorage<string | undefined>("google-token", undefined);
 
   async function handleClick() {
     setIsLoading(true);
@@ -60,8 +63,7 @@ export function ProveButton() {
         <Button
           isLoading={isLoading}
           onClick={async () => {
-            // TODO: put back when ready
-            /*const result = await checkUserValidity({ emailOrId: googleUserInfos?.email ?? facebookUserInfos?.id });
+            const result = await checkUserValidity({ emailOrId: googleUserInfos?.email ?? facebookUserInfos?.id });
 
             if (result.status === 200) {
               // success
@@ -69,24 +71,24 @@ export function ProveButton() {
             } else {
               // error
               setError(result);
-            }*/
-            await handleClick(); //TODO: turn on to prevent abuse
+            }
+
+            await handleClick();
           }}
           startIcon={<VerifiedIcon />}
           size="lg"
           autoFocus
-          className="mb-4 w-full"
+          className={cn("w-full", isLoading && "mb-4")}
           disabled={!!error || isLoading}
         >
           Prove with Bonsai™
         </Button>
 
-        {isLoading && <Loader loadingText="This will take a couple of minutes… Do not close your browser…" />}
+        {isLoading && <Loader loadingText="☕️ This will take a couple of minutes… Do not close your browser…" />}
 
         {error && (
           <Alert variant="destructive" className="mt-4">
             <AlertTriangleIcon className="size-4" />
-
             <AlertTitle>Error {error.status}</AlertTitle>
             <AlertDescription>{error.message}</AlertDescription>
           </Alert>
