@@ -39,7 +39,7 @@ export default function AppPage() {
   }, []);
 
   return (
-    <Card className="shadow-sm">
+    <Card className="shadow-sm overflow-auto">
       <CardHeader>
         <Progress className="mb-4" value={mounted ? calculateCompletionPercentage(currentStep, AMOUNT_OF_STEPS) : 0} />
 

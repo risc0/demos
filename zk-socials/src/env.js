@@ -10,6 +10,8 @@ const env = createEnv({
    */
   server: {
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+
+    BONSAI_API_KEY: z.string(),
   },
 
   /**
@@ -28,9 +30,12 @@ const env = createEnv({
    */
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
+
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
     NEXT_PUBLIC_FACEBOOK_CLIENT_ID: process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID,
     NEXT_PUBLIC_VERCEL_BRANCH_URL: process.env.NEXT_PUBLIC_VERCEL_BRANCH_URL,
+
+    BONSAI_API_KEY: process.env.BONSAI_API_KEY,
   },
   /**
    * Makes it so that empty strings are treated as undefined.

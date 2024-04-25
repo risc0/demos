@@ -5,21 +5,26 @@ import { Button } from "@risc0/ui/button";
 import { AlertTriangleIcon, VerifiedIcon } from "lucide-react";
 import { useState } from "react";
 import { useAccount } from "wagmi";
+import { bonsaiProving } from "../_actions/bonsai-proving";
 import { checkUserValidity } from "../_actions/check-user-validity";
 import { useLocalStorage } from "../_hooks/use-local-storage";
+import { SnarkTable } from "./snark-table";
+import { StarkTable } from "./stark-table";
 import { UserInfos } from "./user-infos";
 
 export function ProveButton() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [starkResults, setStarkResults] = useState<any>();
+  const [snarkResults, setSnarkResults] = useState<any>();
   const [isMinted, _setIsMinted] = useState<boolean>(false);
-  const [error, setError] = useState<{ message?: string; status: number }>();
+  const [error, setError] = useState<any>();
   const { address } = useAccount();
   const [facebookUserInfos] = useLocalStorage<any | undefined>("facebook-infos", undefined);
   const [facebookUserToken] = useLocalStorage<string | undefined>("facebook-token", undefined);
   const [googleUserInfos] = useLocalStorage<any | undefined>("google-infos", undefined);
   const [googleUserToken] = useLocalStorage<string | undefined>("google-token", undefined);
 
-  const handleClick = async () => {
+  async function handleClick() {
     setIsLoading(true);
 
     if (!facebookUserToken && !googleUserToken) {
@@ -29,27 +34,20 @@ export function ProveButton() {
       return;
     }
 
-    setIsLoading(false);
+    try {
+      const results = await bonsaiProving(googleUserToken ?? facebookUserToken ?? "");
 
-    /*try {
-      const response = await fetch("http://127.0.0.1:8080/authenticate", {
-        method: "GET",
-        headers: {
-          "X-Auth-Token": userToken,
-        },
-      });
-
-      if (response.ok) {
-        const _result = await response.json();
-      } else {
-        throw new Error("Response not OK");
+      if (results) {
+        setStarkResults(results.snarkStatus);
+        setSnarkResults(results.snarkStatus);
       }
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error fetching:", error);
+      setError(error);
     } finally {
       setIsLoading(false);
-    }*/
-  };
+    }
+  }
 
   return address ? (
     <>
@@ -74,13 +72,13 @@ export function ProveButton() {
               // error
               setError(result);
             }*/
-            handleClick(); //TODO: turn on to prevent abuse
+            await handleClick(); //TODO: turn on to prevent abuse
           }}
           startIcon={<VerifiedIcon />}
           size="lg"
           autoFocus
           className="w-full"
-          disabled={!!error || isMinted || isLoading}
+          disabled={starkResults || !!error || isMinted || isLoading}
         >
           {isMinted ? "Minted" : "Prove with Bonsai™"}
         </Button>
@@ -95,6 +93,24 @@ export function ProveButton() {
         )}
 
         {isLoading && <p className="mt-2">This Will Take a Couple of Minutes… Hang Tight…</p>}
+
+        {starkResults && (
+          <Alert className="mt-6 -mb-6 -mx-6 border-none w-[calc(100%+3rem)]">
+            <AlertTitle>STARK Results</AlertTitle>
+            <AlertDescription>
+              <StarkTable starkData={starkResults} />
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {snarkResults && (
+          <Alert className="mt-6 -mb-6 -mx-6 border-none w-[calc(100%+3rem)]">
+            <AlertTitle>SNARK Results</AlertTitle>
+            <AlertDescription>
+              <SnarkTable snarkData={snarkResults} />
+            </AlertDescription>
+          </Alert>
+        )}
       </div>
     </>
   ) : null;
