@@ -181,9 +181,7 @@ function encodeU32(value: number) {
   return new Uint8Array(buffer);
 }
 
-async function exampleUsage(client: Client, token: string) {
-  console.log("token: string", token);
-
+async function exampleUsage(client: Client, _token: string) {
   try {
     const inputData = Buffer.from(encodeU32(1));
     const inputId = await client.uploadInput(inputData);
@@ -194,37 +192,26 @@ async function exampleUsage(client: Client, token: string) {
     // Create stark session
     const starkSession = await client.createStarkSession(imageId, inputId, assumptions);
 
-    console.log("starkSession", starkSession);
-
     let starkStatus = await starkSession.status(client);
-
-    console.log("starkStatus", starkStatus);
 
     // Poll until the session is not RUNNING
     while (starkStatus.status === "RUNNING") {
       await sleep(5000); // Wait for 5 seconds
 
       starkStatus = await starkSession.status(client);
-      console.log("starkStatus", starkStatus);
     }
-
-    console.log("starkStatus", starkStatus);
 
     // Create snark session
     const snarkSession = await client.createSnarkSession(starkSession.uuid);
-    console.log("snarkSession", snarkSession);
 
     let snarkStatus = await snarkSession.status(client);
-    console.log("snarkStatus", snarkStatus);
 
     // pooolllll
     while (snarkStatus.status === "RUNNING") {
       await sleep(5000); // Wait for 5 seconds
-      console.log("snarkStatus", snarkStatus);
 
       snarkStatus = await snarkSession.status(client);
     }
-    console.log("snarkStatus", snarkStatus);
 
     return {
       starkStatus,

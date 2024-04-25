@@ -12,6 +12,8 @@ export default function SignOutButton() {
   const [googleUserInfos, setGoogleUserInfos] = useLocalStorage<any | undefined>("google-infos", undefined);
   const [_facebookUserToken, setFacebookUserToken] = useLocalStorage<string | undefined>("facebook-token", undefined);
   const [facebookUserInfos, setFacebookUserInfos] = useLocalStorage<any | undefined>("facebook-infos", undefined);
+  const [starkResults] = useLocalStorage<any | undefined>("stark-results", undefined);
+  const [snarkResults] = useLocalStorage<any | undefined>("snark-results", undefined);
 
   async function signOut() {
     setGoogleUserToken(undefined);
@@ -21,7 +23,7 @@ export default function SignOutButton() {
     await disconnectAsync(); // Disconnect the user's wallet
   }
 
-  if (!address || (!googleUserInfos && !facebookUserInfos)) {
+  if (!address || (!googleUserInfos && !facebookUserInfos) || starkResults || snarkResults) {
     return null;
   }
 

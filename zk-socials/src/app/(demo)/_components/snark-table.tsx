@@ -14,7 +14,7 @@ export function SnarkTable({ snarkData }) {
         <TableRow>
           <TableCell>{capitalize(toLowerCase(snarkData.status))}</TableCell>
           <TableCell>
-            <pre className="font-mono text-[10px] whitespace-pre-wrap break-all">
+            <pre className="whitespace-pre-wrap break-all font-mono text-[10px]">
               {JSON.stringify(snarkData.output)}
             </pre>
           </TableCell>

@@ -8,15 +8,12 @@ import { useAccount } from "wagmi";
 import { bonsaiProving } from "../_actions/bonsai-proving";
 import { checkUserValidity } from "../_actions/check-user-validity";
 import { useLocalStorage } from "../_hooks/use-local-storage";
-import { SnarkTable } from "./snark-table";
-import { StarkTable } from "./stark-table";
 import { UserInfos } from "./user-infos";
 
 export function ProveButton() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [starkResults, setStarkResults] = useState<any>();
-  const [snarkResults, setSnarkResults] = useState<any>();
-  const [isMinted, _setIsMinted] = useState<boolean>(false);
+  const [_starkResults, setStarkResults] = useLocalStorage<any | undefined>("stark-results", undefined);
+  const [_snarkResults, setSnarkResults] = useLocalStorage<any | undefined>("snark-results", undefined);
   const [error, setError] = useState<any>();
   const { address } = useAccount();
   const [facebookUserInfos] = useLocalStorage<any | undefined>("facebook-infos", undefined);
@@ -38,7 +35,7 @@ export function ProveButton() {
       const results = await bonsaiProving(googleUserToken ?? facebookUserToken ?? "");
 
       if (results) {
-        setStarkResults(results.snarkStatus);
+        setStarkResults(results.starkStatus);
         setSnarkResults(results.snarkStatus);
       }
     } catch (error) {
@@ -78,9 +75,9 @@ export function ProveButton() {
           size="lg"
           autoFocus
           className="w-full"
-          disabled={starkResults || !!error || isMinted || isLoading}
+          disabled={!!error || isLoading}
         >
-          {isMinted ? "Minted" : "Prove with Bonsai™"}
+          Prove with Bonsai™
         </Button>
 
         {error && (
@@ -92,25 +89,7 @@ export function ProveButton() {
           </Alert>
         )}
 
-        {isLoading && <p className="mt-2">This Will Take a Couple of Minutes… Hang Tight…</p>}
-
-        {starkResults && (
-          <Alert className="mt-6 -mb-6 -mx-6 border-none w-[calc(100%+3rem)]">
-            <AlertTitle>STARK Results</AlertTitle>
-            <AlertDescription>
-              <StarkTable starkData={starkResults} />
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {snarkResults && (
-          <Alert className="mt-6 -mb-6 -mx-6 border-none w-[calc(100%+3rem)]">
-            <AlertTitle>SNARK Results</AlertTitle>
-            <AlertDescription>
-              <SnarkTable snarkData={snarkResults} />
-            </AlertDescription>
-          </Alert>
-        )}
+        {isLoading && <p className="mt-2">This will take a couple of minutes… Do not close your browser…</p>}
       </div>
     </>
   ) : null;
