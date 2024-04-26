@@ -127,7 +127,11 @@ export default function AppPage() {
                   <Alert className="mt-4 border-none px-0">
                     <AlertTitle>
                       STARK Results{" "}
-                      <span className={cn(starkPollingResults.status === "SUCCEEDED" && "text-green-500")}>
+                      <span
+                        className={cn(
+                          starkPollingResults.status === "SUCCEEDED" && "text-green-600 dark:text-green-500",
+                        )}
+                      >
                         ({starkPollingResults.status})
                       </span>
                     </AlertTitle>
@@ -141,7 +145,11 @@ export default function AppPage() {
                   <Alert className="border-none px-0">
                     <AlertTitle>
                       SNARK Results{" "}
-                      <span className={cn(snarkPollingResults.status === "SUCCEEDED" && "text-green-500")}>
+                      <span
+                        className={cn(
+                          snarkPollingResults.status === "SUCCEEDED" && "text-green-600 dark:text-green-500",
+                        )}
+                      >
                         ({snarkPollingResults.status})
                       </span>
                     </AlertTitle>

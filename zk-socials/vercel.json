@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "app/(demo)/_actions/**/*": {
+      "maxDuration": 300
+    }
+  }
+}
