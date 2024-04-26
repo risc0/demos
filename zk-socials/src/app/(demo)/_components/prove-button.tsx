@@ -2,14 +2,20 @@
 
 import { Alert, AlertDescription, AlertTitle } from "@risc0/ui/alert";
 import { Button } from "@risc0/ui/button";
+import { cn } from "@risc0/ui/cn";
 import { Loader } from "@risc0/ui/loader";
+import { sleep } from "@risc0/ui/utils/sleep";
 import { AlertTriangleIcon, VerifiedIcon } from "lucide-react";
-
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import type { FacebookUserInfos } from "~/types/facebook";
 import type { GoogleUserInfos } from "~/types/google";
-import { bonsaiProving } from "../_actions/bonsai-proving";
+import {
+  bonsaiSnarkProving,
+  bonsaiStarkProving,
+  getBonsaiSnarkStatus,
+  getBonsaiStarkStatus,
+} from "../_actions/bonsai-proving";
 import { checkUserValidity } from "../_actions/check-user-validity";
 import { useLocalStorage } from "../_hooks/use-local-storage";
 import { UserInfos } from "./user-infos";
@@ -24,7 +30,13 @@ export function ProveButton() {
   const [googleUserToken] = useLocalStorage<string | undefined>("google-token", undefined);
   const [error, setError] = useState<any>();
   const { address } = useAccount();
+  const [snarkPollingResults, setSnarkPollingResults] = useState<any>();
+  const [starkPollingResults, setStarkPollingResults] = useState<any>();
 
+  // this beast of a function takes care of creating the STARK session, which then returns a UUID
+  // we then use this UUID to create a SNARK session
+  // lastly, we get all the results from the STARK and SNARK sessions
+  // this gets around Vercel's time limit for serverless functions
   async function handleClick() {
     setIsLoading(true);
 
@@ -36,12 +48,46 @@ export function ProveButton() {
     }
 
     try {
-      const results = await bonsaiProving(googleUserToken ?? facebookUserToken ?? "");
+      const starkUuid = await bonsaiStarkProving({ token: googleUserToken ?? facebookUserToken ?? "" });
 
-      if (results) {
-        setStarkResults(results.starkStatus);
-        setSnarkResults(results.snarkStatus);
+      if (!starkUuid) {
+        throw new Error("STARK UUID not found");
       }
+
+      // STARK
+      let starkStatus = await getBonsaiStarkStatus({ uuid: starkUuid });
+
+      setStarkPollingResults(starkStatus);
+
+      // Poll until the session is not RUNNING
+      while (starkStatus.status === "RUNNING") {
+        await sleep(5000); // Wait for 5 seconds
+
+        starkStatus = await getBonsaiStarkStatus({ uuid: starkUuid });
+        setStarkPollingResults(starkStatus);
+      }
+
+      // SNARK
+      const snarkUuid = await bonsaiSnarkProving({ uuid: starkUuid });
+
+      if (!snarkUuid) {
+        throw new Error("SNARK UUID not found");
+      }
+
+      let snarkStatus = await getBonsaiSnarkStatus({ uuid: snarkUuid });
+
+      setSnarkPollingResults(snarkStatus);
+
+      // Poll until the session is not RUNNING
+      while (snarkStatus.status === "RUNNING") {
+        await sleep(5000); // Wait for 5 seconds
+
+        snarkStatus = await getBonsaiSnarkStatus({ uuid: snarkUuid });
+        setSnarkPollingResults(snarkStatus);
+      }
+
+      setStarkResults(starkStatus);
+      setSnarkResults(snarkStatus);
     } catch (error) {
       console.error("Error fetching:", error);
       setError(error);
@@ -69,17 +115,15 @@ export function ProveButton() {
         <Button
           isLoading={isLoading}
           onClick={async () => {
-            const result = await checkUserValidity({ emailOrId: googleUserInfos?.email ?? facebookUserInfos?.id });
+            const _result = await checkUserValidity({ emailOrId: googleUserInfos?.email ?? facebookUserInfos?.id });
 
-            if (result.status === 200) {
-              // success
-              handleClick();
-            } else {
+            //if (result.status === 200) {
+            // success
+            await handleClick();
+            /*} else {
               // error
               setError(result);
-            }
-
-            await handleClick();
+            }*/
           }}
           startIcon={<VerifiedIcon />}
           size="lg"
@@ -89,6 +133,39 @@ export function ProveButton() {
         >
           Prove with Bonsai™
         </Button>
+
+        {starkPollingResults && (
+          <Alert className="mt-4 border-none px-0">
+            <AlertTitle>
+              STARK Results{" "}
+              <span
+                className={cn(
+                  starkPollingResults.status === "SUCCEEDED" && "font-bold text-green-600 dark:text-green-500",
+                )}
+              >
+                ({starkPollingResults.status})
+              </span>
+            </AlertTitle>
+            <AlertDescription className="rounded border bg-neutral-50 font-mono dark:bg-neutral-900">
+              {starkPollingResults.state}
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {snarkPollingResults && (
+          <Alert className="border-none px-0 pb-0">
+            <AlertTitle>
+              SNARK Results{" "}
+              <span
+                className={cn(
+                  snarkPollingResults.status === "SUCCEEDED" && "font-bold text-green-600 dark:text-green-500",
+                )}
+              >
+                ({snarkPollingResults.status})
+              </span>
+            </AlertTitle>
+          </Alert>
+        )}
 
         {error && (
           <Alert variant="destructive" className="mt-4">
