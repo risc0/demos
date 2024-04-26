@@ -17,55 +17,55 @@ class InternalServerErr extends SdkErr {
   }
 }
 
-interface UploadRes {
+type UploadRes = {
   url: string;
   uuid: string;
-}
+};
 
-interface StarkSessionStats {
+type StarkSessionStats = {
   segments: number;
   total_cycles: number;
   cycles: number;
-}
+};
 
-interface StarkSessionStatusRes {
+export type StarkSessionStatusRes = {
   status: string;
   receipt_url?: string;
   error_msg?: string;
   state?: string;
   elapsed_time?: number;
   stats?: StarkSessionStats;
-}
+};
 
-interface ProofReq {
+type ProofReq = {
   img: string;
   input: string;
   assumptions: string[];
-}
+};
 
-interface CreateStarkSessionRes {
+type CreateStarkSessionRes = {
   uuid: string;
-}
+};
 
-interface CreateSnarkSessionRes {
+type CreateSnarkSessionRes = {
   uuid: string;
-}
+};
 
-interface SnarkSessionReq {
+type SnarkSessionReq = {
   session_id: string;
-}
+};
 
-interface SnarkSessionReceipt {
+type SnarkSessionReceipt = {
   snark: any;
   post_state_digest: number[];
   journal: number[];
-}
+};
 
-interface SnarkSessionStatusRes {
+export type SnarkSessionStatusRes = {
   status: string;
   output?: SnarkSessionReceipt;
   error_msg?: string;
-}
+};
 
 class StarkSession {
   // biome-ignore lint/suspicious/noEmptyBlockStatements: ignore

@@ -5,19 +5,15 @@ import { Button } from "@risc0/ui/button";
 import { cn } from "@risc0/ui/cn";
 import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
 import { Loader } from "@risc0/ui/loader";
-import { sleep } from "@risc0/ui/utils/sleep";
-import { AlertTriangleIcon, VerifiedIcon } from "lucide-react";
+import { AlertTriangleIcon, Loader2Icon, VerifiedIcon } from "lucide-react";
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import type { FacebookUserInfos } from "~/types/facebook";
 import type { GoogleUserInfos } from "~/types/google";
-import {
-  bonsaiSnarkProving,
-  bonsaiStarkProving,
-  getBonsaiSnarkStatus,
-  getBonsaiStarkStatus,
-} from "../_actions/bonsai-proving";
+import type { SnarkSessionStatusRes, StarkSessionStatusRes } from "../_actions/bonsai-proving";
 import { checkUserValidity } from "../_actions/check-user-validity";
+import { doSnarkProving } from "../_utils/do-snark-proving";
+import { doStarkProving } from "../_utils/do-stark-proving";
 import { UserInfos } from "./user-infos";
 
 export function ProveButton() {
@@ -30,8 +26,8 @@ export function ProveButton() {
   const [googleUserToken] = useLocalStorage<string | undefined>("google-token", undefined);
   const [error, setError] = useState<any>();
   const { address } = useAccount();
-  const [snarkPollingResults, setSnarkPollingResults] = useState<any>();
-  const [starkPollingResults, setStarkPollingResults] = useState<any>();
+  const [snarkPollingResults, setSnarkPollingResults] = useState<SnarkSessionStatusRes>();
+  const [starkPollingResults, setStarkPollingResults] = useState<StarkSessionStatusRes>();
 
   // this beast of a function takes care of creating the STARK session, which then returns a UUID
   // we then use this UUID to create a SNARK session
@@ -48,48 +44,16 @@ export function ProveButton() {
     }
 
     try {
-      const starkUuid = await bonsaiStarkProving({ token: googleUserToken ?? facebookUserToken ?? "" });
-
-      if (!starkUuid) {
-        throw new Error("STARK UUID not found");
-      }
-
-      // STARK
-      let starkStatus = await getBonsaiStarkStatus({ uuid: starkUuid });
-
-      setStarkPollingResults(starkStatus);
-
-      // Poll until the session is not RUNNING
-      while (starkStatus.status === "RUNNING") {
-        await sleep(5000); // Wait for 5 seconds
-
-        starkStatus = await getBonsaiStarkStatus({ uuid: starkUuid });
-        setStarkPollingResults(starkStatus);
-      }
-
-      // SNARK
-      const snarkUuid = await bonsaiSnarkProving({ uuid: starkUuid });
-
-      if (!snarkUuid) {
-        throw new Error("SNARK UUID not found");
-      }
-
-      let snarkStatus = await getBonsaiSnarkStatus({ uuid: snarkUuid });
-
-      setSnarkPollingResults(snarkStatus);
-
-      // Poll until the session is not RUNNING
-      while (snarkStatus.status === "RUNNING") {
-        await sleep(5000); // Wait for 5 seconds
-
-        snarkStatus = await getBonsaiSnarkStatus({ uuid: snarkUuid });
-        setSnarkPollingResults(snarkStatus);
-      }
+      const { starkUuid, starkStatus } = await doStarkProving({
+        setStarkPollingResults,
+        token: googleUserToken ?? facebookUserToken ?? "",
+      });
+      const { snarkStatus } = await doSnarkProving({ setSnarkPollingResults, starkUuid });
 
       setStarkResults(starkStatus);
       setSnarkResults(snarkStatus);
     } catch (error) {
-      console.error("Error fetching:", error);
+      console.error("Error proving:", error);
       setError(error);
     } finally {
       setIsLoading(false);
@@ -164,6 +128,9 @@ export function ProveButton() {
                 ({snarkPollingResults.status})
               </span>
             </AlertTitle>
+            <AlertDescription>
+              <Loader2Icon className="mt-0.5 size-4 animate-spin" />
+            </AlertDescription>
           </Alert>
         )}
 
