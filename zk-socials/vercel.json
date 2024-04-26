@@ -1,6 +1,6 @@
 {
   "functions": {
-    "app/(demo)/_actions/**/*": {
+    "src/app/(demo)/_actions/**/*": {
       "maxDuration": 300
     }
   }
