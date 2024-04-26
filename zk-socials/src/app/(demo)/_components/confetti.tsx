@@ -3,18 +3,17 @@
 import { useEffect, useState } from "react";
 import { default as ReactConfetti } from "react-confetti";
 import useWindowSize from "react-use/lib/useWindowSize";
+import { useMounted } from "../_hooks/use-mounted";
 
 export function Confetti() {
   const { width, height } = useWindowSize();
+  const mounted = useMounted();
   const [recycle, setRecycle] = useState<boolean>(true);
-  const [mounted, setMounted] = useState<boolean>(false);
 
   useEffect(() => {
     setTimeout(() => {
       setRecycle(false);
     }, 2000);
-
-    setMounted(true);
   }, []);
 
   return mounted ? (

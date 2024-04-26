@@ -2,9 +2,9 @@
 
 import { Alert, AlertDescription, AlertTitle } from "@risc0/ui/alert";
 import { Button } from "@risc0/ui/button";
-import { cn } from "@risc0/ui/cn";
 import { Loader } from "@risc0/ui/loader";
 import { AlertTriangleIcon, VerifiedIcon } from "lucide-react";
+
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import type { FacebookUserInfos } from "~/types/facebook";
@@ -52,18 +52,24 @@ export function ProveButton() {
 
   return address ? (
     <>
-      <p className="mb-3 break-words text-xs">
-        You are about to prove that address <strong>{address}</strong> owns the following social account(s):
-      </p>
+      {isLoading ? (
+        <Loader loadingText="☕️ This will take a couple of minutes… Do not close your browser…" />
+      ) : (
+        <>
+          <p className="mb-3 break-words text-xs">
+            You are about to prove that address <strong>{address}</strong> owns the following social account(s):
+          </p>
 
-      {googleUserInfos && <UserInfos type="google" userInfos={googleUserInfos} />}
-      {facebookUserInfos && <UserInfos type="facebook" userInfos={facebookUserInfos} />}
+          {googleUserInfos && <UserInfos type="google" userInfos={googleUserInfos} />}
+          {facebookUserInfos && <UserInfos type="facebook" userInfos={facebookUserInfos} />}
+        </>
+      )}
 
       <div className="mt-6">
         <Button
           isLoading={isLoading}
           onClick={async () => {
-            const result = await checkUserValidity({ emailOrId: googleUserInfos?.email ?? facebookUserInfos?.id });
+            /*const result = await checkUserValidity({ emailOrId: googleUserInfos?.email ?? facebookUserInfos?.id });
 
             if (result.status === 200) {
               // success
@@ -71,20 +77,18 @@ export function ProveButton() {
             } else {
               // error
               setError(result);
-            }
+            }*/
 
             await handleClick();
           }}
           startIcon={<VerifiedIcon />}
           size="lg"
           autoFocus
-          className={cn("w-full", isLoading && "mb-4")}
+          className="w-full"
           disabled={!!error || isLoading}
         >
           Prove with Bonsai™
         </Button>
-
-        {isLoading && <Loader loadingText="☕️ This will take a couple of minutes… Do not close your browser…" />}
 
         {error && (
           <Alert variant="destructive" className="mt-4">
