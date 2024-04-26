@@ -1,6 +1,5 @@
 "use server";
 
-import { sleep } from "@risc0/ui/utils/sleep";
 import axios, { type AxiosInstance, type AxiosResponse } from "axios";
 import env from "~/env";
 

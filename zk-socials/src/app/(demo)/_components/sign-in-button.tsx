@@ -6,7 +6,7 @@ import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
 import jwtDecode from "jwt-decode";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAsync } from "react-use";
 import { useAccount } from "wagmi";
@@ -20,7 +20,6 @@ export default function SignInButton() {
   const [googleUserInfos, setGoogleUserInfos] = useLocalStorage<any | undefined>("google-infos", undefined);
   const [googleUserToken, setGoogleUserToken] = useLocalStorage<string | undefined>("google-token", undefined);
   const [codeVerifier, setCodeVerifier] = useLocalStorage<string | undefined>("code-verifier", undefined);
-  const router = useRouter();
   const { address } = useAccount();
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
@@ -28,13 +27,6 @@ export default function SignInButton() {
     env.NEXT_PUBLIC_VERCEL_BRANCH_URL === "localhost:3000"
       ? "http://localhost:3000/"
       : `https://${env.NEXT_PUBLIC_VERCEL_BRANCH_URL}/`; // keep trailing slash, very important
-
-  // if already logged in
-  useEffect(() => {
-    if (googleUserInfos || facebookUserInfos) {
-      router.push("/");
-    }
-  }, [router.push, googleUserInfos, facebookUserInfos]);
 
   useEffect(() => {
     if (!googleUserToken || googleUserInfos) {
@@ -51,6 +43,12 @@ export default function SignInButton() {
 
     setFacebookUserInfos({ ...jwtDecode(facebookUserToken), id: facebookUserId });
   }, [facebookUserToken, facebookUserInfos, setFacebookUserInfos, facebookUserId]);
+
+  useEffect(() => {
+    if (!codeVerifier) {
+      setCodeVerifier(generateRandomString(128));
+    }
+  }, [setCodeVerifier, codeVerifier]);
 
   useAsync(async () => {
     if (code && !facebookUserToken && !facebookUserId) {
@@ -79,12 +77,6 @@ export default function SignInButton() {
         .catch(console.error);
     }
   }, [code, facebookUserToken, facebookUserId]);
-
-  useEffect(() => {
-    if (!codeVerifier) {
-      setCodeVerifier(generateRandomString(128));
-    }
-  }, [setCodeVerifier, codeVerifier]);
 
   return (
     <div className="flex flex-row gap-4">

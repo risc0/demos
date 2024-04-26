@@ -6,6 +6,7 @@ import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
 import { useMounted } from "@risc0/ui/hooks/use-mounted";
 import { Progress } from "@risc0/ui/progress";
 import { Skeleton } from "@risc0/ui/skeleton";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { Confetti } from "./_components/confetti";
@@ -25,6 +26,7 @@ export default function AppPage() {
   const [codeVerifier, setCodeVerifier] = useLocalStorage<string | undefined>("code-verifier", undefined);
   const [starkResults] = useLocalStorage<any | undefined>("stark-results", undefined);
   const [snarkResults] = useLocalStorage<any | undefined>("snark-results", undefined);
+  const router = useRouter();
 
   useEffect(() => {
     if (!address) {
@@ -48,8 +50,9 @@ export default function AppPage() {
   useEffect(() => {
     if (currentStep === 3 && codeVerifier) {
       setCodeVerifier(undefined);
+      router.push("/");
     }
-  }, [currentStep, codeVerifier, setCodeVerifier]);
+  }, [currentStep, router.push, codeVerifier, setCodeVerifier]);
 
   return (
     <>
@@ -65,7 +68,7 @@ export default function AppPage() {
           {mounted ? (
             <CardTitle>
               {currentStep === 1
-                ? "Connect your Wallet"
+                ? "Connect Your Wallet"
                 : currentStep === 2
                   ? "Sign In with Social Account"
                   : "Prove with Bonsai™"}
