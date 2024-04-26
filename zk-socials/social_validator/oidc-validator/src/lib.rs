@@ -11,11 +11,11 @@ use thiserror::Error;
 
 lazy_static! {
     static ref GOOGLE_KEYS: JwkKeys =
-        serde_json::from_str(GOOGLE_PUB_JWK).expect("Failed to parse JWK");
+        serde_json::from_str(GOOGLE_PUB_JWK).expect("Failed to parse Google JWKs");
     static ref FACEBOOK_KEYS: JwkKeys =
-        serde_json::from_str(FACEBOOK_PUB_JWK).expect("Failed to parse JWK");
+        serde_json::from_str(FACEBOOK_PUB_JWK).expect("Failed to parse Facebook JWKs");
     static ref TEST_KEYS: JwkKeys =
-        serde_json::from_str(TEST_PUB_JWK).expect("Failed to parse JWK");
+        serde_json::from_str(TEST_PUB_JWK).expect("Failed to parse Test JWKs");
 }
 
 #[derive(Deserialize, Serialize)]
@@ -63,12 +63,13 @@ impl IdentityProvider {
     }
 }
 
-impl From<u8> for IdentityProvider {
-    fn from(value: u8) -> Self {
-        match value {
-            0 => Self::Google,
-            1 => Self::Facebook,
-            _ => Self::Test,
+impl From<String> for IdentityProvider {
+    fn from(value: String) -> Self {
+        match value.to_lowercase().as_str() {
+            "google" => Self::Google,
+            "facebook" => Self::Facebook,
+            "test" => Self::Test,
+            _ => panic!("invalid identity provider"),
         }
     }
 }
