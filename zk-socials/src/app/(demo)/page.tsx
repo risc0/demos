@@ -124,14 +124,14 @@ export default function AppPage() {
                 <ProveButton />
 
                 {starkPollingResults && (
-                  <Alert className="border-none px-0 mt-4">
+                  <Alert className="mt-4 border-none px-0">
                     <AlertTitle>
                       STARK Results{" "}
                       <span className={cn(starkPollingResults.status === "SUCCEEDED" && "text-green-500")}>
                         ({starkPollingResults.status})
                       </span>
                     </AlertTitle>
-                    <AlertDescription className="font-mono rounded border bg-neutral-50 dark:bg-neutral-900">
+                    <AlertDescription className="rounded border bg-neutral-50 font-mono dark:bg-neutral-900">
                       {starkPollingResults.state}
                     </AlertDescription>
                   </Alert>
@@ -141,7 +141,7 @@ export default function AppPage() {
                   <Alert className="border-none px-0">
                     <AlertTitle>
                       SNARK Results{" "}
-                      <span className={cn(snarkPollingResults.status === "SUCCEEDED", "text-green-500")}>
+                      <span className={cn(snarkPollingResults.status === "SUCCEEDED" && "text-green-500")}>
                         ({snarkPollingResults.status})
                       </span>
                     </AlertTitle>
