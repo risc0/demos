@@ -69,7 +69,7 @@ export type SnarkSessionStatusRes = {
 
 class StarkSession {
   // biome-ignore lint/suspicious/noEmptyBlockStatements: ignore
-  constructor(public uuid: string) {}
+  constructor(public uuid: string) { }
 
   async status(client: Client): Promise<StarkSessionStatusRes> {
     const url = `sessions/status/${this.uuid}`;
@@ -86,7 +86,7 @@ class StarkSession {
 
 class SnarkSession {
   // biome-ignore lint/suspicious/noEmptyBlockStatements: ignore
-  constructor(public uuid: string) {}
+  constructor(public uuid: string) { }
 
   async status(client: Client): Promise<SnarkSessionStatusRes> {
     const url = `snark/status/${this.uuid}`;
@@ -171,22 +171,24 @@ class Client {
   }
 }
 
-// js number -> rust u32 encoder :(
-function encodeU32(value: number) {
-  const buffer = new ArrayBuffer(4);
-  const view = new DataView(buffer);
-  view.setUint32(0, value, true); // true for little-endian byte order
-
-  return new Uint8Array(buffer);
+function encodeString(value: string) {
+  const encoder = new TextEncoder();
+  return encoder.encode(value);
 }
 
 // STARK
-export async function bonsaiStarkProving({ token }: { token: string }) {
+export async function bonsaiStarkProving({ iss, token }: { iss: string, token: string }) {
   const apiKey = env.BONSAI_API_KEY;
   const version = "0.21.0";
   const url = "https://api.staging.bonsai.xyz";
   const client = new Client(url, apiKey, version);
-  const inputData = Buffer.from(encodeU32(1));
+
+  // TODO: This should work, but not entirely sure!
+  const inputData = Buffer.from(JSON.stringify({
+    iss: iss, // "google", "facebook", or "test"
+    jwt: token, // jwt
+  }));
+
   const inputId = await client.uploadInput(inputData);
   const imageId = env.NEXT_PUBLIC_IMAGE_ID;
   const assumptions: string[] = [];
