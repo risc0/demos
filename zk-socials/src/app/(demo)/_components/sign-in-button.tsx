@@ -2,6 +2,7 @@
 
 import { GoogleLogin } from "@react-oauth/google";
 import { Button } from "@risc0/ui/button";
+import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
 import jwtDecode from "jwt-decode";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,7 +11,6 @@ import { useEffect, useState } from "react";
 import { useAsync } from "react-use";
 import { useAccount } from "wagmi";
 import env from "~/env";
-import { useLocalStorage } from "../_hooks/use-local-storage";
 import { generateRandomString } from "../_utils/generate-random-string";
 
 export default function SignInButton() {

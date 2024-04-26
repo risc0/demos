@@ -1,9 +1,9 @@
 "use client";
 
+import { useMounted } from "@risc0/ui/hooks/use-mounted";
 import { useEffect, useState } from "react";
 import { default as ReactConfetti } from "react-confetti";
 import useWindowSize from "react-use/lib/useWindowSize";
-import { useMounted } from "../_hooks/use-mounted";
 
 export function Confetti() {
   const { width, height } = useWindowSize();

@@ -2,6 +2,8 @@
 
 import { Alert, AlertDescription, AlertTitle } from "@risc0/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@risc0/ui/card";
+import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
+import { useMounted } from "@risc0/ui/hooks/use-mounted";
 import { Progress } from "@risc0/ui/progress";
 import { Skeleton } from "@risc0/ui/skeleton";
 import { useEffect, useState } from "react";
@@ -12,8 +14,6 @@ import { ProveButton } from "./_components/prove-button";
 import SignInButton from "./_components/sign-in-button";
 import { SnarkTable } from "./_components/snark-table";
 import { StarkTable } from "./_components/stark-table";
-import { useLocalStorage } from "./_hooks/use-local-storage";
-import { useMounted } from "./_hooks/use-mounted";
 import { AMOUNT_OF_STEPS, calculateCompletionPercentage } from "./_utils/calculate-completion-percentage";
 
 export default function AppPage() {

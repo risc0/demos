@@ -3,6 +3,7 @@
 import { Alert, AlertDescription, AlertTitle } from "@risc0/ui/alert";
 import { Button } from "@risc0/ui/button";
 import { cn } from "@risc0/ui/cn";
+import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
 import { Loader } from "@risc0/ui/loader";
 import { sleep } from "@risc0/ui/utils/sleep";
 import { AlertTriangleIcon, VerifiedIcon } from "lucide-react";
@@ -17,7 +18,6 @@ import {
   getBonsaiStarkStatus,
 } from "../_actions/bonsai-proving";
 import { checkUserValidity } from "../_actions/check-user-validity";
-import { useLocalStorage } from "../_hooks/use-local-storage";
 import { UserInfos } from "./user-infos";
 
 export function ProveButton() {
