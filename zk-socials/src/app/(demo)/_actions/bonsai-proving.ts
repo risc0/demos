@@ -197,7 +197,7 @@ async function proving(client: Client, token: string) {
   try {
     const inputData = Buffer.from(encodeU32(1));
     const inputId = await client.uploadInput(inputData);
-    const imageId = "ab674571f2f8ef5bd7975ce1756725c07d67daa813dd8e720d45bea4f8b10fd8";
+    const imageId = env.NEXT_PUBLIC_IMAGE_ID;
     const assumptions: string[] = [];
 
     // Create stark session

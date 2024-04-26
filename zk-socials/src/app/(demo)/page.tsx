@@ -64,7 +64,7 @@ export default function AppPage() {
     }
 
     if (starkResults || snarkResults) {
-      setCurrentStep(3);
+      setCurrentStep(4);
       return;
     }
 
