@@ -16,6 +16,7 @@ export default function SharedLayout({ children }) {
           Easily link web2 data with on-chain accounts via zk proofs over oauth-authenticated API data
         </p>
       </div>
+
       <Separator className="mb-8" />
 
       <div className="flex flex-1 flex-col-reverse gap-8 lg:flex-row">

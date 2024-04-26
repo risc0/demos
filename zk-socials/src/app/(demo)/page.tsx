@@ -1,23 +1,20 @@
 "use client";
 
-import crypto from "crypto";
 import { Alert, AlertDescription, AlertTitle } from "@risc0/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@risc0/ui/card";
-import { cn } from "@risc0/ui/cn";
+import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
+import { useMounted } from "@risc0/ui/hooks/use-mounted";
 import { Progress } from "@risc0/ui/progress";
 import { Skeleton } from "@risc0/ui/skeleton";
-import Pusher from "pusher-js";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import env from "~/env";
 import { Confetti } from "./_components/confetti";
 import { ConnectWalletButton } from "./_components/connect-wallet-button";
 import { ProveButton } from "./_components/prove-button";
 import SignInButton from "./_components/sign-in-button";
 import { SnarkTable } from "./_components/snark-table";
 import { StarkTable } from "./_components/stark-table";
-import { useLocalStorage } from "./_hooks/use-local-storage";
-import { useMounted } from "./_hooks/use-mounted";
 import { AMOUNT_OF_STEPS, calculateCompletionPercentage } from "./_utils/calculate-completion-percentage";
 
 export default function AppPage() {
@@ -29,28 +26,7 @@ export default function AppPage() {
   const [codeVerifier, setCodeVerifier] = useLocalStorage<string | undefined>("code-verifier", undefined);
   const [starkResults] = useLocalStorage<any | undefined>("stark-results", undefined);
   const [snarkResults] = useLocalStorage<any | undefined>("snark-results", undefined);
-  const [snarkPollingResults, setSnarkPollingResults] = useState<any>();
-  const [starkPollingResults, setStarkPollingResults] = useState<any>();
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: run once
-  useEffect(() => {
-    const channelName = `my-channel-${crypto
-      .createHash("sha256")
-      .update(googleUserToken ?? facebookUserToken ?? "")
-      .digest("hex")}`; // channel names have a maximum amount of chars allowed
-    const pusher = new Pusher(env.NEXT_PUBLIC_PUSHER_API_KEY, {
-      cluster: "us3",
-    });
-    const channel = pusher.subscribe(channelName);
-
-    channel.bind("stark-event", (data) => {
-      setStarkPollingResults(data);
-    });
-
-    channel.bind("snark-event", (data) => {
-      setSnarkPollingResults(data);
-    });
-  }, []);
+  const router = useRouter();
 
   useEffect(() => {
     if (!address) {
@@ -64,7 +40,7 @@ export default function AppPage() {
     }
 
     if (starkResults || snarkResults) {
-      setCurrentStep(3);
+      setCurrentStep(4);
       return;
     }
 
@@ -74,8 +50,9 @@ export default function AppPage() {
   useEffect(() => {
     if (currentStep === 3 && codeVerifier) {
       setCodeVerifier(undefined);
+      router.push("/");
     }
-  }, [currentStep, codeVerifier, setCodeVerifier]);
+  }, [currentStep, router.push, codeVerifier, setCodeVerifier]);
 
   return (
     <>
@@ -91,7 +68,7 @@ export default function AppPage() {
           {mounted ? (
             <CardTitle>
               {currentStep === 1
-                ? "Connect your Wallet"
+                ? "Connect Your Wallet"
                 : currentStep === 2
                   ? "Sign In with Social Account"
                   : "Prove with Bonsai™"}
@@ -120,34 +97,7 @@ export default function AppPage() {
             ) : currentStep === 2 ? (
               <SignInButton />
             ) : currentStep === 3 ? (
-              <>
-                <ProveButton />
-
-                {starkPollingResults && (
-                  <Alert className="mt-4 border-none px-0">
-                    <AlertTitle>
-                      STARK Results{" "}
-                      <span className={cn(starkPollingResults.status === "SUCCEEDED" && "text-green-500")}>
-                        ({starkPollingResults.status})
-                      </span>
-                    </AlertTitle>
-                    <AlertDescription className="rounded border bg-neutral-50 font-mono dark:bg-neutral-900">
-                      {starkPollingResults.state}
-                    </AlertDescription>
-                  </Alert>
-                )}
-
-                {snarkPollingResults && (
-                  <Alert className="border-none px-0">
-                    <AlertTitle>
-                      SNARK Results{" "}
-                      <span className={cn(snarkPollingResults.status === "SUCCEEDED" && "text-green-500")}>
-                        ({snarkPollingResults.status})
-                      </span>
-                    </AlertTitle>
-                  </Alert>
-                )}
-              </>
+              <ProveButton />
             ) : (
               <>
                 {starkResults && (

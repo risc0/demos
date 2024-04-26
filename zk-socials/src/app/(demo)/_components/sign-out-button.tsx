@@ -1,11 +1,11 @@
 "use client";
 
 import { Button } from "@risc0/ui/button";
+import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
 import { LogOutIcon } from "lucide-react";
 import { useAccount, useDisconnect } from "wagmi";
 import type { FacebookUserInfos } from "~/types/facebook";
 import type { GoogleUserInfos } from "~/types/google";
-import { useLocalStorage } from "../_hooks/use-local-storage";
 
 export default function SignOutButton() {
   const { address } = useAccount();

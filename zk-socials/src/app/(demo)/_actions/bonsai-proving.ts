@@ -1,18 +1,7 @@
 "use server";
 
-import crypto from "crypto";
-import { sleep } from "@risc0/ui/utils/sleep";
 import axios, { type AxiosInstance, type AxiosResponse } from "axios";
-import Pusher from "pusher";
 import env from "~/env";
-
-const pusher = new Pusher({
-  appId: "1794263",
-  key: env.NEXT_PUBLIC_PUSHER_API_KEY,
-  secret: env.PUSHER_API_SECRET,
-  cluster: "us3",
-  useTLS: true,
-});
 
 class SdkErr extends Error {
   constructor(message: string) {
@@ -28,55 +17,55 @@ class InternalServerErr extends SdkErr {
   }
 }
 
-interface UploadRes {
+type UploadRes = {
   url: string;
   uuid: string;
-}
+};
 
-interface StarkSessionStats {
+type StarkSessionStats = {
   segments: number;
   total_cycles: number;
   cycles: number;
-}
+};
 
-interface StarkSessionStatusRes {
+export type StarkSessionStatusRes = {
   status: string;
   receipt_url?: string;
   error_msg?: string;
   state?: string;
   elapsed_time?: number;
   stats?: StarkSessionStats;
-}
+};
 
-interface ProofReq {
+type ProofReq = {
   img: string;
   input: string;
   assumptions: string[];
-}
+};
 
-interface CreateStarkSessionRes {
+type CreateStarkSessionRes = {
   uuid: string;
-}
+};
 
-interface CreateSnarkSessionRes {
+type CreateSnarkSessionRes = {
   uuid: string;
-}
+};
 
-interface SnarkSessionReq {
+type SnarkSessionReq = {
   session_id: string;
-}
+};
 
-interface SnarkSessionReceipt {
+type SnarkSessionReceipt = {
   snark: any;
   post_state_digest: number[];
   journal: number[];
-}
+};
 
-interface SnarkSessionStatusRes {
+export type SnarkSessionStatusRes = {
   status: string;
   output?: SnarkSessionReceipt;
   error_msg?: string;
-}
+};
 
 class StarkSession {
   // biome-ignore lint/suspicious/noEmptyBlockStatements: ignore
@@ -191,69 +180,58 @@ function encodeU32(value: number) {
   return new Uint8Array(buffer);
 }
 
-async function proving(client: Client, token: string) {
-  const channelName = `my-channel-${crypto.createHash("sha256").update(token).digest("hex")}`; // channel names have a maximum amount of chars allowed
+// STARK
+export async function bonsaiStarkProving({ token }: { token: string }) {
+  const apiKey = env.BONSAI_API_KEY;
+  const version = "0.21.0";
+  const url = "https://api.staging.bonsai.xyz";
+  const client = new Client(url, apiKey, version);
+  const inputData = Buffer.from(encodeU32(1));
+  const inputId = await client.uploadInput(inputData);
+  const imageId = env.NEXT_PUBLIC_IMAGE_ID;
+  const assumptions: string[] = [];
 
-  try {
-    const inputData = Buffer.from(encodeU32(1));
-    const inputId = await client.uploadInput(inputData);
-    const imageId = "ab674571f2f8ef5bd7975ce1756725c07d67daa813dd8e720d45bea4f8b10fd8";
-    const assumptions: string[] = [];
+  // biome-ignore lint/suspicious/noConsoleLog: <explanation>
+  console.log("token", token);
 
-    // Create stark session
-    const starkSession = await client.createStarkSession(imageId, inputId, assumptions);
+  const starkSession = await client.createStarkSession(imageId, inputId, assumptions);
 
-    let starkStatus = await starkSession.status(client);
-
-    pusher.trigger(channelName, "stark-event", {
-      ...starkStatus,
-    });
-
-    // Poll until the session is not RUNNING
-    while (starkStatus.status === "RUNNING") {
-      await sleep(5000); // Wait for 5 seconds
-
-      starkStatus = await starkSession.status(client);
-
-      pusher.trigger(channelName, "stark-event", {
-        ...starkStatus,
-      });
-    }
-
-    // Create snark session
-    const snarkSession = await client.createSnarkSession(starkSession.uuid);
-
-    let snarkStatus = await snarkSession.status(client);
-
-    pusher.trigger(channelName, "snark-event", {
-      ...snarkStatus,
-    });
-
-    // pooolllll
-    while (snarkStatus.status === "RUNNING") {
-      await sleep(5000); // Wait for 5 seconds
-
-      snarkStatus = await snarkSession.status(client);
-
-      pusher.trigger(channelName, "snark-event", {
-        ...snarkStatus,
-      });
-    }
-
-    return {
-      starkStatus,
-      snarkStatus,
-    };
-  } catch (error) {
-    console.error("Error:", error);
-  }
+  return starkSession.uuid;
 }
 
-export async function bonsaiProving(token: string) {
+// STARK STATUS
+export async function getBonsaiStarkStatus({ uuid }: { uuid: string }) {
   const apiKey = env.BONSAI_API_KEY;
   const version = "0.21.0";
   const url = "https://api.staging.bonsai.xyz";
   const client = new Client(url, apiKey, version);
 
-  return await proving(client, token);
+  const starkSession = new StarkSession(uuid);
+  const starkStatus = await starkSession.status(client);
+
+  return starkStatus;
+}
+
+// SNARK
+export async function bonsaiSnarkProving({ uuid }: { uuid: string }) {
+  const apiKey = env.BONSAI_API_KEY;
+  const version = "0.21.0";
+  const url = "https://api.staging.bonsai.xyz";
+  const client = new Client(url, apiKey, version);
+  const snarkSession = await client.createSnarkSession(uuid);
+
+  return snarkSession.uuid;
+}
+
+// SNARK STATUS
+export async function getBonsaiSnarkStatus({ uuid }: { uuid: string }) {
+  const apiKey = env.BONSAI_API_KEY;
+  const version = "0.21.0";
+  const url = "https://api.staging.bonsai.xyz";
+  const client = new Client(url, apiKey, version);
+
+  const snarkSession = new SnarkSession(uuid);
+  const snarkStatus = await snarkSession.status(client);
+
+  return snarkStatus;
 }
