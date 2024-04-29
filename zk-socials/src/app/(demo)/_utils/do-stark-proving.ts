@@ -3,10 +3,17 @@ import type { Dispatch, SetStateAction } from "react";
 import { type StarkSessionStatusRes, bonsaiStarkProving, getBonsaiStarkStatus } from "../_actions/bonsai-proving";
 
 export async function doStarkProving({
+  iss,
   token,
   setStarkPollingResults,
-}: { token: string; setStarkPollingResults: Dispatch<SetStateAction<StarkSessionStatusRes | undefined>> }) {
-  const starkUuid = await bonsaiStarkProving({ token });
+}: {
+  iss: "facebook" | "google" | "test";
+  token: string;
+  setStarkPollingResults: Dispatch<SetStateAction<StarkSessionStatusRes | undefined>>;
+}) {
+  const starkUuid = await bonsaiStarkProving({ iss, token });
+
+  console.log("starkUuid", starkUuid);
 
   if (!starkUuid) {
     throw new Error("STARK UUID not found");
@@ -14,6 +21,7 @@ export async function doStarkProving({
 
   // STARK
   let starkStatus = await getBonsaiStarkStatus({ uuid: starkUuid });
+  console.log("starkStatus", starkStatus);
 
   setStarkPollingResults(starkStatus);
 
@@ -22,9 +30,12 @@ export async function doStarkProving({
     await sleep(4000); // Wait for 4 seconds
 
     starkStatus = await getBonsaiStarkStatus({ uuid: starkUuid });
+    console.log("starkStatus", starkStatus);
     setStarkPollingResults(starkStatus);
   }
 
+  console.log("starkUuid", starkUuid);
+  console.log("starkStatus", starkStatus);
   return {
     starkUuid,
     starkStatus,

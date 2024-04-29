@@ -9,8 +9,9 @@ const env = createEnv({
    * Specify server-side environment variables schema here.
    */
   server: {
-    NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
     BONSAI_API_KEY: z.string(),
+    IMAGE_ID: z.string(),
+    NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   },
 
   /**
@@ -20,7 +21,6 @@ const env = createEnv({
   client: {
     NEXT_PUBLIC_FACEBOOK_CLIENT_ID: z.string(),
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: z.string(),
-    NEXT_PUBLIC_IMAGE_ID: z.string(),
     NEXT_PUBLIC_VERCEL_BRANCH_URL: z.string(),
   },
 
@@ -32,12 +32,12 @@ const env = createEnv({
     // Client-side environment variables
     NEXT_PUBLIC_FACEBOOK_CLIENT_ID: process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID,
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-    NEXT_PUBLIC_IMAGE_ID: process.env.NEXT_PUBLIC_IMAGE_ID,
     NEXT_PUBLIC_VERCEL_BRANCH_URL: process.env.NEXT_PUBLIC_VERCEL_BRANCH_URL,
 
     // Server-side environment variables
-    NODE_ENV: process.env.NODE_ENV,
     BONSAI_API_KEY: process.env.BONSAI_API_KEY,
+    IMAGE_ID: process.env.IMAGE_ID,
+    NODE_ENV: process.env.NODE_ENV,
   },
   /**
    * Makes it so that empty strings are treated as undefined.

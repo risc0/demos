@@ -17,7 +17,7 @@ export default function SharedLayout({ children }) {
         </p>
       </div>
 
-      <Separator className="mb-8" />
+      <Separator className="mb-8" decorative />
 
       <div className="flex flex-1 flex-col-reverse gap-8 lg:flex-row">
         <div className="flex flex-1 flex-col">

@@ -45,6 +45,7 @@ export function ProveButton() {
 
     try {
       const { starkUuid, starkStatus } = await doStarkProving({
+        iss: googleUserInfos ? "google" : "facebook",
         setStarkPollingResults,
         token: googleUserToken ?? facebookUserToken ?? "",
       });
