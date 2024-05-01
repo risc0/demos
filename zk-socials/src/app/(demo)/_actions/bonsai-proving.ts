@@ -69,7 +69,7 @@ export type SnarkSessionStatusRes = {
 
 class StarkSession {
   // biome-ignore lint/suspicious/noEmptyBlockStatements: ignore
-  constructor(public uuid: string) {}
+  constructor(public uuid: string) { }
 
   async status(client: Client): Promise<StarkSessionStatusRes> {
     const url = `sessions/status/${this.uuid}`;
@@ -86,7 +86,7 @@ class StarkSession {
 
 class SnarkSession {
   // biome-ignore lint/suspicious/noEmptyBlockStatements: ignore
-  constructor(public uuid: string) {}
+  constructor(public uuid: string) { }
 
   async status(client: Client): Promise<SnarkSessionStatusRes> {
     const url = `snark/status/${this.uuid}`;
@@ -177,7 +177,7 @@ function encodeString(value: string) {
 }
 
 // STARK
-export async function bonsaiStarkProving({ iss, token }: { iss: "facebook" | "google" | "test"; token: string }) {
+export async function bonsaiStarkProving({ iss, token }: { iss: "Facebook" | "Google" | "test"; token: string }) {
   const apiKey = env.BONSAI_API_KEY;
   const version = "0.21.0";
   const url = "https://api.staging.bonsai.xyz";
@@ -185,10 +185,10 @@ export async function bonsaiStarkProving({ iss, token }: { iss: "facebook" | "go
 
   // TODO: This should work, but not entirely sure!
   const inputData = Buffer.from(
-    JSON.stringify({
+    encodeString(JSON.stringify({
       iss, // "google", "facebook", or "test"
       jwt: token, // jwt
-    }),
+    }))
   );
 
   console.log("****inputData:", inputData);

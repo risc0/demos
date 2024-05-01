@@ -7,7 +7,7 @@ export async function doStarkProving({
   token,
   setStarkPollingResults,
 }: {
-  iss: "facebook" | "google" | "test";
+  iss: "Facebook" | "Google" | "Test";
   token: string;
   setStarkPollingResults: Dispatch<SetStateAction<StarkSessionStatusRes | undefined>>;
 }) {
