@@ -106,13 +106,16 @@ export function ProveButton() {
               <span
                 className={cn(
                   starkPollingResults.status === "SUCCEEDED" && "font-bold text-green-600 dark:text-green-500",
+                  starkPollingResults.status === "FAILED" && "font-bold text-red-600 dark:text-red-500",
                 )}
               >
                 ({starkPollingResults.status})
               </span>
             </AlertTitle>
             <AlertDescription className="rounded border bg-neutral-50 font-mono dark:bg-neutral-900">
-              {starkPollingResults.state}
+              <div className="flex flex-row items-center justify-between gap-2 p-2">
+                {starkPollingResults.state} <Loader2Icon className="size-3.5 animate-spin text-muted-foreground" />
+              </div>
             </AlertDescription>
           </Alert>
         )}
@@ -124,6 +127,7 @@ export function ProveButton() {
               <span
                 className={cn(
                   snarkPollingResults.status === "SUCCEEDED" && "font-bold text-green-600 dark:text-green-500",
+                  snarkPollingResults.status === "FAILED" && "font-bold text-red-600 dark:text-red-500",
                 )}
               >
                 ({snarkPollingResults.status})
@@ -136,7 +140,7 @@ export function ProveButton() {
         )}
 
         {error && (
-          <Alert variant="destructive" className="mt-4">
+          <Alert variant="destructive" className="mt-2">
             <AlertTriangleIcon className="size-4" />
             <AlertTitle>Error {error.status}</AlertTitle>
             <AlertDescription>{error.message}</AlertDescription>

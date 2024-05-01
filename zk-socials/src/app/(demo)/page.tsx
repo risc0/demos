@@ -98,7 +98,7 @@ export default function AppPage() {
               <div>
                 <ConnectWalletButton />
                 <Separator className="my-4" decorative />
-                <p className="text-xs text-muted-foreground mb-2">You can also...</p>
+                <p className="mb-2 text-muted-foreground text-xs">You can also...</p>
                 <ConnectWebAuthnButton />
               </div>
             ) : currentStep === 2 ? (

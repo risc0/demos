@@ -13,6 +13,7 @@ export async function doSnarkProving({
   }
 
   let snarkStatus = await getBonsaiSnarkStatus({ uuid: snarkUuid });
+  console.log('snarkStatus', snarkStatus)
 
   setSnarkPollingResults(snarkStatus);
 
@@ -21,6 +22,7 @@ export async function doSnarkProving({
     await sleep(4000); // Wait for 4 seconds
 
     snarkStatus = await getBonsaiSnarkStatus({ uuid: snarkUuid });
+    console.log('snarkStatus', snarkStatus)
     setSnarkPollingResults(snarkStatus);
   }
 

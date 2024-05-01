@@ -69,7 +69,7 @@ export type SnarkSessionStatusRes = {
 
 class StarkSession {
   // biome-ignore lint/suspicious/noEmptyBlockStatements: ignore
-  constructor(public uuid: string) { }
+  constructor(public uuid: string) {}
 
   async status(client: Client): Promise<StarkSessionStatusRes> {
     const url = `sessions/status/${this.uuid}`;
@@ -86,7 +86,7 @@ class StarkSession {
 
 class SnarkSession {
   // biome-ignore lint/suspicious/noEmptyBlockStatements: ignore
-  constructor(public uuid: string) { }
+  constructor(public uuid: string) {}
 
   async status(client: Client): Promise<SnarkSessionStatusRes> {
     const url = `snark/status/${this.uuid}`;
@@ -185,16 +185,20 @@ export async function bonsaiStarkProving({ iss, token }: { iss: "Facebook" | "Go
 
   // TODO: This should work, but not entirely sure!
   const inputData = Buffer.from(
-    encodeString(JSON.stringify({
-      iss, // "google", "facebook", or "test"
-      jwt: token, // jwt
-    }))
+    encodeString(
+      JSON.stringify({
+        iss,
+        jwt: token,
+      }),
+    ),
   );
 
   console.log("****inputData:", inputData);
 
   const inputId = await client.uploadInput(inputData);
+
   console.log("****inputId:", inputData);
+
   const imageId = env.IMAGE_ID;
   const assumptions: string[] = [];
 
