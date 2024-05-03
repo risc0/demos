@@ -6,7 +6,7 @@ export function Footer() {
       <span>
         Built by{" "}
         <Link className="link text-muted-foreground" href="https://www.risczero.com" target="_blank">
-          Risc Zero
+          RISC Zero
         </Link>
       </span>
       <span>•</span>
