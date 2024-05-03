@@ -12,7 +12,7 @@ import { useAccount } from "wagmi";
 import { Confetti } from "./_components/confetti";
 import { ConnectWalletButton } from "./_components/connect-wallet-button";
 import { ProveButton } from "./_components/prove-button";
-import SignInButton from "./_components/sign-in-button";
+import { SignInButton } from "./_components/sign-in-button";
 import { SnarkTable } from "./_components/snark-table";
 import { StarkTable } from "./_components/stark-table";
 import { AMOUNT_OF_STEPS, calculateCompletionPercentage } from "./_utils/calculate-completion-percentage";

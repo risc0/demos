@@ -7,7 +7,7 @@ import { useAccount, useDisconnect } from "wagmi";
 import type { FacebookUserInfos } from "~/types/facebook";
 import type { GoogleUserInfos } from "~/types/google";
 
-export default function SignOutButton() {
+export function SignOutButton() {
   const { address } = useAccount();
   const { disconnectAsync } = useDisconnect();
   const [_googleUserToken, setGoogleUserToken] = useLocalStorage<string | undefined>("google-token", undefined);

@@ -3,7 +3,7 @@ import { Separator } from "@risc0/ui/separator";
 import { CodePreview } from "./_components/code-preview";
 import { Footer } from "./_components/footer";
 import { Header } from "./_components/header";
-import SignOutButton from "./_components/sign-out-button";
+import { SignOutButton } from "./_components/sign-out-button";
 
 export default function SharedLayout({ children }) {
   return (

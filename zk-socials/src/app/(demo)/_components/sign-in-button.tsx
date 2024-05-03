@@ -13,7 +13,7 @@ import { useAccount } from "wagmi";
 import env from "~/env";
 import { generateRandomString } from "../_utils/generate-random-string";
 
-export default function SignInButton() {
+export function SignInButton() {
   const [facebookUserId, setFacebookUserId] = useState<string>();
   const [facebookUserInfos, setFacebookUserInfos] = useLocalStorage<any | undefined>("facebook-infos", undefined);
   const [facebookUserToken, setFacebookUserToken] = useLocalStorage<string | undefined>("facebook-token", undefined);

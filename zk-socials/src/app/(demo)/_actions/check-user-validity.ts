@@ -2,12 +2,23 @@
 
 import { sql } from "@vercel/postgres";
 
+const ALLOWED_EMAILS_INFINITE_TRIES = [
+  "hans@risczero.com",
+  "brett@risczero.com",
+  "cohan@risczero.com",
+  "cohan.carpentier@gmail.com",
+];
+
 export async function checkUserValidity({ emailOrId }): Promise<{
   status: number;
   message?: string;
 }> {
   if (!emailOrId) {
     throw new Error("Email or ID is Required");
+  }
+
+  if (ALLOWED_EMAILS_INFINITE_TRIES.includes(emailOrId)) {
+    return { status: 200 };
   }
 
   const existingEmail = await sql`SELECT * FROM Users WHERE EmailOrId = ${emailOrId};`;
