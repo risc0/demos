@@ -80,15 +80,15 @@ export function ProveButton() {
         <Button
           isLoading={isLoading}
           onClick={async () => {
-            const _result = await checkUserValidity({ emailOrId: googleUserInfos?.email ?? facebookUserInfos?.id });
+            const result = await checkUserValidity({ emailOrId: googleUserInfos?.email ?? facebookUserInfos?.id });
 
-            //if (result.status === 200) {
-            // success
-            await handleClick();
-            /*} else {
+            if (result.status === 200) {
+              // success
+              await handleClick();
+            } else {
               // error
               setError(result);
-            }*/
+            }
           }}
           startIcon={<VerifiedIcon />}
           size="lg"
@@ -112,11 +112,13 @@ export function ProveButton() {
                 ({starkPollingResults.status})
               </span>
             </AlertTitle>
-            <AlertDescription className="rounded border bg-neutral-50 font-mono dark:bg-neutral-900">
-              <div className="flex flex-row items-center justify-between gap-2 p-2">
-                {starkPollingResults.state} <Loader2Icon className="size-3.5 animate-spin text-muted-foreground" />
-              </div>
-            </AlertDescription>
+            {starkPollingResults.status !== "SUCCEEDED" && (
+              <AlertDescription className="rounded border bg-neutral-50 font-mono dark:bg-neutral-900">
+                <div className="flex flex-row items-center justify-between gap-2 p-2">
+                  {starkPollingResults.state} <Loader2Icon className="size-3.5 animate-spin text-muted-foreground" />
+                </div>
+              </AlertDescription>
+            )}
           </Alert>
         )}
 
@@ -133,8 +135,10 @@ export function ProveButton() {
                 ({snarkPollingResults.status})
               </span>
             </AlertTitle>
-            <AlertDescription>
-              <Loader2Icon className="mt-0.5 size-4 animate-spin" />
+            <AlertDescription className="rounded border bg-neutral-50 font-mono dark:bg-neutral-900">
+              <div className="flex flex-row items-center justify-between gap-2 p-2">
+                This will take around 2 minutes <Loader2Icon className="size-3.5 animate-spin text-muted-foreground" />
+              </div>
             </AlertDescription>
           </Alert>
         )}

@@ -1,6 +1,7 @@
 "use client";
 
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { TooltipProvider } from "@risc0/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import { WagmiProvider } from "wagmi";
@@ -21,7 +22,7 @@ export function Providers({ children }) {
             enableSystem
             enableColorScheme
           >
-            {children}
+            <TooltipProvider>{children}</TooltipProvider>
           </ThemeProvider>
         </QueryClientProvider>
       </WagmiProvider>

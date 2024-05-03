@@ -1,7 +1,34 @@
-"use server";
+import "server-only";
 
 import axios, { type AxiosInstance, type AxiosResponse } from "axios";
 import env from "~/env";
+
+type StarkSessionStats = {
+  segments: number;
+  total_cycles: number;
+  cycles: number;
+};
+
+type SnarkSessionReceipt = {
+  snark: any;
+  post_state_digest: number[];
+  journal: number[];
+};
+
+export type StarkSessionStatusRes = {
+  status: string;
+  receipt_url?: string;
+  error_msg?: string;
+  state?: string;
+  elapsed_time?: number;
+  stats?: StarkSessionStats;
+};
+
+export type SnarkSessionStatusRes = {
+  status: string;
+  output?: SnarkSessionReceipt;
+  error_msg?: string;
+};
 
 class SdkErr extends Error {
   constructor(message: string) {
@@ -22,21 +49,6 @@ type UploadRes = {
   uuid: string;
 };
 
-type StarkSessionStats = {
-  segments: number;
-  total_cycles: number;
-  cycles: number;
-};
-
-export type StarkSessionStatusRes = {
-  status: string;
-  receipt_url?: string;
-  error_msg?: string;
-  state?: string;
-  elapsed_time?: number;
-  stats?: StarkSessionStats;
-};
-
 type ProofReq = {
   img: string;
   input: string;
@@ -53,18 +65,6 @@ type CreateSnarkSessionRes = {
 
 type SnarkSessionReq = {
   session_id: string;
-};
-
-type SnarkSessionReceipt = {
-  snark: any;
-  post_state_digest: number[];
-  journal: number[];
-};
-
-export type SnarkSessionStatusRes = {
-  status: string;
-  output?: SnarkSessionReceipt;
-  error_msg?: string;
 };
 
 class StarkSession {
@@ -193,17 +193,12 @@ export async function bonsaiStarkProving({ iss, token }: { iss: "Facebook" | "Go
     ),
   );
 
-  console.log("****inputData:", inputData);
-
   const inputId = await client.uploadInput(inputData);
-
-  console.log("****inputId:", inputData);
 
   const imageId = env.IMAGE_ID;
   const assumptions: string[] = [];
 
   const starkSession = await client.createStarkSession(imageId, inputId, assumptions);
-  console.log("****starkSession:", starkSession);
 
   return starkSession.uuid;
 }

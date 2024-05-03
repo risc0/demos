@@ -3,9 +3,9 @@
 import { GoogleLogin } from "@react-oauth/google";
 import { Button } from "@risc0/ui/button";
 import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@risc0/ui/tooltip";
 import jwtDecode from "jwt-decode";
 import Image from "next/image";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAsync } from "react-use";
@@ -91,20 +91,29 @@ export default function SignInButton() {
         }}
       />
 
-      <Link
-        href={`https://www.facebook.com/v11.0/dialog/oauth?client_id=${env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID}&scope=openid&response_type=code&redirect_uri=${facebookRedirectURL}&code_challenge=${codeVerifier}&code_challenge_method=plain&nonce=${address}`}
-      >
-        <Button
-          className="relative flex min-h-10 flex-row justify-start gap-4 rounded-lg bg-[#202124] pr-6 pl-0 font-bold text-white [&>svg]:hidden hover:bg-neutral-600"
-          size="sm"
-          variant="secondary"
-        >
-          <div className="ml-0.5 flex size-9 items-center justify-center rounded-s-md bg-white">
-            <Image src="/facebook.png" alt="Facebook" width={20} height={20} />
+      <Tooltip delayDuration={0}>
+        <TooltipTrigger asChild>
+          {/*<Link
+            href={`https://www.facebook.com/v11.0/dialog/oauth?client_id=${env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID}&scope=openid&response_type=code&redirect_uri=${facebookRedirectURL}&code_challenge=${codeVerifier}&code_challenge_method=plain&nonce=${address}`}
+      >*/}
+          <div>
+            <Button
+              className="relative flex min-h-10 flex-row justify-start gap-4 rounded-lg bg-[#202124] pr-6 pl-0 font-bold text-white [&>svg]:hidden hover:bg-neutral-600"
+              size="sm"
+              variant="secondary"
+              disabled
+            >
+              <div className="ml-0.5 flex size-9 items-center justify-center rounded-s-md bg-white">
+                <Image src="/facebook.png" alt="Facebook" width={20} height={20} />
+              </div>
+              Sign In with Facebook
+            </Button>
+            {/*</Link>*/}
           </div>
-          Sign In with Facebook
-        </Button>
-      </Link>
+        </TooltipTrigger>
+
+        <TooltipContent>Not supported at the moment</TooltipContent>
+      </Tooltip>
     </div>
   );
 }

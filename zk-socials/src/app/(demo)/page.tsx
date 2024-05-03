@@ -5,14 +5,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@risc
 import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
 import { useMounted } from "@risc0/ui/hooks/use-mounted";
 import { Progress } from "@risc0/ui/progress";
-import { Separator } from "@risc0/ui/separator";
 import { Skeleton } from "@risc0/ui/skeleton";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { Confetti } from "./_components/confetti";
 import { ConnectWalletButton } from "./_components/connect-wallet-button";
-import { ConnectWebAuthnButton } from "./_components/connect-webauthn-button";
 import { ProveButton } from "./_components/prove-button";
 import SignInButton from "./_components/sign-in-button";
 import { SnarkTable } from "./_components/snark-table";
@@ -60,7 +58,7 @@ export default function AppPage() {
     <>
       {currentStep === 4 && <Confetti />}
 
-      <Card className="overflow-auto shadow-sm">
+      <Card className="overflow-auto rounded-lg shadow-sm">
         <CardHeader>
           <Progress
             className="mb-4"
@@ -95,12 +93,7 @@ export default function AppPage() {
         <CardContent>
           {mounted &&
             (currentStep === 1 ? (
-              <div>
-                <ConnectWalletButton />
-                <Separator className="my-4" decorative />
-                <p className="mb-2 text-muted-foreground text-xs">You can also...</p>
-                <ConnectWebAuthnButton />
-              </div>
+              <ConnectWalletButton />
             ) : currentStep === 2 ? (
               <SignInButton />
             ) : currentStep === 3 ? (

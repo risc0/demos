@@ -1,3 +1,5 @@
+"use server";
+
 import { sleep } from "@risc0/ui/utils/sleep";
 import type { Dispatch, SetStateAction } from "react";
 import { type SnarkSessionStatusRes, bonsaiSnarkProving, getBonsaiSnarkStatus } from "../_actions/bonsai-proving";
@@ -13,7 +15,6 @@ export async function doSnarkProving({
   }
 
   let snarkStatus = await getBonsaiSnarkStatus({ uuid: snarkUuid });
-  console.log('snarkStatus', snarkStatus)
 
   setSnarkPollingResults(snarkStatus);
 
@@ -22,7 +23,6 @@ export async function doSnarkProving({
     await sleep(4000); // Wait for 4 seconds
 
     snarkStatus = await getBonsaiSnarkStatus({ uuid: snarkUuid });
-    console.log('snarkStatus', snarkStatus)
     setSnarkPollingResults(snarkStatus);
   }
 

@@ -31,15 +31,15 @@ export function StarkTable({ starkData }) {
           <TableCell>
             <div className="flex flex-col items-end">
               <span>
-                <span className="text-muted-foreground">segments</span>{" "}
+                <span className="text-muted-foreground">Segments:</span>{" "}
                 {formatters.number("en-US").format(starkData.stats?.segments)}
               </span>
               <span>
-                <span className="text-muted-foreground">cycles</span>{" "}
+                <span className="text-muted-foreground">Cycles:</span>{" "}
                 {formatters.number("en-US").format(starkData.stats?.cycles)}
               </span>
               <span>
-                <span className="text-muted-foreground">total cycles</span>{" "}
+                <span className="text-muted-foreground">Total Cycles:</span>{" "}
                 {formatters.number("en-US").format(starkData.stats?.total_cycles)}
               </span>
             </div>

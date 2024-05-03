@@ -17,13 +17,16 @@ export default function SharedLayout({ children }) {
         </p>
       </div>
 
-      <Separator className="mb-8" decorative />
+      <Separator className="mb-6" decorative />
 
       <div className="flex flex-1 flex-col-reverse gap-8 lg:flex-row">
         <div className="flex flex-1 flex-col">
           <h2 className="subtitle min-h-10 pb-2">👨‍💻 The zkVM Guest Code</h2>
 
-          <Card className="overflow-auto bg-neutral-950 shadow-xl dark:bg-inherit" style={{ colorScheme: "dark" }}>
+          <Card
+            className="overflow-auto rounded-lg bg-neutral-950 shadow-xl dark:bg-inherit"
+            style={{ colorScheme: "dark" }}
+          >
             <CardContent>
               <CodePreview />
             </CardContent>
@@ -31,7 +34,7 @@ export default function SharedLayout({ children }) {
         </div>
 
         <div className="w-full max-w-unset lg:max-w-[520px]">
-          <div className="flex flex-row items-center justify-between gap-4 pb-2">
+          <div className="flex min-h-10 flex-row items-center justify-between gap-4 pb-2">
             <h2 className="subtitle">💅 The Demo</h2>
 
             <SignOutButton />
