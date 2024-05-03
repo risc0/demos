@@ -1,4 +1,4 @@
-import "server-only";
+"use server";
 
 import axios, { type AxiosInstance, type AxiosResponse } from "axios";
 import env from "~/env";
