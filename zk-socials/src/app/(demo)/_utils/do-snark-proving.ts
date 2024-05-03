@@ -1,5 +1,3 @@
-"use server";
-
 import { sleep } from "@risc0/ui/utils/sleep";
 import type { Dispatch, SetStateAction } from "react";
 import { type SnarkSessionStatusRes, bonsaiSnarkProving, getBonsaiSnarkStatus } from "../_actions/bonsai-proving";

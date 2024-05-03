@@ -80,15 +80,16 @@ export function ProveButton() {
         <Button
           isLoading={isLoading}
           onClick={async () => {
-            const result = await checkUserValidity({ emailOrId: googleUserInfos?.email ?? facebookUserInfos?.id });
+            await handleClick();
+            //const result = await checkUserValidity({ emailOrId: googleUserInfos?.email ?? facebookUserInfos?.id });
 
-            if (result.status === 200) {
-              // success
-              await handleClick();
-            } else {
-              // error
-              setError(result);
-            }
+            //if (result.status === 200) {
+            //  // success
+            //  await handleClick();
+            //} else {
+            //  // error
+            //  setError(result);
+            //}
           }}
           startIcon={<VerifiedIcon />}
           size="lg"
