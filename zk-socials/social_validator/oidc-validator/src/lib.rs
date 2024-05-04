@@ -12,8 +12,6 @@ use thiserror::Error;
 lazy_static! {
     static ref GOOGLE_KEYS: JwkKeys =
         serde_json::from_str(GOOGLE_PUB_JWK).expect("Failed to parse Google JWKs");
-    static ref FACEBOOK_KEYS: JwkKeys =
-        serde_json::from_str(FACEBOOK_PUB_JWK).expect("Failed to parse Facebook JWKs");
     static ref TEST_KEYS: JwkKeys =
         serde_json::from_str(TEST_PUB_JWK).expect("Failed to parse Test JWKs");
 }
@@ -40,24 +38,33 @@ struct Extra {
 #[derive(Deserialize, Serialize)]
 pub enum IdentityProvider {
     Google,
-    Facebook,
     Test,
 }
 
 impl IdentityProvider {
-    pub fn validate(&self, token: &str) -> Result<(String, String), OidcErr> {
+    pub fn validate(
+        &self,
+        token: &str,
+        jwk_str: &str,
+    ) -> Result<(String, String, String), OidcErr> {
+        let jwk: JwkKeys =
+            serde_json::from_str(jwk_str).map_err(|_| OidcErr::CertificateParseError)?;
         match self {
             Self::Google => {
-                let decoded = decode_token::<GoogleClaims>(token, &GOOGLE_KEYS).unwrap();
-                Ok((decoded.email.to_string(), decoded.nonce))
-            }
-            Self::Facebook => {
-                let decoded = decode_token::<FacebookClaims>(token, &FACEBOOK_KEYS).unwrap();
-                Ok((decoded.email.to_string(), decoded.nonce))
+                let decoded = decode_token::<GoogleClaims>(token, &jwk).unwrap();
+                Ok((
+                    decoded.email.to_string(),
+                    decoded.nonce,
+                    jwk_str.to_string(),
+                ))
             }
             Self::Test => {
-                let decoded = decode_token::<TestClaims>(token, &TEST_KEYS).unwrap();
-                Ok((decoded.email.to_string(), decoded.nonce))
+                let decoded = decode_token::<TestClaims>(token, &jwk).unwrap();
+                Ok((
+                    decoded.email.to_string(),
+                    decoded.nonce,
+                    jwk_str.to_string(),
+                ))
             }
         }
     }
@@ -67,7 +74,6 @@ impl From<String> for IdentityProvider {
     fn from(value: String) -> Self {
         match value.to_lowercase().as_str() {
             "google" => Self::Google,
-            "facebook" => Self::Facebook,
             "test" => Self::Test,
             _ => panic!("invalid identity provider"),
         }
@@ -94,23 +100,6 @@ pub struct GoogleClaims {
     pub picture: Option<String>,
     pub nbf: Option<u64>,
     pub jti: Option<String>,
-}
-
-#[derive(Deserialize, Serialize, Debug, Clone)]
-pub struct FacebookClaims {
-    pub iss: String,
-    pub aud: String,
-    pub sub: String,
-    pub iat: Option<u64>,
-    pub exp: Option<u64>,
-    pub jti: String,
-    pub nonce: String,
-    pub at_hash: String,
-    pub email: String,
-    pub given_name: String,
-    pub family_name: String,
-    pub name: String,
-    pub picture: String,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
