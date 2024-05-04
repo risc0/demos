@@ -1,20 +1,10 @@
-mod certs;
-use certs::{FACEBOOK_PUB_JWK, GOOGLE_PUB_JWK, TEST_PUB_JWK};
 use jwt_compact::{
     alg::{Rsa, RsaPublicKey},
     jwk::{JsonWebKey, KeyType},
     AlgorithmExt, UntrustedToken,
 };
-use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
-
-lazy_static! {
-    static ref GOOGLE_KEYS: JwkKeys =
-        serde_json::from_str(GOOGLE_PUB_JWK).expect("Failed to parse Google JWKs");
-    static ref TEST_KEYS: JwkKeys =
-        serde_json::from_str(TEST_PUB_JWK).expect("Failed to parse Test JWKs");
-}
 
 #[derive(Deserialize, Serialize)]
 struct JwkKeys {
@@ -163,25 +153,28 @@ where
 #[cfg(test)]
 pub mod test_oidc_validator {
 
-    use crate::GOOGLE_KEYS;
-    use std::env;
+    use super::*;
 
-    use super::{decode_token, GoogleClaims};
-
-    #[ignore] // Ignoring this test because it requires a valid jwt token with env var.
-    #[test]
-    fn test_validate_google_jwt_valid_token() {
-        let jwt = env::var("jwt").expect("jwt not set");
-        let decoded = decode_token::<GoogleClaims>(&jwt, &GOOGLE_KEYS).unwrap();
-
-        assert_eq!(&decoded.email, "hans@risczero.com");
-        assert_eq!(&decoded.nonce, "0xefdF9861F3eDc2404643B588378FE242FCadE658");
-    }
+    const TEST_PUB_JWK: &str = r#"
+        {
+          "keys" : [
+            {
+              "alg": "RS256",
+              "e": "AQAB",
+              "kty": "RSA",
+              "n": "y-jiMQRB9zDOYbIaCoA4ppJ4prXbLhsM6upxCiip_6niQM_LHcCZxt_cFe88yi29Rgj1iEkOIJgXosydJLAtiOJHh1n7-FdSWEgKn3EfzI_VSncT2jnW6r3TtApzmHdDQnZmRKLB4mGXvnkwK-xzkpTRRM8r-m2A9dAylx0mGMqUabYYNg0n8x3EFG9ciFI5c3JwmMm8bHDw8BkhiHtG09nr7FkrEpn4tbhX9d7OeL-rbYLb2_H49BSX9L4O1vCOqf0cQMpSfhWiw7UjLjECzKlo0HNtELrpubBQbgZc9UbNlfCiaK4QO_fLog_YhY5Taxu05MViQvV_rxCi4ZwddQ",
+              "use": "sig",
+              "kid": "8792e7c2a2b7c1ab924e158a4ec4cf51"
+            }
+          ]
+        }
+        "#;
 
     #[test]
     fn test_validate_test_jwt_valid_token() {
+        let test_keys: JwkKeys = serde_json::from_str(&TEST_PUB_JWK).unwrap();
         let jwt = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ijg3OTJlN2MyYTJiN2MxYWI5MjRlMTU4YTRlYzRjZjUxIn0.eyJlbWFpbCI6InRlc3RAZW1haWwuY29tIiwibm9uY2UiOiIweDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAifQ.TPUrmStwY2iuqMLXn3WvpiJY1W-bbrU12WGuv0nK9NJ6Q0bT8D_Ags8qj8LPOGGE1CdHn2isBcHgSxaEbNbW8Pz0fVWpFiehj8BwrC47Rld5dwazsxghF84D3q2So5ZBQslWqq1PRGEFKfx4AOgnS375oKi2jAZ3jN_58UNdgtUUdFhuOGHvGbWnr_fEWIbrEcfNFIWahngQ2dbU-sSNZFZ5L3L46bXUkBlbGGNztr6OiAHUwxqH2A02h1EceUol2m6_GTvPfdXKzd0Z34CJNW_loAEheH69hkmkGPbt3ta_XAFWRHgmVN7gFjErRmPiB818YgAFBBIuhZnjvGmC5Q";
-        let decoded = decode_token::<super::TestClaims>(&jwt, &super::TEST_KEYS).unwrap();
+        let decoded = decode_token::<super::TestClaims>(&jwt, &test_keys).unwrap();
 
         assert_eq!(&decoded.email, "test@email.com");
         assert_eq!(&decoded.nonce, "0x0000000000000000000000000000000000000000");
@@ -190,7 +183,8 @@ pub mod test_oidc_validator {
     #[test]
     #[should_panic]
     fn test_fail_invalid_test_token() {
+        let test_keys: JwkKeys = serde_json::from_str(&TEST_PUB_JWK).unwrap();
         let jwt = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxx";
-        decode_token::<super::TestClaims>(&jwt, &super::TEST_KEYS).unwrap();
+        decode_token::<super::TestClaims>(&jwt, &test_keys).unwrap();
     }
 }
