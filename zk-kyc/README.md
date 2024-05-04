@@ -1,89 +1,157 @@
 # zk-KYC Demonstration Application
 > WARNING: this project is experimental and should not be used for any production use cases. Use at your own risk.
+
 The zk-KYC demo application allows individuals to verify and mint their identity as an NFT enabling onchain identity verification with zero-knowledge proofs.
 
 This demo leverages [ID.me](https://www.id.me/) to generate a client authentication token. The token includes a nonce that is associated with the user's connected wallet address, employing principles from the [OpenPubkey: Augmenting OpenID Connect with User held Signing Keys](https://eprint.iacr.org/2023/296) paper. The JWT's integrity is then verified within the guest using ID.me's public RS256 signing [certificates](https://api.id.me/oidc/.well-known/jwks). Subsequently, the guest generates a cryptographic proof of the JWT's integrity and issues a receipt. This receipt, containing the SNARK, an obfuscated identifier, and the user's address, can be validated on the onchain for ERC721 token minting or other transactions, if valid.
 
 For detailed information about the RISC Zero zkVM, refer to our developer [documentation](https://dev.risczero.com/api).
 
-### Getting Started
+> **Note: This software is not production ready. Do not use in production.**
 
-#### Project Structure
+This is based on the [Bonsai Foundry Template] for writing an application using [RISC Zero] and Ethereum.
 
-The zk-KYC  Demo consists of three components, forming the complete end-user application:
+This repository implements the application on Ethereum utilizing RISC Zero as a [coprocessor] to the smart contract application. Prove computation with the [RISC Zero zkVM] and verify the results in your Ethereum contract. 
 
-- [`zkvm`]: This directory contains the host, guest, and OIDC library components.
-    - [`zkvm/host`]: The entry point for the web socket client using the [bonsai-sdk] crate. 
-    - [`zkvm/methods`]: The guest source code that runs and is proven in the zkVM.
-    - [`zkvm/oidc-validator`]: A library for implementing JWT validation in the guest and host using the [jwt-compact] crate.
-- [`contracts`]: This directory houses the [foundry] project for smart contracts, scripts, and tests related to ERC721 token minting.
-- [`app`]: The front-end react application directory, enabling end-user interaction.
+Check out the [developer FAQ] for more information on zkVM application design.
 
-[`zkvm`]: zkvm/
-[`zkvm/host`]: zkvm/host
-[`zkvm/methods`]: zkvm/methods
-[`zkvm/oidc-validator`]: zkvm/oidc-validator
-[`contracts`]: contracts/
-[`app`]: app/
-[bonsai-sdk]: https://crates.io/crates/bonsai-sdk
-[jwt-compact]: https://github.com/slowli/jwt-compact
-[foundry]: https://github.com/foundry-rs/foundry
+## Dependencies
 
-#### Application Setup
+First, [install Rust] and [Foundry], and then restart your terminal.
 
-In order to run this application locally with remote proving, you will need to obtain a [Bonsai API](https://www.bonsai.xyz/) Key. You will also need Node and Rust installed. 
-
-First, head to the [`app`] directory, which hosts the front-end client application.
-
-Configure the `.env` file according to `.env.example` and install Node packages:
-
-```bash
-pnpm i
+```sh
+# Install Rust
+curl https://sh.rustup.rs -sSf | sh
+# Install Foundry
+curl -L https://foundry.paradigm.xyz | bash
 ```
 
-Then, initiate the application in development mode:
+Next, you will need to install the `cargo risczero` tool.
+We'll use [`cargo binstall`][cargo-binstall] to get `cargo-risczero` installed, and then install the `risc0` toolchain.
+See [RISC Zero installation] for more details.
 
-```bash
-pnpm run dev
+```sh
+cargo install cargo-binstall
+cargo binstall cargo-risczero
+cargo risczero install
 ```
 
-The application will now be available via your local web browser.
+### ID.me Developer Account
 
-#### Relay Configuration
+This demo requires a ID.me developer account. You will also need an account to generate a client ID and secret to enable Sign-In-With-ID.me with OIDC. You can find more information about ID.me integration [here](https://developers.id.me/documentation) and the corresponding OIDC documentation [here](https://developers.id.me/documentation/federated-protocols/oidc).
 
-In the [`zkvm`] directory, find the zkVM crates for OIDC validation and the Bonsai Relay server, powered by the `bonsai-sdk`.
+### Etherscan API Key
 
-Prepare the `.env` file for the relay server as outlined in the `.env.example`.
+You will need an Etherscan API key to verify the contract's source code. You can get one [here](https://etherscan.io/apis). This is not required, but is helpful for verifying the contract source code and generating the ABI bindings with [`wagmi`](https://wagmi.sh), which is used in the zk-KYC UI.
 
-To start the relay server with information logging, execute:
+Now you have all the tools you need to develop and deploy an application with [RISC Zero].
+
+
+
+## Quick Start
+
+- Builds for zkVM program, the publisher app, and any other Rust code.
+
+  ```sh
+  cargo build
+  ```
+
+- Build your Solidity smart contracts
+
+  > NOTE: `cargo build` needs to run first to generate the `ImageID.sol` contract.
+
+  ```sh
+  forge build
+  ```
+
+- Create a `.env` and update the necessary environment variables as shown in the [`.env.example`] file, for the UI.
+
+  ```sh
+  cp ui/.env.example ui/.env
+  ```
+
+### Run the Tests
+
+- Tests your zkVM program.
+
+  ```sh
+  cargo test
+  ```
+
+- Test your Solidity contracts, integrated with your zkVM program.
+
+  ```sh
+  RISC0_DEV_MODE=true forge test -vvv 
+  ```
+
+### Configuring Bonsai
+
+***Note:*** *To request an API key [complete the form here](https://bonsai.xyz/apply).*
+
+With the Bonsai proving service, you can produce a [Groth16 SNARK proof] that is verifiable on-chain.
+You can get started by setting the following environment variables with your API key and associated URL.
 
 ```bash
-RUST_LOG=info cargo run 
+export BONSAI_API_KEY="YOUR_API_KEY" # see form linked above
+export BONSAI_API_URL="BONSAI_URL" # provided with your api key
 ```
 
-#### Smart Contracts
+Now if you run `forge test` with `RISC0_DEV_MODE=false`, the test will run as before, but will additionally use the fully verifying `RiscZeroGroth16Verifier` contract instead of `MockRiscZeroVerifier` and will request a SNARK receipt from Bonsai.
 
-The [`contracts`] directory contains the necessary smart contracts for the KYC proof verification and token functionality. Use Foundry for testing and deployment.
+```sh
+RISC0_DEV_MODE=false forge test -vvv
+```
 
-After setting up the `.env` file:
+### Deploying the zk-KYC Contract
 
-Initiate anvil:
+To deploy the zk-KYC contract, you will need to set the following environment variables. You can read more about deploying with Foundry scripts [here](https://book.getfoundry.sh/tutorials/solidity-scripting?highlight=Deploy#deploying-our-contract). Please note that the contracts are unaudited and should not be used in production chains.
 
 ```bash
-anvil
+export ETH_WALLET_PRIVATE_KEY="YOUR_PRIVATE_KEY"
 ```
 
-Deploy the contracts to a local node:
+You can deploy the contract using the forge deploy script. 
+  
+  ```sh
+  forge script script/Deploy.s.sol \ 
+    --rpc-url <YOUR_RPC_URL> \
+    --broadcast \
+    --etherscan-api-key <YOUR_ETHERSCAN_API_KEY> \
+    --verify 
+  ```
 
-```bash
-forge script script/Deploy.s.sol --rpc-url http://localhost:8545
-```
+### Running the Application
 
-## Privacy and Security
+- Start the publisher/subscriber app with the configured variables.
 
-As a sample application, the ERC721 Token Minting Demo is designed for demonstration purposes and is not suitable for production use. It is important to be aware that:
-* The application **HAS NOT BEEN AUDITED** and **MAY CONTAIN SECURITY ISSUES**:
-  * The OIDC validation process may be inadequate, as it does not fully verify expiration in the zkVM. 
-* The zkVM Reciept is saved to the chain, publicly. This includes the zk-SNARK, Digest, and Journal which contains the issue date, expiration date, and the proof owner address.
+  ```sh
+  cargo run --bin pubsub -- --chain-id <DEPLOYED_CHAIN_ID> \
+    --eth-wallet-private-key <YOUR_PUBLISHER_PRIVATE_KEY> \
+    --rpc-url <YOUR_RPC_PROVIDER> \
+    --contract <DEPLOYED_BONSAI_PAY_CONTRACT_ADDRESS>
+  ```
 
-This code is shared for the public benefit but necessitates a comprehensive security analysis before any practical application.
+- Start the UI.
+
+  ```sh
+  cd ui
+  pnpm i 
+  pnpm run dev
+  ```
+
+[Bonsai]: https://dev.bonsai.xyz/
+[Foundry]: https://getfoundry.sh/
+[Groth16 SNARK proof]: https://www.risczero.com/news/on-chain-verification
+[RISC Zero Verifier]: https://github.com/risc0/risc0/blob/release-0.21/bonsai/ethereum/contracts/IRiscZeroVerifier.sol
+[RISC Zero installation]: https://dev.risczero.com/api/zkvm/install
+[RISC Zero zkVM]: https://dev.risczero.com/zkvm
+[RISC Zero]: https://www.risczero.com/
+[Sepolia]: https://www.alchemy.com/overviews/sepolia-testnet
+[cargo-binstall]: https://github.com/cargo-bins/cargo-binstall#cargo-binaryinstall
+[coprocessor]: https://www.risczero.com/news/a-guide-to-zk-coprocessors-for-scalability
+[developer FAQ]: https://dev.risczero.com/faq#zkvm-application-design
+[install Rust]: https://doc.rust-lang.org/cargo/getting-started/installation.html
+[zkVM program]: ./methods/guest/
+[Bonsai Foundry Template]: https://github.com/risc0/bonsai-foundry-template
+[`.env.example`]: ./ui/.env.example
+
