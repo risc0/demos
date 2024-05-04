@@ -7,8 +7,11 @@ const codeBlock = `
 #![no_main]
 
 use oidc_validator::IdentityProvider;
-use risc0_zkvm::guest::env;
-use serde::Deserialize;
+use risc0_zkvm::{
+  guest::env,
+  sha::rust_crypto::{Digest as _, Sha256},
+};
+use serde::{Deserialize, Serialize};
 use std::io::Read;
 
 risc0_zkvm::guest::entry!(main);
@@ -16,7 +19,15 @@ risc0_zkvm::guest::entry!(main);
 #[derive(Deserialize)]
 struct Input {
   iss: IdentityProvider,
+  jwks: String,
   jwt: String,
+}
+
+#[derive(Serialize)]
+struct Output {
+  email: Vec<u8>,
+  public_key: String,
+  jwks: Vec<u8>,
 }
 
 fn main() {
@@ -27,17 +38,24 @@ fn main() {
     .expect("could not read input string");
 
   // Deserialize user input
-  let input: Input =
-    serde_json::from_str(&input_str.as_str()).expect("could not deserialize input");
+  let input: Input = serde_json::from_str(&input_str).expect("could not deserialize input");
 
   // Validate the JWT
-  let (email, public_key): (String, String) = input
+  let (email, public_key, jwks): (String, String, String) = input
     .iss
-    .validate(&input.jwt)
+    .validate(&input.jwt, &input.jwks)
     .expect("failed to validate and decode");
 
-  // Commit the email and public key to the journal
-  env::commit(&(email, public_key));
+  // Hash the email and issuer jwks
+  let email = Sha256::digest(email.as_bytes()).to_vec();
+  let jwks = Sha256::digest(jwks.as_bytes()).to_vec();
+
+  // Commit the output to the public journal
+  env::commit(&Output {
+    email,
+    public_key,
+    jwks,
+  });
 }
 `;
 
