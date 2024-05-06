@@ -10,7 +10,6 @@ import { Skeleton } from "@risc0/ui/skeleton";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { Confetti } from "./_components/confetti";
@@ -29,11 +28,9 @@ export default function AppPage() {
   const [googleUserToken] = useLocalStorage("google-token", null);
   const mounted = useMounted();
   const [currentStep, setCurrentStep] = useState<number>(1);
-  const [codeVerifier, setCodeVerifier] = useLocalStorage<string | undefined>("code-verifier", undefined);
   const [starkResults] = useLocalStorage<any | undefined>("stark-results", undefined);
   const [snarkResults] = useLocalStorage<any | undefined>("snark-results", undefined);
   const [webAuthnPublicKey] = useLocalStorage<string | undefined>("webauth-public-key", undefined);
-  const router = useRouter();
 
   useEffect(() => {
     if (!address && !webAuthnPublicKey) {
@@ -53,13 +50,6 @@ export default function AppPage() {
 
     setCurrentStep(3);
   }, [address, googleUserToken, webAuthnPublicKey, starkResults, snarkResults]);
-
-  useEffect(() => {
-    if (currentStep === 3 && codeVerifier) {
-      setCodeVerifier(undefined);
-      router.push("/");
-    }
-  }, [currentStep, router.push, codeVerifier, setCodeVerifier]);
 
   return (
     <>

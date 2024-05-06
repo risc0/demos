@@ -74,7 +74,7 @@ export function ProveButton() {
             <strong title={address ?? webAuthnPublicKey?.toString()}>
               {address ?? truncate(webAuthnPublicKey?.toString() ?? "", 18)}
             </strong>{" "}
-            owns the following social account(s):
+            owns the following social account:
           </p>
 
           {googleUserInfos && <UserInfos type="google" userInfos={googleUserInfos} />}
