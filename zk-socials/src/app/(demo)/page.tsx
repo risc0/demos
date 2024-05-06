@@ -107,10 +107,10 @@ export default function AppPage() {
                 <ConnectWalletButton />
 
                 <div className="relative flex items-center justify-center">
-                  <p className="inline-table absolute top-7 right-0 left-0 z-10 mx-auto bg-background px-4 text-muted-foreground">
+                  <p className="absolute top-7 right-0 left-0 z-10 mx-auto inline-table bg-background px-4 text-muted-foreground">
                     Or
                   </p>
-                  <Separator className="my-10" />
+                  <Separator className="mt-10 mb-9" />
                 </div>
                 <WebAuthnButton />
               </>

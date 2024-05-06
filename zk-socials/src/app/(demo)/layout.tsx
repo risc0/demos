@@ -60,7 +60,8 @@ export default async function SharedLayout({ children }) {
             <SignOutButton />
           </div>
           <p className="pb-2 text-muted-foreground text-xs">
-            Try out the program and generate an example proof that links your Ethereum address to your Google account.
+            Try out the program and generate an example proof that links your Ethereum address or passkey public key to
+            your Google account.
           </p>
 
           {children}

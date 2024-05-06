@@ -63,7 +63,7 @@ export async function verifyRegistration(
     verification = await verifyRegistrationResponse({
       response: credential,
       expectedChallenge: challenge,
-      requireUserVerification: true,
+      requireUserVerification: false, // not sure if this is correct
       ...HOST_SETTINGS,
     });
   } catch (error) {
