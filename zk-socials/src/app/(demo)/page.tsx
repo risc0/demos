@@ -19,6 +19,7 @@ import { SignInButton } from "./_components/sign-in-button";
 import { SnarkTable } from "./_components/snark-table";
 import { StarkTable } from "./_components/stark-table";
 import { TermsAndServices } from "./_components/terms-and-services";
+import { WebAuthnButton } from "./_components/webauthn-button";
 import { AMOUNT_OF_STEPS, calculateCompletionPercentage } from "./_utils/calculate-completion-percentage";
 
 export default function AppPage() {
@@ -110,9 +111,14 @@ export default function AppPage() {
         <CardContent>
           {mounted &&
             (currentStep === 1 ? (
-              <ConnectWalletButton />
+              <>
+                <ConnectWalletButton />
+                <WebAuthnButton />
+              </>
             ) : currentStep === 2 ? (
-              <SignInButton />
+              <div className="flex justify-center">
+                <SignInButton />
+              </div>
             ) : currentStep === 3 ? (
               <ProveButton />
             ) : (
