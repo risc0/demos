@@ -27,9 +27,7 @@ async function binaryToBase64url(bytes: Uint8Array) {
 }
 
 const HOST_SETTINGS = {
-  expectedOrigin: env.NEXT_PUBLIC_VERCEL_BRANCH_URL
-    ? `https://${env.NEXT_PUBLIC_VERCEL_BRANCH_URL}`
-    : "http://localhost:3000",
+  expectedOrigin: env.NEXT_PUBLIC_VERCEL_BRANCH_URL === "localhost" ? "http://localhost:3000" : "http://localhost:3000",
   expectedRPID: env.NEXT_PUBLIC_VERCEL_BRANCH_URL ?? "localhost",
 };
 
@@ -51,10 +49,7 @@ export const registerUser = async (verification: VerifiedRegistrationResponse): 
   };
 };
 
-export const getRegistrationOptions = async (
-  email: string,
-  username: string,
-): Promise<PublicKeyCredentialCreationOptionsJSON> => {
+export const getRegistrationOptions = async (): Promise<PublicKeyCredentialCreationOptionsJSON> => {
   const challenge: string = generateChallenge();
 
   const registrationOptionsParameters: GenerateRegistrationOptionsOpts = {
@@ -62,8 +57,8 @@ export const getRegistrationOptions = async (
     rpName: "next-webauthn",
     rpID: "localhost",
     userID: new TextEncoder().encode(uuidv4()),
-    userName: email,
-    userDisplayName: username,
+    userName: "example-email@example.com",
+    userDisplayName: "example-username",
     timeout: 60000,
     attestationType: "none",
     authenticatorSelection: { residentKey: "discouraged" },

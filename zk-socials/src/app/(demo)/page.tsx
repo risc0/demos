@@ -116,7 +116,7 @@ export default function AppPage() {
                 <ConnectWalletButton />
 
                 <div className="relative flex items-center justify-center">
-                  <p className="display-inline-table absolute top-7 right-0 left-0 z-10 mx-auto bg-background px-4 text-muted-foreground">
+                  <p className="inline-table absolute top-7 right-0 left-0 z-10 mx-auto bg-background px-4 text-muted-foreground">
                     Or
                   </p>
                   <Separator className="my-10" />
