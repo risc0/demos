@@ -1,13 +1,23 @@
 "use client";
 
 import { Button } from "@risc0/ui/button";
+import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
 import { startRegistration } from "@simplewebauthn/browser";
 import type { VerifiedRegistrationResponse } from "@simplewebauthn/server";
 import type { PublicKeyCredentialCreationOptionsJSON, RegistrationResponseJSON } from "@simplewebauthn/types";
-import { getRegistrationOptions, registerUser, verifyRegistration } from "../_actions/register";
+import {
+  getRegistrationOptions,
+  registerUserViaWebAuthn,
+  verifyRegistration,
+} from "../_actions/register-user-via-web-authn";
 
 export const WebAuthnButton = () => {
-  async function handleFormSubmit() {
+  const [_webAuthnPublicKey, setWebAuthnPublicKey] = useLocalStorage<string | undefined>(
+    "webauth-public-key",
+    undefined,
+  );
+
+  async function registerAuthn() {
     const creationOptionsJSON: PublicKeyCredentialCreationOptionsJSON = await getRegistrationOptions();
     const registrationResponse: RegistrationResponseJSON = await startRegistration(creationOptionsJSON);
     const verificationResponse: VerifiedRegistrationResponse = await verifyRegistration(
@@ -16,14 +26,12 @@ export const WebAuthnButton = () => {
     );
 
     try {
-      const user = await registerUser(verificationResponse);
+      const userPublicKey = await registerUserViaWebAuthn(verificationResponse);
 
-      if (user instanceof Error) {
-        console.error(user.message ? user.message : "An unknown Registration error occurred");
-        throw user;
-      }
+      // Convert to base64
+      const base64String = btoa(String.fromCharCode.apply(null, Array.from(userPublicKey)));
 
-      console.log("User registered successfully", user);
+      setWebAuthnPublicKey(base64String);
     } catch (err) {
       const registerError = err as Error;
       console.error(registerError.message);
@@ -31,7 +39,7 @@ export const WebAuthnButton = () => {
   }
 
   return (
-    <Button onClick={handleFormSubmit} className="w-full" type="submit">
+    <Button onClick={registerAuthn} className="w-full" type="submit">
       Register with WebAuthn
     </Button>
   );

@@ -7,28 +7,6 @@ import type { PublicKeyCredentialCreationOptionsJSON, RegistrationResponseJSON }
 import { v4 as uuidv4 } from "uuid";
 import env from "~/env";
 
-function clean(str: string) {
-  return str.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
-}
-
-function generateChallenge() {
-  return clean(crypto.randomBytes(32).toString("base64"));
-}
-
-async function binaryToBase64url(bytes: Uint8Array) {
-  let str = "";
-
-  // biome-ignore lint/complexity/noForEach: ignore
-  bytes.forEach((charCode) => {
-    str += String.fromCharCode(charCode);
-  });
-
-  return btoa(str);
-}
-
-console.log("ENV", env);
-console.log("NEXT_PUBLIC_VERCEL_BRANCH_URL", env.NEXT_PUBLIC_VERCEL_BRANCH_URL);
-
 const HOST_SETTINGS = {
   expectedOrigin:
     env.NEXT_PUBLIC_VERCEL_BRANCH_URL === "localhost"
@@ -37,25 +15,26 @@ const HOST_SETTINGS = {
   expectedRPID: env.NEXT_PUBLIC_VERCEL_BRANCH_URL ?? "localhost",
 };
 
-export const registerUser = async (verification: VerifiedRegistrationResponse): Promise<any | Error> => {
+function clean(str: string) {
+  return str.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+}
+
+function generateChallenge() {
+  return clean(crypto.randomBytes(32).toString("base64"));
+}
+
+// biome-ignore lint/suspicious/useAwait: keep
+export async function registerUserViaWebAuthn(verification: VerifiedRegistrationResponse) {
   const { credentialID, credentialPublicKey } = verification.registrationInfo ?? {};
 
   if (credentialID == null || credentialPublicKey == null) {
     throw new Error("Registration failed");
   }
 
-  const credentialIDBytes = new TextEncoder().encode(credentialID); // Convert the string to Uint8Array
+  return Buffer.from(credentialPublicKey);
+}
 
-  return {
-    userID: uuidv4(),
-    externalID: clean(await binaryToBase64url(credentialIDBytes)), // Pass the Uint8Array to the function
-    publicKey: Buffer.from(credentialPublicKey),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-};
-
-export const getRegistrationOptions = async (): Promise<PublicKeyCredentialCreationOptionsJSON> => {
+export async function getRegistrationOptions(): Promise<PublicKeyCredentialCreationOptionsJSON> {
   const challenge: string = generateChallenge();
 
   const registrationOptionsParameters: GenerateRegistrationOptionsOpts = {
@@ -75,12 +54,12 @@ export const getRegistrationOptions = async (): Promise<PublicKeyCredentialCreat
     await generateRegistrationOptions(registrationOptionsParameters);
 
   return registrationOptions;
-};
+}
 
-export const verifyRegistration = async (
+export async function verifyRegistration(
   credential: RegistrationResponseJSON,
   challenge: string,
-): Promise<VerifiedRegistrationResponse> => {
+): Promise<VerifiedRegistrationResponse> {
   let verification: VerifiedRegistrationResponse;
 
   if (credential == null) {
@@ -104,4 +83,4 @@ export const verifyRegistration = async (
   }
 
   return verification;
-};
+}

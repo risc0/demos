@@ -13,14 +13,19 @@ export function SignOutButton() {
   const [googleUserInfos, setGoogleUserInfos] = useLocalStorage<GoogleUserInfos | undefined>("google-infos", undefined);
   const [starkResults] = useLocalStorage<any | undefined>("stark-results", undefined);
   const [snarkResults] = useLocalStorage<any | undefined>("snark-results", undefined);
+  const [webAuthnPublicKey, setWebAuthnPublicKey] = useLocalStorage<string | undefined>(
+    "webauth-public-key",
+    undefined,
+  );
 
   async function signOut() {
     setGoogleUserToken(undefined);
     setGoogleUserInfos(undefined);
+    setWebAuthnPublicKey(undefined);
     await disconnectAsync(); // Disconnect the user's wallet
   }
 
-  if (!address || !googleUserInfos || starkResults || snarkResults) {
+  if ((!address && !webAuthnPublicKey) || !googleUserInfos || starkResults || snarkResults) {
     return null;
   }
 

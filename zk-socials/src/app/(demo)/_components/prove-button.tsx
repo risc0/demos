@@ -5,6 +5,7 @@ import { Button } from "@risc0/ui/button";
 import { cn } from "@risc0/ui/cn";
 import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
 import { Loader } from "@risc0/ui/loader";
+import { truncate } from "@risc0/ui/utils/truncate";
 import { AlertTriangleIcon, Loader2Icon, VerifiedIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
@@ -19,6 +20,7 @@ import { UserInfos } from "./user-infos";
 
 export function ProveButton() {
   const { resolvedTheme } = useTheme();
+  const [webAuthnPublicKey] = useLocalStorage<string | undefined>("webauth-public-key", undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [_starkResults, setStarkResults] = useLocalStorage<any | undefined>("stark-results", undefined);
   const [_snarkResults, setSnarkResults] = useLocalStorage<any | undefined>("snark-results", undefined);
@@ -29,7 +31,7 @@ export function ProveButton() {
   const [snarkPollingResults, setSnarkPollingResults] = useState<SnarkSessionStatusRes>();
   const [starkPollingResults, setStarkPollingResults] = useState<StarkSessionStatusRes[]>();
 
-  // this beast of a function takes care of creating the STARK session, which then returns a UUID
+  // this function takes care of creating the STARK session, which then returns a UUID
   // we then use this UUID to create a SNARK session
   // lastly, we get all the results from the STARK and SNARK sessions
   // this gets around Vercel's time limit for serverless functions
@@ -61,14 +63,18 @@ export function ProveButton() {
     }
   }
 
-  return address ? (
+  return address || webAuthnPublicKey ? (
     <>
       {isLoading ? (
         <Loader loadingText="☕️ This will take a couple of minutes… Do not close your browser…" />
       ) : (
         <>
           <p className="mb-3 break-words text-xs">
-            You are about to prove that address <strong>{address}</strong> owns the following social account(s):
+            You are about to prove that {address ? "address" : "public key"}{" "}
+            <strong title={address ?? webAuthnPublicKey?.toString()}>
+              {address ?? truncate(webAuthnPublicKey?.toString() ?? "", 18)}
+            </strong>{" "}
+            owns the following social account(s):
           </p>
 
           {googleUserInfos && <UserInfos type="google" userInfos={googleUserInfos} />}

@@ -32,10 +32,11 @@ export default function AppPage() {
   const [codeVerifier, setCodeVerifier] = useLocalStorage<string | undefined>("code-verifier", undefined);
   const [starkResults] = useLocalStorage<any | undefined>("stark-results", undefined);
   const [snarkResults] = useLocalStorage<any | undefined>("snark-results", undefined);
+  const [webAuthnPublicKey] = useLocalStorage<string | undefined>("webauth-public-key", undefined);
   const router = useRouter();
 
   useEffect(() => {
-    if (!address) {
+    if (!address && !webAuthnPublicKey) {
       setCurrentStep(1);
       return;
     }
@@ -51,7 +52,7 @@ export default function AppPage() {
     }
 
     setCurrentStep(3);
-  }, [address, googleUserToken, starkResults, snarkResults]);
+  }, [address, googleUserToken, webAuthnPublicKey, starkResults, snarkResults]);
 
   useEffect(() => {
     if (currentStep === 3 && codeVerifier) {

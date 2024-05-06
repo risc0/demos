@@ -10,6 +10,7 @@ export function SignInButton() {
   const [googleUserInfos, setGoogleUserInfos] = useLocalStorage<any | undefined>("google-infos", undefined);
   const [googleUserToken, setGoogleUserToken] = useLocalStorage<string | undefined>("google-token", undefined);
   const { address } = useAccount();
+  const [webAuthnPublicKey] = useLocalStorage<string | undefined>("webauth-public-key", undefined);
 
   useEffect(() => {
     if (!googleUserToken || googleUserInfos) {
@@ -23,7 +24,7 @@ export function SignInButton() {
     <GoogleLogin
       auto_select
       theme="filled_black"
-      nonce={address}
+      nonce={address ?? webAuthnPublicKey}
       onSuccess={(response) => {
         if (response.credential) {
           setGoogleUserToken(response.credential);

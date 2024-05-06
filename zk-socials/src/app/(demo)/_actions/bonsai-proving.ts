@@ -191,9 +191,11 @@ export async function bonsaiStarkProving({ iss, token }: { iss: "Google" | "test
 
   // TODO: Add others, if applicable
   let jwks = "";
+
   if (iss === "Google") {
     jwks = await getGoogleCerts();
   }
+
   const inputData = Buffer.from(
     encodeString(
       JSON.stringify({
@@ -205,10 +207,8 @@ export async function bonsaiStarkProving({ iss, token }: { iss: "Google" | "test
   );
 
   const inputId = await client.uploadInput(inputData);
-
   const imageId = env.IMAGE_ID;
   const assumptions: string[] = [];
-
   const starkSession = await client.createStarkSession(imageId, inputId, assumptions);
 
   return starkSession.uuid;
