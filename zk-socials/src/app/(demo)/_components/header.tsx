@@ -7,7 +7,7 @@ import { ThemeToggle } from "~/client/theme/theme-toggle";
 export function Header() {
   return (
     <div className="flex flex-row justify-between pt-8 pb-5">
-      <Link href="/" className="flex flex-col gap-2 transition-opacity hover:opacity-70">
+      <Link href="https://risczero.com" className="flex flex-col gap-2 transition-opacity hover:opacity-70">
         <Image width={59} height={43} src="/risczero.svg" alt="RISC Zero" className="dark:invert dark:invert-1" />
 
         <h1 className="truncate text-[10px] text-primary">Demos</h1>
