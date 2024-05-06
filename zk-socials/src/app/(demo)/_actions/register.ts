@@ -61,7 +61,7 @@ export const getRegistrationOptions = async (): Promise<PublicKeyCredentialCreat
   const registrationOptionsParameters: GenerateRegistrationOptionsOpts = {
     challenge,
     rpName: "next-webauthn",
-    rpID: "localhost",
+    rpID: HOST_SETTINGS.expectedRPID,
     userID: new TextEncoder().encode(uuidv4()),
     userName: "example-email@example.com",
     userDisplayName: "example-username",
