@@ -31,7 +31,8 @@ export async function registerUserViaWebAuthn(verification: VerifiedRegistration
     throw new Error("Registration failed");
   }
 
-  return Buffer.from(credentialPublicKey);
+  // convert the buffer to a hex string
+  return Buffer.from(credentialPublicKey).toString("hex");
 }
 
 export async function getRegistrationOptions(): Promise<PublicKeyCredentialCreationOptionsJSON> {

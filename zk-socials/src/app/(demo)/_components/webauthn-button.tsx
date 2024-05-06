@@ -28,13 +28,9 @@ export const WebAuthnButton = () => {
     try {
       const userPublicKey = await registerUserViaWebAuthn(verificationResponse);
 
-      // Convert to base64
-      const base64String = btoa(String.fromCharCode.apply(null, Array.from(userPublicKey)));
-
-      setWebAuthnPublicKey(base64String);
-    } catch (err) {
-      const registerError = err as Error;
-      console.error(registerError.message);
+      setWebAuthnPublicKey(userPublicKey);
+    } catch (error) {
+      console.error(error);
     }
   }
 
