@@ -27,7 +27,9 @@ async function binaryToBase64url(bytes: Uint8Array) {
 }
 
 const HOST_SETTINGS = {
-  expectedOrigin: env.VERCEL_URL ? `https://${env.NEXT_PUBLIC_VERCEL_BRANCH_URL}` : "http://localhost:3000",
+  expectedOrigin: env.NEXT_PUBLIC_VERCEL_BRANCH_URL
+    ? `https://${env.NEXT_PUBLIC_VERCEL_BRANCH_URL}`
+    : "http://localhost:3000",
   expectedRPID: env.NEXT_PUBLIC_VERCEL_BRANCH_URL ?? "localhost",
 };
 

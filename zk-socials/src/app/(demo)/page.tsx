@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@risc
 import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
 import { useMounted } from "@risc0/ui/hooks/use-mounted";
 import { Progress } from "@risc0/ui/progress";
+import { Separator } from "@risc0/ui/separator";
 import { Skeleton } from "@risc0/ui/skeleton";
 import { useTheme } from "next-themes";
 import Image from "next/image";
@@ -113,6 +114,13 @@ export default function AppPage() {
             (currentStep === 1 ? (
               <>
                 <ConnectWalletButton />
+
+                <div className="relative flex items-center justify-center">
+                  <p className="display-inline-table absolute top-7 right-0 left-0 z-10 mx-auto bg-background px-4 text-muted-foreground">
+                    Or
+                  </p>
+                  <Separator className="my-10" />
+                </div>
                 <WebAuthnButton />
               </>
             ) : currentStep === 2 ? (

@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@risc0/ui/button";
 import { startRegistration } from "@simplewebauthn/browser";
 import type { VerifiedRegistrationResponse } from "@simplewebauthn/server";
 import type { PublicKeyCredentialCreationOptionsJSON, RegistrationResponseJSON } from "@simplewebauthn/types";
@@ -10,26 +11,21 @@ import { getRegistrationOptions, registerUser, verifyRegistration } from "../_ac
 export const WebAuthnButton = () => {
   const [username, setUsername] = useState("example-username");
   const [email, setEmail] = useState("example-email@example.com");
-  const [error, setError] = useState("");
+  const [_error, setError] = useState("");
 
   const handleFormSubmit = async (event: FormEvent) => {
     event.preventDefault();
     const creationOptionsJSON: PublicKeyCredentialCreationOptionsJSON = await getRegistrationOptions(email, username);
 
-    console.log("creationOptionsJSON", creationOptionsJSON);
-
     const registrationResponse: RegistrationResponseJSON = await startRegistration(creationOptionsJSON);
-    console.log("registrationResponse", registrationResponse);
 
     const verificationResponse: VerifiedRegistrationResponse = await verifyRegistration(
       registrationResponse,
       creationOptionsJSON.challenge,
     );
-    console.log("verificationResponse", verificationResponse);
 
     try {
       const user = await registerUser(verificationResponse);
-      console.log("user", user);
 
       if (user instanceof Error) {
         setError(user.message ? user.message : "An unknown Registration error occurred");
@@ -48,6 +44,7 @@ export const WebAuthnButton = () => {
         id="username"
         name="username"
         placeholder="Username"
+        className="hidden"
         value={username}
         onChange={(event) => setUsername(event.target.value)}
       />
@@ -57,19 +54,12 @@ export const WebAuthnButton = () => {
         name="email"
         placeholder="Email"
         value={email}
+        className="hidden"
         onChange={(event) => setEmail(event.target.value)}
       />
-      <input type="submit" value="Register" />
-      {error != null ? <pre>{error}</pre> : null}
-      {error === "User with this email already exists" ? (
-        <p>
-          Please{" "}
-          <Link href="/login">
-            <b>sign in</b>
-          </Link>{" "}
-          using your existing account credentials instead
-        </p>
-      ) : null}
+      <Button className="w-full" type="submit">
+        Register with WebAuthn
+      </Button>
     </form>
   );
 };
