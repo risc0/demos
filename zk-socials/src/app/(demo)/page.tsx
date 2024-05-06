@@ -6,6 +6,9 @@ import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
 import { useMounted } from "@risc0/ui/hooks/use-mounted";
 import { Progress } from "@risc0/ui/progress";
 import { Skeleton } from "@risc0/ui/skeleton";
+import { useTheme } from "next-themes";
+import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
@@ -20,6 +23,7 @@ import { AMOUNT_OF_STEPS, calculateCompletionPercentage } from "./_utils/calcula
 
 export default function AppPage() {
   const { address } = useAccount();
+  const { resolvedTheme } = useTheme();
   const [googleUserToken] = useLocalStorage("google-token", null);
   const mounted = useMounted();
   const [currentStep, setCurrentStep] = useState<number>(1);
@@ -67,11 +71,24 @@ export default function AppPage() {
 
           {mounted ? (
             <CardTitle>
-              {currentStep === 1
-                ? "Connect Your Wallet"
-                : currentStep === 2
-                  ? "Sign In with Social Account"
-                  : "Prove with Bonsai™"}
+              {currentStep === 1 ? (
+                "Connect Your Wallet"
+              ) : currentStep === 2 ? (
+                "Sign In with Social Account"
+              ) : (
+                <div className="flex flex-row items-center gap-1.5">
+                  Prove with{" "}
+                  <Link className="transition-opacity hover:opacity-70" target="_blank" href="https://www.bonsai.xyz/">
+                    <Image
+                      className="-top-[1px] relative"
+                      width={58}
+                      height={16}
+                      src={resolvedTheme === "dark" ? "/bonsai-logo-dark.svg" : "/bonsai-logo-light.svg"}
+                      alt="bonsai logo"
+                    />
+                  </Link>
+                </div>
+              )}
             </CardTitle>
           ) : (
             <Skeleton className="h-4 w-40" />

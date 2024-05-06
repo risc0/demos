@@ -6,6 +6,8 @@ import { cn } from "@risc0/ui/cn";
 import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
 import { Loader } from "@risc0/ui/loader";
 import { AlertTriangleIcon, Loader2Icon, VerifiedIcon } from "lucide-react";
+import { useTheme } from "next-themes";
+import Image from "next/image";
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import type { GoogleUserInfos } from "~/types/google";
@@ -16,6 +18,7 @@ import { doStarkProving } from "../_utils/do-stark-proving";
 import { UserInfos } from "./user-infos";
 
 export function ProveButton() {
+  const { resolvedTheme } = useTheme();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [_starkResults, setStarkResults] = useLocalStorage<any | undefined>("stark-results", undefined);
   const [_snarkResults, setSnarkResults] = useLocalStorage<any | undefined>("snark-results", undefined);
@@ -24,7 +27,7 @@ export function ProveButton() {
   const [error, setError] = useState<any>();
   const { address } = useAccount();
   const [snarkPollingResults, setSnarkPollingResults] = useState<SnarkSessionStatusRes>();
-  const [starkPollingResults, setStarkPollingResults] = useState<StarkSessionStatusRes>();
+  const [starkPollingResults, setStarkPollingResults] = useState<StarkSessionStatusRes[]>();
 
   // this beast of a function takes care of creating the STARK session, which then returns a UUID
   // we then use this UUID to create a SNARK session
@@ -86,32 +89,46 @@ export function ProveButton() {
               setError(result);
             }
           }}
-          startIcon={<VerifiedIcon />}
           size="lg"
           autoFocus
-          className="w-full"
+          className="flex w-full flex-row items-center gap-1.5"
           disabled={!!error || isLoading}
         >
-          Prove with Bonsai™
+          Prove with{" "}
+          <Image
+            className="-top-[1px] relative"
+            width={58}
+            height={16}
+            src={resolvedTheme === "dark" ? "/bonsai-logo-light.svg" : "/bonsai-logo-dark.svg"}
+            alt="bonsai logo"
+          />
         </Button>
 
-        {starkPollingResults && (
+        {starkPollingResults && starkPollingResults.length > 0 && (
           <Alert className="mt-4 border-none px-0">
             <AlertTitle>
               STARK Results{" "}
               <span
                 className={cn(
-                  starkPollingResults.status === "SUCCEEDED" && "font-bold text-green-600 dark:text-green-500",
-                  starkPollingResults.status === "FAILED" && "font-bold text-red-600 dark:text-red-500",
+                  "text-muted-foreground",
+                  starkPollingResults.at(-1)?.status === "SUCCEEDED" && "font-bold text-green-600 dark:text-green-500",
+                  starkPollingResults.at(-1)?.status === "FAILED" && "font-bold text-red-600 dark:text-red-500",
                 )}
               >
-                ({starkPollingResults.status})
+                ({starkPollingResults.at(-1)?.status})
               </span>
             </AlertTitle>
-            {starkPollingResults.status !== "SUCCEEDED" && (
+            {starkPollingResults.at(-1)?.status !== "SUCCEEDED" && (
               <AlertDescription className="rounded border bg-neutral-50 font-mono dark:bg-neutral-900">
-                <div className="flex flex-row items-center justify-between gap-2 p-2">
-                  {starkPollingResults.state} <Loader2Icon className="size-3.5 animate-spin text-muted-foreground" />
+                <div className="flex flex-row items-start justify-between gap-2 px-3 py-2">
+                  <div className="flex flex-col">
+                    {starkPollingResults.map((result, index) => (
+                      <code key={index} className="block text-[10px]">
+                        {result.state}
+                      </code>
+                    ))}
+                  </div>
+                  <Loader2Icon className="mt-[0.25rem] size-3.5 animate-spin text-border" />
                 </div>
               </AlertDescription>
             )}
@@ -132,8 +149,8 @@ export function ProveButton() {
               </span>
             </AlertTitle>
             <AlertDescription className="rounded border bg-neutral-50 font-mono dark:bg-neutral-900">
-              <div className="flex flex-row items-center justify-between gap-2 p-2">
-                This will take around 2 minutes <Loader2Icon className="size-3.5 animate-spin text-muted-foreground" />
+              <div className="flex flex-row items-center justify-between gap-2 px-3 py-2 text-xs">
+                This will take ~2 minutes <Loader2Icon className="size-3.5 animate-spin text-border" />
               </div>
             </AlertDescription>
           </Alert>

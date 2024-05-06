@@ -23,12 +23,12 @@ export default function SharedLayout({ children }) {
       <div className="flex flex-1 flex-col-reverse gap-8 lg:flex-row">
         <div className="flex flex-1 flex-col">
           <h2 className="subtitle min-h-10">👨‍💻 The zkVM Guest Code</h2>
-          <div className="text-xs text-muted-foreground pb-2">
-            The RISC Zero zkVM enables enables developers to write simple programs in vanilla Rust, instead of
-            specialized languages for writing circuits. This gives developers the power of Rust crates, control flow and
-            other conveniences of general purpose languages as demonstrated in the simple example program below. In just
-            a few lines of code, a JWT is verified using the open source{" "}
-            <Badge variant="secondary" className="text-[10px] p-0 px-1 font-normal font-mono">
+          <div className="pb-2 text-muted-foreground text-xs">
+            The RISC Zero zkVM enables developers to write simple programs in vanilla Rust, instead of specialized
+            languages for writing circuits. This gives developers the power of Rust crates, control flow, and other
+            conveniences of general purpose languages as demonstrated in the simple example program below 👇. In just a
+            few lines of code, a JWT is verified using the open source{" "}
+            <Badge variant="secondary" className="p-0 px-1 font-mono font-normal text-[10px]">
               oidc_validator
             </Badge>{" "}
             crate.
@@ -50,7 +50,7 @@ export default function SharedLayout({ children }) {
 
             <SignOutButton />
           </div>
-          <p className="text-xs text-muted-foreground pb-2">
+          <p className="pb-2 text-muted-foreground text-xs">
             Try out the program and generate an example proof that links your Ethereum address to your Google account.
           </p>
 

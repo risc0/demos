@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export function TermsAndServices() {
   return (
-    <p className="text-xs text-center mt-6 text-muted-foreground">
+    <p className="mt-6 text-center text-muted-foreground text-xs">
       By utilizing this app, you agree to our{" "}
       <Link className="link" target="_blank" href="https://www.risczero.com/terms-of-service">
         Terms of Service

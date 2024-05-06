@@ -19,8 +19,8 @@ export async function doSnarkProving({
   // Poll until the session is not RUNNING
   while (snarkStatus.status === "RUNNING") {
     await sleep(4000); // Wait for 4 seconds
-
     snarkStatus = await getBonsaiSnarkStatus({ uuid: snarkUuid });
+
     setSnarkPollingResults(snarkStatus);
   }
 

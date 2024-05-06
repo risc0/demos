@@ -15,8 +15,8 @@ export function UserInfos({ userInfos, type }: { userInfos: GoogleUserInfos; typ
         <p title={userInfos.name} className="truncate font-bold text-xl">
           {userInfos.name}
         </p>
-        <p title={(userInfos as GoogleUserInfos).email} className="truncate text-muted-foreground text-sm">
-          {(userInfos as GoogleUserInfos).email}
+        <p title={userInfos.email} className="truncate text-muted-foreground text-sm">
+          {userInfos.email}
         </p>
         <p className="mt-1 flex flex-row gap-2 font-mono text-[10px]">
           {type === "google" && (
