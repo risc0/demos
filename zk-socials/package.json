@@ -14,7 +14,7 @@
     "@react-oauth/google": "0.12.1",
     "@risc0/ui": "0.0.62",
     "@t3-oss/env-nextjs": "0.10.1",
-    "@tanstack/react-query": "5.32.1",
+    "@tanstack/react-query": "5.35.1",
     "@vercel/postgres": "0.8.0",
     "axios": "1.6.8",
     "deepmerge": "4.3.1",
@@ -31,12 +31,12 @@
     "sharp": "0.33.3",
     "string-ts": "2.1.1",
     "typescript": "5.4.5",
-    "viem": "2.9.31",
-    "wagmi": "2.8.0",
+    "viem": "2.9.32",
+    "wagmi": "2.8.1",
     "zod": "3.23.6"
   },
   "devDependencies": {
-    "@types/node": "20.12.8",
+    "@types/node": "20.12.9",
     "@types/react": "18.3.1",
     "@types/react-dom": "18.3.0",
     "pino-pretty": "11.0.0"

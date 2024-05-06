@@ -16,7 +16,7 @@ export function StarkTable({ starkData }) {
           <TableHead className="truncate">Status</TableHead>
           {!isSuccess && <TableHead className="truncate">Error Message</TableHead>}
           <TableHead className="truncate text-right">Stats</TableHead>
-          <TableHead className="truncate text-right">Ellapsed Time</TableHead>
+          <TableHead className="truncate text-right">Elapsed Time</TableHead>
           {isSuccess && <TableHead className="truncate text-right">Receipt URL</TableHead>}
         </TableRow>
       </TableHeader>
