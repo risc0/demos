@@ -1,11 +1,11 @@
 "use server";
 
-import crypto from "crypto";
 import { generateRegistrationOptions, verifyRegistrationResponse } from "@simplewebauthn/server";
 import type { GenerateRegistrationOptionsOpts, VerifiedRegistrationResponse } from "@simplewebauthn/server";
 import type { PublicKeyCredentialCreationOptionsJSON, RegistrationResponseJSON } from "@simplewebauthn/types";
 import { v4 as uuidv4 } from "uuid";
 import env from "~/env";
+import { generateChallenge } from "../_utils/generate-challenge";
 
 const HOST_SETTINGS = {
   expectedOrigin:
@@ -14,14 +14,6 @@ const HOST_SETTINGS = {
       : `https://${env.NEXT_PUBLIC_VERCEL_BRANCH_URL}`,
   expectedRPID: env.NEXT_PUBLIC_VERCEL_BRANCH_URL ?? "localhost",
 };
-
-function clean(str: string) {
-  return str.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
-}
-
-function generateChallenge() {
-  return clean(crypto.randomBytes(32).toString("base64"));
-}
 
 // biome-ignore lint/suspicious/useAwait: keep
 export async function registerUserViaWebAuthn(verification: VerifiedRegistrationResponse) {

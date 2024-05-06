@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "~/auth";
 import env from "~/env";
 
-export default async function SignIn() {
+export default async function SignInPage() {
   const session = await getServerSession(authOptions);
   const cookieStore = cookies();
 
