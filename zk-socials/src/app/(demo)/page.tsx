@@ -21,7 +21,6 @@ import { AMOUNT_OF_STEPS, calculateCompletionPercentage } from "./_utils/calcula
 export default function AppPage() {
   const { address } = useAccount();
   const [googleUserToken] = useLocalStorage("google-token", null);
-  const [facebookUserToken] = useLocalStorage("facebook-token", null);
   const mounted = useMounted();
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [codeVerifier, setCodeVerifier] = useLocalStorage<string | undefined>("code-verifier", undefined);
@@ -35,7 +34,7 @@ export default function AppPage() {
       return;
     }
 
-    if (!googleUserToken && !facebookUserToken) {
+    if (!googleUserToken) {
       setCurrentStep(2);
       return;
     }
@@ -46,7 +45,7 @@ export default function AppPage() {
     }
 
     setCurrentStep(3);
-  }, [address, googleUserToken, facebookUserToken, starkResults, snarkResults]);
+  }, [address, googleUserToken, starkResults, snarkResults]);
 
   useEffect(() => {
     if (currentStep === 3 && codeVerifier) {

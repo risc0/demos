@@ -19,7 +19,6 @@ const env = createEnv({
    * To expose them to the client, prefix them with `NEXT_PUBLIC_`.
    */
   client: {
-    NEXT_PUBLIC_FACEBOOK_CLIENT_ID: z.string(),
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: z.string(),
     NEXT_PUBLIC_VERCEL_BRANCH_URL: z.string(),
   },
@@ -30,7 +29,6 @@ const env = createEnv({
    */
   runtimeEnv: {
     // Client-side environment variables
-    NEXT_PUBLIC_FACEBOOK_CLIENT_ID: process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID,
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
     NEXT_PUBLIC_VERCEL_BRANCH_URL: process.env.NEXT_PUBLIC_VERCEL_BRANCH_URL,
 

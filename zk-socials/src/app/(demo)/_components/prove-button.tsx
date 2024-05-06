@@ -8,7 +8,6 @@ import { Loader } from "@risc0/ui/loader";
 import { AlertTriangleIcon, Loader2Icon, VerifiedIcon } from "lucide-react";
 import { useState } from "react";
 import { useAccount } from "wagmi";
-import type { FacebookUserInfos } from "~/types/facebook";
 import type { GoogleUserInfos } from "~/types/google";
 import type { SnarkSessionStatusRes, StarkSessionStatusRes } from "../_actions/bonsai-proving";
 import { checkUserValidity } from "../_actions/check-user-validity";
@@ -20,8 +19,6 @@ export function ProveButton() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [_starkResults, setStarkResults] = useLocalStorage<any | undefined>("stark-results", undefined);
   const [_snarkResults, setSnarkResults] = useLocalStorage<any | undefined>("snark-results", undefined);
-  const [facebookUserInfos] = useLocalStorage<FacebookUserInfos | undefined>("facebook-infos", undefined);
-  const [facebookUserToken] = useLocalStorage<string | undefined>("facebook-token", undefined);
   const [googleUserInfos] = useLocalStorage<GoogleUserInfos | undefined>("google-infos", undefined);
   const [googleUserToken] = useLocalStorage<string | undefined>("google-token", undefined);
   const [error, setError] = useState<any>();
@@ -36,7 +33,7 @@ export function ProveButton() {
   async function handleClick() {
     setIsLoading(true);
 
-    if (!facebookUserToken && !googleUserToken) {
+    if (!googleUserToken) {
       console.error("JWT not found");
       setIsLoading(false);
 
@@ -45,9 +42,9 @@ export function ProveButton() {
 
     try {
       const { starkUuid, starkStatus } = await doStarkProving({
-        iss: googleUserInfos ? "Google" : "Facebook",
+        iss: googleUserInfos ? "Google" : "test",
         setStarkPollingResults,
-        token: googleUserToken ?? facebookUserToken ?? "",
+        token: googleUserToken ?? "",
       });
       const { snarkStatus } = await doSnarkProving({ setSnarkPollingResults, starkUuid });
 
@@ -72,7 +69,6 @@ export function ProveButton() {
           </p>
 
           {googleUserInfos && <UserInfos type="google" userInfos={googleUserInfos} />}
-          {facebookUserInfos && <UserInfos type="facebook" userInfos={facebookUserInfos} />}
         </>
       )}
 
@@ -80,7 +76,7 @@ export function ProveButton() {
         <Button
           isLoading={isLoading}
           onClick={async () => {
-            const result = await checkUserValidity({ emailOrId: googleUserInfos?.email ?? facebookUserInfos?.id });
+            const result = await checkUserValidity({ emailOrId: googleUserInfos?.email });
 
             if (result.status === 200) {
               // success

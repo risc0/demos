@@ -69,7 +69,7 @@ type SnarkSessionReq = {
 
 class StarkSession {
   // biome-ignore lint/suspicious/noEmptyBlockStatements: ignore
-  constructor(public uuid: string) { }
+  constructor(public uuid: string) {}
 
   async status(client: Client): Promise<StarkSessionStatusRes> {
     const url = `sessions/status/${this.uuid}`;
@@ -86,7 +86,7 @@ class StarkSession {
 
 class SnarkSession {
   // biome-ignore lint/suspicious/noEmptyBlockStatements: ignore
-  constructor(public uuid: string) { }
+  constructor(public uuid: string) {}
 
   async status(client: Client): Promise<SnarkSessionStatusRes> {
     const url = `snark/status/${this.uuid}`;
@@ -171,9 +171,8 @@ class Client {
   }
 }
 
-
 async function getGoogleCerts(): Promise<string> {
-  const response = await axios.get('https://www.googleapis.com/oauth2/v3/certs');
+  const response = await axios.get("https://www.googleapis.com/oauth2/v3/certs");
   const certs = response.data;
   return JSON.stringify(certs);
 }
@@ -184,15 +183,15 @@ function encodeString(value: string) {
 }
 
 // STARK
-export async function bonsaiStarkProving({ iss, token }: { iss: "Facebook" | "Google" | "test"; token: string }) {
+export async function bonsaiStarkProving({ iss, token }: { iss: "Google" | "test"; token: string }) {
   const apiKey = env.BONSAI_API_KEY;
   const version = "0.21.0";
   const url = "https://api.staging.bonsai.xyz";
   const client = new Client(url, apiKey, version);
 
   // TODO: Add others, if applicable
-  let jwks = '';
-  if (iss === 'Google') {
+  let jwks = "";
+  if (iss === "Google") {
     jwks = await getGoogleCerts();
   }
   const inputData = Buffer.from(
