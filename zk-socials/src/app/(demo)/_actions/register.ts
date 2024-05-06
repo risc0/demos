@@ -26,8 +26,14 @@ async function binaryToBase64url(bytes: Uint8Array) {
   return btoa(str);
 }
 
+console.log("ENV", env);
+console.log("NEXT_PUBLIC_VERCEL_BRANCH_URL", env.NEXT_PUBLIC_VERCEL_BRANCH_URL);
+
 const HOST_SETTINGS = {
-  expectedOrigin: env.NEXT_PUBLIC_VERCEL_BRANCH_URL === "localhost" ? "http://localhost:3000" : "http://localhost:3000",
+  expectedOrigin:
+    env.NEXT_PUBLIC_VERCEL_BRANCH_URL === "localhost"
+      ? "http://localhost:3000"
+      : `https://${env.NEXT_PUBLIC_VERCEL_BRANCH_URL}`,
   expectedRPID: env.NEXT_PUBLIC_VERCEL_BRANCH_URL ?? "localhost",
 };
 
