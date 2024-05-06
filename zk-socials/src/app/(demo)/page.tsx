@@ -15,6 +15,7 @@ import { ProveButton } from "./_components/prove-button";
 import { SignInButton } from "./_components/sign-in-button";
 import { SnarkTable } from "./_components/snark-table";
 import { StarkTable } from "./_components/stark-table";
+import { TermsAndServices } from "./_components/terms-and-services";
 import { AMOUNT_OF_STEPS, calculateCompletionPercentage } from "./_utils/calculate-completion-percentage";
 
 export default function AppPage() {
@@ -119,6 +120,8 @@ export default function AppPage() {
                 )}
               </>
             ))}
+
+          <TermsAndServices />
         </CardContent>
       </Card>
     </>

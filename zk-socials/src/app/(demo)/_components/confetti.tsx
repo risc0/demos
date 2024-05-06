@@ -17,13 +17,8 @@ export function Confetti() {
   }, []);
 
   return mounted ? (
-    <ReactConfetti
-      recycle={recycle}
-      numberOfPieces={500}
-      gravity={0.05}
-      style={{ inset: "-16px" }}
-      width={width}
-      height={height}
-    />
+    <div className="fixed inset-0">
+      <ReactConfetti recycle={recycle} numberOfPieces={500} gravity={0.05} width={width} height={height} />
+    </div>
   ) : null;
 }
