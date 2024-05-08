@@ -36,25 +36,25 @@ impl IdentityProvider {
         &self,
         token: &str,
         jwk_str: &str,
-    ) -> Result<(String, String, String), OidcErr> {
+    ) -> Result<(String, String, String, String, String), OidcErr> {
         let jwk: JwkKeys =
             serde_json::from_str(jwk_str).map_err(|_| OidcErr::CertificateParseError)?;
         match self {
             Self::Google => {
                 let decoded = decode_token::<GoogleClaims>(token, &jwk).unwrap();
-                Ok((
-                    decoded.email.to_string(),
-                    decoded.nonce,
-                    jwk_str.to_string(),
-                ))
+                let email = decoded.custom.email.to_string();
+                let nonce = decoded.custom.nonce.to_string();
+                let exp = decoded.expiration.unwrap().timestamp().to_string();
+                let iat = decoded.issued_at.unwrap().timestamp().to_string();
+                Ok((email, nonce, exp, iat, jwk_str.to_string()))
             }
             Self::Test => {
                 let decoded = decode_token::<TestClaims>(token, &jwk).unwrap();
-                Ok((
-                    decoded.email.to_string(),
-                    decoded.nonce,
-                    jwk_str.to_string(),
-                ))
+                let email = decoded.custom.email.to_string();
+                let nonce = decoded.custom.nonce.to_string();
+                let exp = decoded.expiration.unwrap().timestamp().to_string();
+                let iat = decoded.issued_at.unwrap().timestamp().to_string();
+                Ok((email, nonce, exp, iat, jwk_str.to_string()))
             }
         }
     }
@@ -77,8 +77,6 @@ pub struct GoogleClaims {
     pub sub: String,
     pub nonce: String, // I require this one.
     pub email: String, // And this one too.
-    pub exp: Option<u64>,
-    pub iat: Option<u64>,
     pub at_hash: Option<String>,
     pub azp: Option<String>,
     pub email_verified: Option<bool>,
@@ -88,7 +86,6 @@ pub struct GoogleClaims {
     pub locale: Option<String>,
     pub name: Option<String>,
     pub picture: Option<String>,
-    pub nbf: Option<u64>,
     pub jti: Option<String>,
 }
 
@@ -116,7 +113,7 @@ pub enum OidcErr {
     KeyIdMissingError,
 }
 
-fn decode_token<T>(token: &str, keys: &JwkKeys) -> Result<T, OidcErr>
+fn decode_token<T>(token: &str, keys: &JwkKeys) -> Result<jwt_compact::Claims<T>, OidcErr>
 where
     T: for<'de> Deserialize<'de> + Serialize + Clone,
 {
@@ -147,7 +144,8 @@ where
         .validate_integrity::<T>(&token, &vkey)
         .map_err(|_| OidcErr::TokenValidationError);
 
-    Ok(res.unwrap().claims().custom.clone())
+    // Ok(claims)
+    Ok(res.unwrap().claims().clone())
 }
 
 #[cfg(test)]
@@ -158,14 +156,17 @@ pub mod test_oidc_validator {
     const TEST_PUB_JWK: &str = r#"
         {
           "keys" : [
-            {
+             {
               "alg": "RS256",
               "e": "AQAB",
+              "key_ops": [
+                "verify"
+              ],
               "kty": "RSA",
-              "n": "y-jiMQRB9zDOYbIaCoA4ppJ4prXbLhsM6upxCiip_6niQM_LHcCZxt_cFe88yi29Rgj1iEkOIJgXosydJLAtiOJHh1n7-FdSWEgKn3EfzI_VSncT2jnW6r3TtApzmHdDQnZmRKLB4mGXvnkwK-xzkpTRRM8r-m2A9dAylx0mGMqUabYYNg0n8x3EFG9ciFI5c3JwmMm8bHDw8BkhiHtG09nr7FkrEpn4tbhX9d7OeL-rbYLb2_H49BSX9L4O1vCOqf0cQMpSfhWiw7UjLjECzKlo0HNtELrpubBQbgZc9UbNlfCiaK4QO_fLog_YhY5Taxu05MViQvV_rxCi4ZwddQ",
+              "n": "t50xn1bqloo0peLNX9mieuuyBEVIurn1Zzy41F9R5bn66KmhtKOCBWFXQAGD4IWphqlut0qDaWavENcamgl-bpriCSgiatIi61nq2CQ9pZzH4lGGp3sIYsTuSoEz8jSJKZ28ErGe9QPrAooX28X0l83fiRPBD22lqYRktSQPUNja_dB5CsmmSXBcb-jby5ubNLoAG7tCt_3IFvAfVWECcvsNX-_E8zOcB9FjQbusx3nPANXeWS8aN_hgMKqNyYtXrX6SPh0vjukDxLEj8o71C0Zb1WTGaHAt3lFVU-WLgAJlwCc5l_EpUE0oFzCPIry3afblbHdPembY25J4D-jMTQ",
               "use": "sig",
-              "kid": "8792e7c2a2b7c1ab924e158a4ec4cf51"
-            }
+              "kid": "8725d08a4b35982092e9f8a50797118c"
+             }
           ]
         }
         "#;
@@ -173,11 +174,14 @@ pub mod test_oidc_validator {
     #[test]
     fn test_validate_test_jwt_valid_token() {
         let test_keys: JwkKeys = serde_json::from_str(&TEST_PUB_JWK).unwrap();
-        let jwt = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ijg3OTJlN2MyYTJiN2MxYWI5MjRlMTU4YTRlYzRjZjUxIn0.eyJlbWFpbCI6InRlc3RAZW1haWwuY29tIiwibm9uY2UiOiIweDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAifQ.TPUrmStwY2iuqMLXn3WvpiJY1W-bbrU12WGuv0nK9NJ6Q0bT8D_Ags8qj8LPOGGE1CdHn2isBcHgSxaEbNbW8Pz0fVWpFiehj8BwrC47Rld5dwazsxghF84D3q2So5ZBQslWqq1PRGEFKfx4AOgnS375oKi2jAZ3jN_58UNdgtUUdFhuOGHvGbWnr_fEWIbrEcfNFIWahngQ2dbU-sSNZFZ5L3L46bXUkBlbGGNztr6OiAHUwxqH2A02h1EceUol2m6_GTvPfdXKzd0Z34CJNW_loAEheH69hkmkGPbt3ta_XAFWRHgmVN7gFjErRmPiB818YgAFBBIuhZnjvGmC5Q";
+        let jwt = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ijg3MjVkMDhhNGIzNTk4MjA5MmU5ZjhhNTA3OTcxMThjIn0.eyJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJub25jZSI6IjB4MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMCIsImlhdCI6MTkxNTEwODU5NywiZXhwIjoxOTE1MTEyMTk3fQ.QmJMTvOCX972kNiwLCe8jxwd1KRG8NwvI-r5YqkUwJvk-EviFJFRw2xWrBwnJh-ggWCmbMhiF6zxauSeuf5DcWdujaM6n3k5fVawo5fDBOhlAeoqwl-mYZIrYUmAjZainnNSmH6_NN7jd7eT3kh0bijGNbLAAvUc1_rZ52XOpUUYgAiNwUDwiafDZpGOQ5zN53kIoqabbR1nDsNJzNMxs84rax473FixyfgnXJPaxBuceSkEFYgDMcicaCZzEjZ1xOIrp_KwuBj6eQWGesGGJXyQpWPB3R_XOgYQpZc1l3Usozz4M4e39GXV03z2izjTrWT4XF_Si1lvO9VAkAEIsw";
         let decoded = decode_token::<super::TestClaims>(&jwt, &test_keys).unwrap();
 
-        assert_eq!(&decoded.email, "test@email.com");
-        assert_eq!(&decoded.nonce, "0x0000000000000000000000000000000000000000");
+        assert_eq!(&decoded.custom.email, "test@example.com");
+        assert_eq!(
+            &decoded.custom.nonce,
+            "0x0000000000000000000000000000000000000000"
+        );
     }
 
     #[test]

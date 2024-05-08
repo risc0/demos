@@ -34,6 +34,8 @@ struct Input {
 struct Output {
     email: Vec<u8>,
     public_key: String,
+    expiration: String,
+    issued_at: String,
     jwks: Vec<u8>,
 }
 
@@ -48,10 +50,11 @@ fn main() {
     let input: Input = serde_json::from_str(&input_str).expect("could not deserialize input");
 
     // Validate the JWT
-    let (email, public_key, jwks): (String, String, String) = input
-        .iss
-        .validate(&input.jwt, &input.jwks)
-        .expect("failed to validate and decode");
+    let (email, public_key, expiration, issued_at, jwks): (String, String, String, String, String) =
+        input
+            .iss
+            .validate(&input.jwt, &input.jwks)
+            .expect("failed to validate and decode");
 
     // Hash the email and issuer jwks
     let email = Sha256::digest(email.as_bytes()).to_vec();
@@ -61,6 +64,8 @@ fn main() {
     env::commit(&Output {
         email,
         public_key,
+        expiration,
+        issued_at,
         jwks,
     });
 }
