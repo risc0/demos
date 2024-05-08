@@ -1,20 +1,9 @@
-#![no_main]
-
 use near_zk_types::{
-    ApprovalInner, CryptoHash, LightClientBlockLiteView, LightClientBlockView, PrevBlockContext,
-    ValidatorStakeView,
+    ApprovalInner, BlockCommitData, CryptoHash, LightClientBlockLiteView, LightClientBlockView,
+    PrevBlockContext, ValidatorStakeView,
 };
 use risc0_zkvm::guest::env;
 use sha2::{Digest, Sha256};
-
-risc0_zkvm::guest::entry!(main);
-
-type CommitData = (
-    [u32; 8],
-    CryptoHash,
-    LightClientBlockLiteView,
-    Vec<ValidatorStakeView>,
-);
 
 fn main() {
     let mut reader = env::stdin();
@@ -27,10 +16,14 @@ fn main() {
     let (first_block_hash, last_known_block, current_bps) = match prev_block_context {
         PrevBlockContext::Proof { journal } => {
             env::verify(guest_id, &journal).expect("Failed to verify recursive journal");
-            let (prev_id, hash, last_known_block, current_bps): CommitData =
-                borsh::from_slice(&journal).expect("Invalid journal format");
-            assert_eq!(guest_id, prev_id, "Guest program IDs do not match");
-            (hash, last_known_block, current_bps)
+            let BlockCommitData {
+                block_guest_id,
+                first_block_hash,
+                new_block_lite,
+                block_producers,
+            } = borsh::from_slice(&journal).expect("Invalid journal format");
+            assert_eq!(guest_id, block_guest_id, "Guest program IDs do not match");
+            (first_block_hash, new_block_lite, block_producers)
         }
         PrevBlockContext::Block {
             prev_block,
@@ -137,21 +130,19 @@ fn main() {
             "Next block producers hash doesn't match"
         );
 
+
+        // NOTE: this has the assumption that only one block per epoch will be validated. If it's
+        //       necessary to validate multiple blocks per epoch, this should be changed.
         // Update block producers to be committed.
         block_producers = next_bps;
     }
 
-    borsh::to_writer(
-        &mut env::journal(),
-        &(
-            // Note: guest_id shouldn't be needed if only verifying one block. Handling optional
-            // values in practice would unnecessarily complicate things.
-            // TODO double check not having guest id be optional is correct.
-            &guest_id,
-            &first_block_hash,
-            &new_block_lite,
-            &block_producers,
-        ),
-    )
-    .unwrap();
+    let commit_data = BlockCommitData {
+        block_guest_id: guest_id,
+        first_block_hash,
+        new_block_lite,
+        block_producers,
+    };
+
+    borsh::to_writer(&mut env::journal(), &commit_data).unwrap();
 }
