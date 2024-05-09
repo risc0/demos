@@ -71,7 +71,7 @@ export function CodePreview() {
               key={`row-${
                 // biome-ignore lint/suspicious/noArrayIndexKey: ignore
                 index
-                }`}
+              }`}
               {...getLineProps({ line })}
             >
               {line.map((token, index) => (
@@ -79,7 +79,7 @@ export function CodePreview() {
                   key={`token-${
                     // biome-ignore lint/suspicious/noArrayIndexKey: ignore
                     index
-                    }`}
+                  }`}
                   {...getTokenProps({ token })}
                 />
               ))}
