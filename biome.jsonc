@@ -1,0 +1,6 @@
+{
+  "extends": ["./zk-socials/node_modules/@risc0/ui/biome.base.jsonc"],
+  "files": {
+    "include": ["zk-socials"]
+  }
+}
