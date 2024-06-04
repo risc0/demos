@@ -9,11 +9,11 @@ edition = "2021"
 #repository = "https://github.com/xxx/xxx"
 
 [lib]
-crate-type = ["cdylib", "rlib"]
+crate-type = ["cdylib"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
 near-sdk = "5.1.0"
+risc0-zkvm = { version = "0.21.0", default-features = false }
 
 [dev-dependencies]
 near-sdk = { version = "5.1.0", features = ["unit-testing"] }

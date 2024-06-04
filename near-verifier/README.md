@@ -12,6 +12,16 @@ cargo near build
 
 ## How to Test Locally?
 
+
+## Generate receipts to verify
+
+```console
+cd risc0-example
+cargo run
+```
+
+> Note: this assumes BONSAI_API env variables are set. See example readme.
+
 ```bash
 cargo test
 ```

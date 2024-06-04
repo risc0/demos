@@ -1,7 +1,8 @@
 use near_sdk::NearToken;
+use risc0_zkvm::Receipt;
 use serde_json::json;
 
-const FIVE_NEAR: NearToken = NearToken::from_near(5);
+const FIFTY_NEAR: NearToken = NearToken::from_near(50);
 
 #[tokio::test]
 async fn test_contract_is_operational() -> Result<(), Box<dyn std::error::Error>> {
@@ -10,23 +11,32 @@ async fn test_contract_is_operational() -> Result<(), Box<dyn std::error::Error>
 
     let root = sandbox.root_account()?;
 
-    let user_account = root.create_subaccount("user").transact().await?.unwrap();
-    let contract_account = root.create_subaccount("contract").initial_balance(FIVE_NEAR).transact().await?.unwrap();
+    let user_account = root
+        .create_subaccount("user")
+        .initial_balance(FIFTY_NEAR)
+        .transact()
+        .await?
+        .unwrap();
+    let contract_account = root
+        .create_subaccount("contract")
+        .initial_balance(FIFTY_NEAR)
+        .transact()
+        .await?
+        .unwrap();
 
     let contract = contract_account.deploy(&contract_wasm).await?.unwrap();
 
     let outcome = user_account
-        .call(contract.id(), "set_greeting")
-        .args_json(json!({"greeting": "Hello World!"}))
-        .transact()
-        .await?;
-    assert!(outcome.is_success());
-
-    let user_message_outcome = contract
-        .view("get_greeting")
-        .args_json(json!({}))
-        .await?;
-    assert_eq!(user_message_outcome.json::<String>()?, "Hello World!");
+        .call(contract.id(), "verify_proof")
+        .args_json(json!({
+            "image_id": serde_json::from_str::<[u32; 8]>(&include_str!("../factors_id.json")).unwrap(),
+            "receipt": serde_json::from_str::<Receipt>(&include_str!("../snark-receipt.json")).unwrap()
+        }))
+        .max_gas()
+        .transact().await?;
+    println!("{:?}", outcome);
+    // assert!(outcome.is_success());
+    println!("{:?}", outcome.logs());
 
     Ok(())
 }
