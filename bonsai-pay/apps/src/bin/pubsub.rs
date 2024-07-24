@@ -1,30 +1,19 @@
-// Copyright 2024 RISC Zero, Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 use alloy_primitives::{FixedBytes, U256};
-use alloy_sol_types::{sol, SolInterface, SolValue};
-use anyhow::Context;
-use apps::{BonsaiProver, TxSender};
+use alloy_sol_types::{sol, SolInterface, SolType, SolValue};
+use anyhow::{Context, Result};
 use clap::Parser;
+use ethers::prelude::*;
 use log::info;
 use methods::JWT_VALIDATOR_ELF;
+use risc0_ethereum_contracts::groth16::{self, abi_encode};
+use risc0_zkvm::{default_prover, ExecutorEnv, ProverOpts, VerifierContext};
 use tokio::sync::oneshot;
-use warp::Filter;
+use warp::{reject::Rejection, Filter};
+use IBonsaiPay::claimCall;
 
 sol! {
     interface IBonsaiPay {
-        function claim(address payable to, bytes32 claim_id, bytes32 post_state_digest, bytes calldata seal);
+        function claim(address payable to, bytes32 claim_id, bytes calldata seal);
     }
 
     struct Input {
@@ -35,6 +24,47 @@ sol! {
     struct ClaimsData {
         address msg_sender;
         bytes32 claim_id;
+    }
+}
+
+/// Wrapper of a `SignerMiddleware` client to send transactions to the given
+/// contract's `Address`.
+pub struct TxSender {
+    chain_id: u64,
+    client: SignerMiddleware<Provider<Http>, Wallet<k256::ecdsa::SigningKey>>,
+    contract: Address,
+}
+
+impl TxSender {
+    /// Creates a new `TxSender`.
+    pub fn new(chain_id: u64, rpc_url: &str, private_key: &str, contract: &str) -> Result<Self> {
+        let provider = Provider::<Http>::try_from(rpc_url)?;
+        let wallet: LocalWallet = private_key.parse::<LocalWallet>()?.with_chain_id(chain_id);
+        let client = SignerMiddleware::new(provider.clone(), wallet.clone());
+        let contract = contract.parse::<Address>()?;
+
+        Ok(TxSender {
+            chain_id,
+            client,
+            contract,
+        })
+    }
+
+    /// Send a transaction with the given calldata.
+    pub async fn send(&self, calldata: Vec<u8>) -> Result<Option<TransactionReceipt>> {
+        let tx = TransactionRequest::new()
+            .chain_id(self.chain_id)
+            .to(self.contract)
+            .from(self.client.address())
+            .data(calldata);
+
+        log::info!("Transaction request: {:?}", &tx);
+
+        let tx = self.client.send_transaction(tx, None).await?.await?;
+
+        log::info!("Transaction receipt: {:?}", &tx);
+
+        Ok(tx)
     }
 }
 
@@ -69,66 +99,76 @@ async fn handle_jwt_authentication(token: String) -> Result<(), warp::Rejection>
     info!("Token received: {}", token);
 
     let args = Args::parse();
-    let (tx, rx) = oneshot::channel();
+
+    // Log to capture the request
+    info!("Processing JWT authentication");
 
     // Spawn a new thread for the Bonsai Prover computation
-    std::thread::spawn(move || {
-        prove_and_send_transaction(args, token, tx);
-    });
-
-    match rx.await {
-        Ok(_result) => Ok(()),
-        Err(_) => Err(warp::reject::reject()),
-    }
+    prove_and_send_transaction(args, token).map_err(|_| warp::reject())
 }
 
-fn prove_and_send_transaction(
-    args: Args,
-    token: String,
-    tx: oneshot::Sender<(Vec<u8>, FixedBytes<32>, Vec<u8>)>,
-) {
-    let input = Input {
-        identity_provider: U256::ZERO, // Google as the identity provider
-        jwt: token,
-    };
-
-    let (journal, post_state_digest, seal) =
-        BonsaiProver::prove(JWT_VALIDATOR_ELF, &input.abi_encode())
-            .expect("failed to prove on bonsai");
-
-    let seal_clone = seal.clone();
-
+fn prove_and_send_transaction(args: Args, token: String) -> Result<()> {
     let tx_sender = TxSender::new(
         args.chain_id,
         &args.rpc_url,
         &args.eth_wallet_private_key,
         &args.contract,
     )
-    .expect("failed to create tx sender");
+    .expect("failed to create new tx sender");
 
-    let claims = ClaimsData::abi_decode(&journal, true)
-        .context("decoding journal data")
-        .expect("failed to decode");
+    let input = Input {
+        identity_provider: U256::ZERO, // Google as the identity provider
+        jwt: token,
+    };
+    let input = input.abi_encode();
+    let env = ExecutorEnv::builder()
+        .write_slice(&input)
+        .build()
+        .expect("Error building env");
 
-    info!("Claim ID: {:?}", claims.claim_id);
-    info!("Msg Sender: {:?}", claims.msg_sender);
+    let receipt = default_prover()
+        .prove_with_ctx(
+            env,
+            &VerifierContext::default(),
+            JWT_VALIDATOR_ELF,
+            &ProverOpts::groth16(),
+        )
+        .expect("failed to prove.")
+        .receipt;
+
+    // Encode the seal with the selector.
+    let seal = groth16::encode(
+        receipt
+            .inner
+            .groth16()
+            .expect("failed to create groth16")
+            .seal
+            .clone(),
+    )
+    .expect("failed to clone seal");
+
+    let journal = receipt.journal.bytes.clone();
+
+    let claims: ClaimsData = <ClaimsData as SolValue>::abi_decode(&journal, true)
+        .expect("failed to decode claims")
+        .clone();
 
     let calldata = IBonsaiPay::IBonsaiPayCalls::claim(IBonsaiPay::claimCall {
         to: claims.msg_sender,
         claim_id: claims.claim_id,
-        post_state_digest,
-        seal: seal_clone,
+        seal: seal.into(),
     })
     .abi_encode();
 
+    // Initialize the async runtime environment to handle the transaction sending.
+    let runtime = tokio::runtime::Runtime::new()?;
+
     // Send the calldata to Ethereum.
-    let runtime = tokio::runtime::Runtime::new().expect("failed to start new tokio runtime");
     runtime
         .block_on(tx_sender.send(calldata))
         .expect("failed to send tx");
 
-    tx.send((journal, post_state_digest, seal))
-        .expect("failed to send over channel");
+    Ok(())
 }
 
 fn jwt_authentication_filter() -> impl Filter<Extract = ((),), Error = warp::Rejection> + Clone {
@@ -158,5 +198,8 @@ async fn main() {
 
     let api = auth_filter();
 
+    info!("Starting server at http://127.0.0.1:8080");
+
     warp::serve(api).run(([127, 0, 0, 1], 8080)).await;
 }
+

@@ -37,7 +37,11 @@ contract BonsaiPay {
     mapping(bytes32 => uint256[]) private claimRecords;
 
     event Deposited(bytes32 indexed claimId, uint256 amount);
-    event Claimed(address indexed recipient, bytes32 indexed claimId, uint256 amount);
+    event Claimed(
+        address indexed recipient,
+        bytes32 indexed claimId,
+        uint256 amount
+    );
 
     error InvalidDeposit(string message);
     error InvalidClaim(string message);
@@ -51,16 +55,27 @@ contract BonsaiPay {
         if (claimId == bytes32(0)) revert InvalidDeposit("Empty claimId");
         if (msg.value == 0) revert InvalidDeposit("Zero deposit amount");
 
-        deposits.push(Deposit({status: ClaimStatus.Pending, claimId: claimId, amount: msg.value}));
+        deposits.push(
+            Deposit({
+                status: ClaimStatus.Pending,
+                claimId: claimId,
+                amount: msg.value
+            })
+        );
         claimRecords[claimId].push(deposits.length - 1);
 
         emit Deposited(claimId, msg.value);
     }
 
-    function claim(address payable to, bytes32 claimId, bytes32 postStateDigest, bytes calldata seal) public {
+    function claim(
+        address payable to,
+        bytes32 claimId,
+        bytes32 postStateDigest,
+        bytes calldata seal
+    ) public {
         if (to == address(0)) revert InvalidClaim("Invalid recipient address");
         if (claimId == bytes32(0)) revert InvalidClaim("Empty claimId");
-        if (!verifier.verify(seal, imageId, postStateDigest, sha256(abi.encode(to, claimId)))) {
+        if (!verifier.verify(seal, imageId, sha256(abi.encode(to, claimId)))) {
             revert InvalidClaim("Invalid proof");
         }
 
@@ -69,7 +84,7 @@ contract BonsaiPay {
 
         if (balance == 0) revert InvalidClaim("No claimable balance");
 
-        (bool success,) = to.call{value: balance}("");
+        (bool success, ) = to.call{value: balance}("");
         if (!success) revert TransferFailed();
 
         emit Claimed(to, claimId, balance);
@@ -82,7 +97,9 @@ contract BonsaiPay {
         return _calculateBalance(depositIndices);
     }
 
-    function _processDeposits(uint256[] storage depositIndices) private returns (uint256) {
+    function _processDeposits(
+        uint256[] storage depositIndices
+    ) private returns (uint256) {
         uint256 balance = 0;
 
         for (uint256 i = 0; i < depositIndices.length; ++i) {
@@ -96,7 +113,9 @@ contract BonsaiPay {
         return balance;
     }
 
-    function _calculateBalance(uint256[] storage depositIndices) private view returns (uint256) {
+    function _calculateBalance(
+        uint256[] storage depositIndices
+    ) private view returns (uint256) {
         uint256 balance = 0;
 
         for (uint256 i = 0; i < depositIndices.length; ++i) {
