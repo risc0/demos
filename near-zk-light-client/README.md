@@ -12,14 +12,7 @@ Generating a ZK proof of the light client verification is ideal in this case, es
 
 ## Quick Start
 
-First, [install Rust], and then restart your terminal.
-
-```sh
-# Install Rust
-curl https://sh.rustup.rs -sSf | sh
-```
-
-Next, use the [RISC Zero installation] instructions to install `v0.20` of the RISC Zero zkVM. 
+First, [install] `v0.20` of the RISC Zero zkVM. 
 > Note: This demo only works with `v0.20`.
 
 To build all methods and execute the method within the zkVM, run the following
@@ -97,6 +90,7 @@ We'd love to hear from you on [Discord][discord] or [Twitter][twitter].
 [discord]: https://discord.gg/risczero
 [docs.rs]: https://docs.rs/releases/search?query=risc0
 [examples]: https://github.com/risc0/risc0/tree/main/examples
+[install]: https://dev.risczero.com/api/zkvm/install
 [risc0-build]: https://docs.rs/risc0-build
 [risc0-repo]: https://www.github.com/risc0/risc0
 [risc0-zkvm]: https://docs.rs/risc0-zkvm
