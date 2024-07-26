@@ -12,15 +12,21 @@ Generating a ZK proof of the light client verification is ideal in this case, es
 
 ## Quick Start
 
-First, make sure [rustup] is installed. The
-[`rust-toolchain.toml`][rust-toolchain] file will be used by `cargo` to
-automatically install the correct version.
+First, [install Rust], and then restart your terminal.
+
+```sh
+# Install Rust
+curl https://sh.rustup.rs -sSf | sh
+```
+
+Next, use the [RISC Zero installation] instructions to install `v0.20` of the RISC Zero zkVM. 
+> Note: This demo only works with `v0.20`.
 
 To build all methods and execute the method within the zkVM, run the following
 command:
 
 ```bash
-cargo run
+cargo run 
 ```
 
 This is an empty template, and so there is no expected output (until you modify
