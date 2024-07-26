@@ -26,15 +26,8 @@ curl https://sh.rustup.rs -sSf | sh
 curl -L https://foundry.paradigm.xyz | bash
 ```
 
-Next, you will need to install the `cargo risczero` tool.
-We'll use [`cargo binstall`][cargo-binstall] to get `cargo-risczero` installed, and then install the `risc0` toolchain.
-See [RISC Zero installation] for more details.
-
-```sh
-cargo install cargo-binstall
-cargo binstall cargo-risczero
-cargo risczero install
-```
+Next, use the [RISC Zero installation] instructions to install `v0.21` of the RISC Zero zkVM. 
+> Note: This demo only works with `v0.21`.
 
 ### ID.me Developer Account
 

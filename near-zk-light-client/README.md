@@ -12,15 +12,14 @@ Generating a ZK proof of the light client verification is ideal in this case, es
 
 ## Quick Start
 
-First, make sure [rustup] is installed. The
-[`rust-toolchain.toml`][rust-toolchain] file will be used by `cargo` to
-automatically install the correct version.
+First, [install] `v0.20` of the RISC Zero zkVM. 
+> Note: This demo only works with `v0.20`.
 
 To build all methods and execute the method within the zkVM, run the following
 command:
 
 ```bash
-cargo run
+cargo run 
 ```
 
 This is an empty template, and so there is no expected output (until you modify
@@ -91,6 +90,7 @@ We'd love to hear from you on [Discord][discord] or [Twitter][twitter].
 [discord]: https://discord.gg/risczero
 [docs.rs]: https://docs.rs/releases/search?query=risc0
 [examples]: https://github.com/risc0/risc0/tree/main/examples
+[install]: https://dev.risczero.com/api/zkvm/install
 [risc0-build]: https://docs.rs/risc0-build
 [risc0-repo]: https://www.github.com/risc0/risc0
 [risc0-zkvm]: https://docs.rs/risc0-zkvm
