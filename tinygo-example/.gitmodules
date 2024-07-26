@@ -1,0 +1,4 @@
+[submodule "tinygo"]
+	path = tinygo
+	url = https://github.com/risc0/tinygo.git
+	branch = go21
