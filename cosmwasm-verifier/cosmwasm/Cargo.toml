@@ -1,0 +1,27 @@
+[package]
+name = "cosmwasm-verifier"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+cosmwasm-std = { version = "1.0.0-beta8", features = ["staking"] }
+serde = { version = "1.0.103", default-features = false, features = [
+	"derive",
+	"rc",
+] }
+risc0-zkvm = { version = "=1.0.5", default-features = false }
+cw-storage-plus = "0.13.4"
+serde_json = "1.0.111"
+
+[dev-dependencies]
+cw-multi-test = "0.13.4"
+
+[profile.release]
+codegen-units = 1
+opt-level = "z"
+lto = "thin"
+debug = false
+panic = "abort"
