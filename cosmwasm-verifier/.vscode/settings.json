@@ -1,0 +1,7 @@
+{
+    "rust-analyzer.linkedProjects": [
+        "./risc0-example/methods/guest/Cargo.toml",
+        "./risc0-example/host/Cargo.toml",
+        "./cosmwasm/Cargo.toml",
+    ]
+}
