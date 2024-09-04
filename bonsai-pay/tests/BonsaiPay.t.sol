@@ -16,7 +16,7 @@
 
 pragma solidity ^0.8.20;
 
-import {RiscZeroCheats} from "risc0/RiscZeroCheats.sol";
+import {RiscZeroCheats} from "risc0-test/RiscZeroCheats.sol";
 import {console2} from "forge-std/console2.sol";
 import {Test} from "forge-std/Test.sol";
 import {IRiscZeroVerifier} from "risc0/IRiscZeroVerifier.sol";
@@ -68,11 +68,10 @@ contract BonsaiPayTest is RiscZeroCheats, Test {
 
         Input memory input = Input({id_provider: id_provider, jwt: jwt});
 
-        (bytes memory journal, bytes32 post_state_digest, bytes memory seal) =
-            prove(Elf.JWT_VALIDATOR_PATH, abi.encode(input));
+        (bytes memory journal, bytes memory seal) = prove(Elf.JWT_VALIDATOR_PATH, abi.encode(input));
 
         vm.prank(bob);
-        bonsaiPay.claim(payable(bob), claimId, post_state_digest, seal);
+        bonsaiPay.claim(payable(bob), claimId, seal);
         assertEq(address(bonsaiPay).balance, 0);
         assertEq(bob.balance, 6 ether);
     }
@@ -104,11 +103,10 @@ contract BonsaiPayTest is RiscZeroCheats, Test {
 
         Input memory bobInput = Input({id_provider: id_provider, jwt: bobJwt});
 
-        (bytes memory journal, bytes32 post_state_digest, bytes memory seal) =
-            prove(Elf.JWT_VALIDATOR_PATH, abi.encode(bobInput));
+        (bytes memory journal, bytes memory seal) = prove(Elf.JWT_VALIDATOR_PATH, abi.encode(bobInput));
 
         vm.prank(bob);
-        bonsaiPay.claim(payable(bob), bobClaimId, post_state_digest, seal);
+        bonsaiPay.claim(payable(bob), bobClaimId, seal);
         assertEq(address(bonsaiPay).balance, 2 ether);
         assertEq(bob.balance, 9 ether);
 
@@ -121,11 +119,11 @@ contract BonsaiPayTest is RiscZeroCheats, Test {
 
         Input memory charlieInput = Input({id_provider: id_provider, jwt: charlieJwt});
 
-        (bytes memory charlieJournal, bytes32 charliePostStateDigest, bytes memory charlieSeal) =
+        (bytes memory charlieJournal, bytes memory charlieSeal) =
             prove(Elf.JWT_VALIDATOR_PATH, abi.encode(charlieInput));
 
         vm.prank(charlie);
-        bonsaiPay.claim(payable(charlie), charlieClaimId, charliePostStateDigest, charlieSeal);
+        bonsaiPay.claim(payable(charlie), charlieClaimId, charlieSeal);
         assertEq(address(bonsaiPay).balance, 0);
         assertEq(charlie.balance, 4 ether);
 

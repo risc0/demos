@@ -57,12 +57,11 @@ contract BonsaiPay {
         emit Deposited(claimId, msg.value);
     }
 
-    function claim(address payable to, bytes32 claimId, bytes32 postStateDigest, bytes calldata seal) public {
+    function claim(address payable to, bytes32 claimId, bytes calldata seal) public {
         if (to == address(0)) revert InvalidClaim("Invalid recipient address");
         if (claimId == bytes32(0)) revert InvalidClaim("Empty claimId");
-        if (!verifier.verify(seal, imageId, postStateDigest, sha256(abi.encode(to, claimId)))) {
-            revert InvalidClaim("Invalid proof");
-        }
+
+        verifier.verify(seal, imageId, sha256(abi.encode(to, claimId)));
 
         uint256[] storage depositIndices = claimRecords[claimId];
         uint256 balance = _processDeposits(depositIndices);
