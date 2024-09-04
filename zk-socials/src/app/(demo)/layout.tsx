@@ -1,21 +1,12 @@
 import { Badge } from "@risc0/ui/badge";
 import { Card, CardContent } from "@risc0/ui/card";
 import { Separator } from "@risc0/ui/separator";
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
-import { authOptions } from "~/auth";
 import { CodePreview } from "./_components/code-preview";
 import { Footer } from "./_components/footer";
 import { Header } from "./_components/header";
 import { SignOutButton } from "./_components/sign-out-button";
 
-export default async function SharedLayout({ children }) {
-  const session = await getServerSession(authOptions);
-
-  if (!session) {
-    redirect("/api/auth/signin?callbackUrl=/");
-  }
-
+export default function SharedLayout({ children }) {
   return (
     <div className="container mx-auto flex max-w-screen-xl flex-1 flex-col">
       <Header />

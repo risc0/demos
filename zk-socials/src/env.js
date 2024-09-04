@@ -12,8 +12,6 @@ const env = createEnv({
     BONSAI_API_KEY: z.string(),
     IMAGE_ID: z.string(),
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
-    NEXTAUTH_PASSWORD: z.string(),
-    NEXTAUTH_SECRET: z.string(),
   },
 
   /**
@@ -38,8 +36,6 @@ const env = createEnv({
     BONSAI_API_KEY: process.env.BONSAI_API_KEY,
     IMAGE_ID: process.env.IMAGE_ID,
     NODE_ENV: process.env.NODE_ENV,
-    NEXTAUTH_PASSWORD: process.env.NEXTAUTH_PASSWORD,
-    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   },
   /**
    * Makes it so that empty strings are treated as undefined.
