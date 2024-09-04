@@ -20,6 +20,8 @@ This will install a version of clang that supports RISC-V targets.
 
 ## Run
 
+> To run the example, you'll need to [update your zkVM installation] to use `v0.20`.
+
 Run the zkDOOM system with a input demo file (lmp), emit the frames to /tmp/ and run for 30 update iterations
 
 Please have `CC` set to clang, currently we don't support building this project with gcc
@@ -53,3 +55,5 @@ convert -delay 20 -loop 0 `ls -v /tmp/frame*.jpg` /tmp/zkdoom.gif
 https://classicdoom.com/d1demos.htm#e1m5
 
 WARNING: You need to make sure your demo files match the contents of the WAD. So the doom1.wad shareware version only contains a limited few maps so only select demos will work.
+
+[update your zkVM installation]: https://dev.risczero.com/api/zkvm/install#install
