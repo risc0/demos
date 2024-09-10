@@ -21,8 +21,8 @@ curl https://sh.rustup.rs -sSf | sh
 curl -L https://foundry.paradigm.xyz | bash
 ```
 
-Next, use the [RISC Zero installation] instructions to install `v0.21` of the RISC Zero zkVM. 
-> Note: This demo only works with `v0.21`.
+Next, use the [RISC Zero installation] instructions to install `v1.0.5` of the RISC Zero zkVM. 
+> Note: This demo only works with `v1.0.5`.
 
 ### Google Cloud Platform
 
@@ -108,13 +108,12 @@ You can deploy the contract using the forge deploy script.
 
 ### Running the Application
 
+Copy the `.env.example` file to `.env` and update the variables as needed.
+
 - Start the publisher/subscriber app with the configured variables.
 
   ```sh
-  cargo run --bin pubsub -- --chain-id <DEPLOYED_CHAIN_ID> \
-    --eth-wallet-private-key <YOUR_PUBLISHER_PRIVATE_KEY> \
-    --rpc-url <YOUR_RPC_PROVIDER> \
-    --contract <DEPLOYED_BONSAI_PAY_CONTRACT_ADDRESS>
+  cargo run --bin pubsub 
   ```
 
 - Start the UI.
