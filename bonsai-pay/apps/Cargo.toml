@@ -7,18 +7,20 @@ edition = { workspace = true }
 alloy-primitives = { workspace = true }
 alloy-sol-types = { workspace = true }
 anyhow = { workspace = true }
-bincode = { workspace = true }
-bonsai-sdk = { workspace = true }
-bytemuck = { workspace = true }
+bincode.workspace = true
+bonsai-sdk = "1.1.0"
+bytemuck.workspace = true
 clap = { version = "4.0", features = ["derive", "env"] }
+dotenv = "0.15.0"
 env_logger = { version = "0.10" }
 ethers = { workspace = true }
-hex = { workspace = true }
+hex = "0.4.3"
 log = { workspace = true }
 methods = { workspace = true }
-risc0-ethereum-contracts = { workspace = true }
-risc0-zkvm = { workspace = true }
-serde = { workspace = true }
+oidc-validator = { version = "0.1.0", path = "../oidc-validator" }
+reqwest = { version = "0.12.7", features = ["json"] }
+risc0-ethereum-contracts.workspace = true
+risc0-zkvm = { workspace = true, features = ["client"] }
+serde.workspace = true
 tokio = { version = "1.35", features = ["full"] }
-oidc-validator = { workspace = true }
-warp = "0.3.6"
+warp = "0.3.7"
