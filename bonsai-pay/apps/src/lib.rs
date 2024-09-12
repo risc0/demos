@@ -22,12 +22,10 @@
 
 use std::time::Duration;
 
-use alloy_primitives::FixedBytes;
 use anyhow::{Context, Result};
 use ethers::prelude::*;
-use reqwest::Request;
 use risc0_ethereum_contracts::groth16::abi_encode;
-use risc0_zkvm::{compute_image_id, default_prover, ExecutorEnv, Receipt};
+use risc0_zkvm::{compute_image_id, Receipt};
 
 pub struct TxSender {
     chain_id: u64,
@@ -137,20 +135,11 @@ impl BonsaiProver {
             }
         };
 
-        let snark_url = snark_receipt;
-        log::debug!("Snark url!: {snark_url:?}");
-
-        let receipt = reqwest::blocking::get(snark_url)?;
-
-        let receipt: Receipt = bincode::deserialize(&receipt.bytes()?)?;
-
-        println!("receipt: {:?}", receipt);
-
-        let seal = &receipt.inner.groth16().unwrap().seal;
+        let seal = snark_receipt.snark;
 
         let abi_encoded_seal = abi_encode(seal.to_vec()).unwrap();
 
-        let journal = receipt.journal.bytes;
+        let journal = snark_receipt.journal;
 
         Ok((journal, abi_encoded_seal))
     }
