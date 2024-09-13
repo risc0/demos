@@ -12,19 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use alloy_primitives::{FixedBytes, U256};
+use alloy_primitives::U256;
 use alloy_sol_types::{sol, SolInterface, SolValue};
 use anyhow::Context;
 use apps::{BonsaiProver, TxSender};
-use clap::Parser;
+use dotenv::dotenv;
 use log::info;
 use methods::JWT_VALIDATOR_ELF;
+use std::env;
 use tokio::sync::oneshot;
 use warp::Filter;
 
 sol! {
     interface IBonsaiPay {
-        function claim(address payable to, bytes32 claim_id, bytes32 post_state_digest, bytes calldata seal);
+        function claim(address payable to, bytes32 claim_id, bytes calldata seal);
     }
 
     struct Input {
@@ -38,27 +39,6 @@ sol! {
     }
 }
 
-/// Arguments of the publisher CLI.
-#[derive(Parser, Debug)]
-#[clap(author, version, about, long_about = None)]
-struct Args {
-    /// Ethereum chain ID
-    #[clap(long)]
-    chain_id: u64,
-
-    /// Ethereum Node endpoint.
-    #[clap(long, env)]
-    eth_wallet_private_key: String,
-
-    /// Ethereum Node endpoint.
-    #[clap(long)]
-    rpc_url: String,
-
-    /// Application's contract address on Ethereum
-    #[clap(long)]
-    contract: String,
-}
-
 const HEADER_XAUTH: &str = "X-Auth-Token";
 
 async fn handle_jwt_authentication(token: String) -> Result<(), warp::Rejection> {
@@ -68,12 +48,11 @@ async fn handle_jwt_authentication(token: String) -> Result<(), warp::Rejection>
 
     info!("Token received: {}", token);
 
-    let args = Args::parse();
     let (tx, rx) = oneshot::channel();
 
     // Spawn a new thread for the Bonsai Prover computation
     std::thread::spawn(move || {
-        prove_and_send_transaction(args, token, tx);
+        prove_and_send_transaction(token, tx);
     });
 
     match rx.await {
@@ -82,29 +61,33 @@ async fn handle_jwt_authentication(token: String) -> Result<(), warp::Rejection>
     }
 }
 
-fn prove_and_send_transaction(
-    args: Args,
-    token: String,
-    tx: oneshot::Sender<(Vec<u8>, FixedBytes<32>, Vec<u8>)>,
-) {
+fn prove_and_send_transaction(token: String, tx: oneshot::Sender<(Vec<u8>, Vec<u8>)>) {
+    dotenv().ok();
+
     let input = Input {
         identity_provider: U256::ZERO, // Google as the identity provider
         jwt: token,
     };
 
-    let (journal, post_state_digest, seal) =
-        BonsaiProver::prove(JWT_VALIDATOR_ELF, &input.abi_encode())
-            .expect("failed to prove on bonsai");
+    let (journal, seal) = BonsaiProver::prove(JWT_VALIDATOR_ELF, &input.abi_encode())
+        .expect("failed to prove on bonsai");
 
-    let seal_clone = seal.clone();
+    println!("journal: {:?}", journal);
+    println!("seal: {:?}", seal);
 
-    let tx_sender = TxSender::new(
-        args.chain_id,
-        &args.rpc_url,
-        &args.eth_wallet_private_key,
-        &args.contract,
-    )
-    .expect("failed to create tx sender");
+    // let input = input.abi_encode();
+
+    let chain_id: u64 = env::var("CHAIN_ID")
+        .expect("CHAIN_ID must be set")
+        .parse()
+        .expect("CHAIN_ID must be a valid u64");
+    let rpc_url = env::var("RPC_URL").expect("RPC_URL must be set");
+    let eth_wallet_private_key =
+        env::var("ETH_WALLET_PRIVATE_KEY").expect("ETH_WALLET_PRIVATE_KEY must be set");
+    let contract = env::var("CONTRACT_ADDRESS").expect("CONTRACT_ADDRESS must be set");
+
+    let tx_sender = TxSender::new(chain_id, &rpc_url, &eth_wallet_private_key, &contract)
+        .expect("failed to create tx sender");
 
     let claims = ClaimsData::abi_decode(&journal, true)
         .context("decoding journal data")
@@ -116,8 +99,7 @@ fn prove_and_send_transaction(
     let calldata = IBonsaiPay::IBonsaiPayCalls::claim(IBonsaiPay::claimCall {
         to: claims.msg_sender,
         claim_id: claims.claim_id,
-        post_state_digest,
-        seal: seal_clone,
+        seal: seal.clone(),
     })
     .abi_encode();
 
@@ -127,7 +109,7 @@ fn prove_and_send_transaction(
         .block_on(tx_sender.send(calldata))
         .expect("failed to send tx");
 
-    tx.send((journal, post_state_digest, seal))
+    tx.send((journal, seal))
         .expect("failed to send over channel");
 }
 
