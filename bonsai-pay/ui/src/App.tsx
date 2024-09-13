@@ -8,7 +8,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import Claim from "./components/Claim";
 import Deposit from "./components/Deposit";
-import { sepolia } from "wagmi/chains";
+import { localhost } from "wagmi/chains";
 import Modal from "./components/Modal";
 import "react-toastify/dist/ReactToastify.css";
 import { clearCookies } from "./libs/utils";
@@ -20,7 +20,7 @@ const config = createConfig(
     alchemyId: VITE_ALCHEMY_ID,
     walletConnectProjectId: VITE_WALLET_CONNECT_ID,
     appName: "Bonsai Pay",
-    chains: [sepolia],
+    chains: [localhost],
   })
 );
 
