@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [[bin]]
-name = "jwt-validator"
+name = "jwt_validator"
 path = "src/bin/jwt_validator.rs"
 
 [workspace]
@@ -12,8 +12,8 @@ path = "src/bin/jwt_validator.rs"
 [dependencies]
 alloy-primitives = { version = "0.6", default-features = false, features = ["rlp", "serde", "std"] }
 alloy-sol-types = { version = "0.6" }
-risc0-zkvm = {  version = "0.21", default-features = false, features = ['std'] }
-oidc-validator = { path = "../../oidc-validator" }
+risc0-zkvm = { version = "1.0.5", default-features = false, features = ['std'] }
+oidc-validator = { version = "0.1.0", path = "../../oidc-validator" }
 
 [profile.release]
 lto = "thin"
