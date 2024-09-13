@@ -60,7 +60,7 @@ mod tests {
             .unwrap();
 
         let prover = default_prover();
-        let receipt = prover.prove(env, SOCIAL_VALIDATOR_ELF).unwrap();
+        let receipt = prover.prove(env, SOCIAL_VALIDATOR_ELF).unwrap().receipt;
         receipt.verify(SOCIAL_VALIDATOR_ID).unwrap();
     }
 }
