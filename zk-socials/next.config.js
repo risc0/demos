@@ -1,16 +1,8 @@
-await import("./src/env.js");
+import "./src/env.js";
 
-/** @type {import("next").NextConfig} */
-const config = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  reactStrictMode: true,
-  swcMinify: true,
-  transpilePackages: ["@risc0/ui"],
-  experimental: {
-    caseSensitiveRoutes: true,
-  },
-};
+import { nextConfigBase } from "@risc0/ui/config/next.config.base.js";
+import deepmerge from "deepmerge";
+
+const config = deepmerge(nextConfigBase, {});
 
 export default config;

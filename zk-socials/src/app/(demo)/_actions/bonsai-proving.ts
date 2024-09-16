@@ -68,7 +68,6 @@ type SnarkSessionReq = {
 };
 
 class StarkSession {
-  // biome-ignore lint/suspicious/noEmptyBlockStatements: ignore
   constructor(public uuid: string) {}
 
   async status(client: Client): Promise<StarkSessionStatusRes> {
@@ -85,7 +84,6 @@ class StarkSession {
 }
 
 class SnarkSession {
-  // biome-ignore lint/suspicious/noEmptyBlockStatements: ignore
   constructor(public uuid: string) {}
 
   async status(client: Client): Promise<SnarkSessionStatusRes> {
@@ -185,7 +183,7 @@ function encodeString(value: string) {
 // STARK
 export async function bonsaiStarkProving({ iss, token }: { iss: "Google" | "test"; token: string }) {
   const apiKey = env.BONSAI_API_KEY;
-  const version = "0.21.0";
+  const version = "1.0.5";
   const url = "https://api.staging.bonsai.xyz";
   const client = new Client(url, apiKey, version);
 
@@ -217,7 +215,7 @@ export async function bonsaiStarkProving({ iss, token }: { iss: "Google" | "test
 // STARK STATUS
 export async function getBonsaiStarkStatus({ uuid }: { uuid: string }) {
   const apiKey = env.BONSAI_API_KEY;
-  const version = "0.21.0";
+  const version = "1.0.5";
   const url = "https://api.staging.bonsai.xyz";
   const client = new Client(url, apiKey, version);
 
@@ -230,7 +228,7 @@ export async function getBonsaiStarkStatus({ uuid }: { uuid: string }) {
 // SNARK
 export async function bonsaiSnarkProving({ uuid }: { uuid: string }) {
   const apiKey = env.BONSAI_API_KEY;
-  const version = "0.21.0";
+  const version = "1.0.5";
   const url = "https://api.staging.bonsai.xyz";
   const client = new Client(url, apiKey, version);
   const snarkSession = await client.createSnarkSession(uuid);
@@ -241,7 +239,7 @@ export async function bonsaiSnarkProving({ uuid }: { uuid: string }) {
 // SNARK STATUS
 export async function getBonsaiSnarkStatus({ uuid }: { uuid: string }) {
   const apiKey = env.BONSAI_API_KEY;
-  const version = "0.21.0";
+  const version = "1.0.5";
   const url = "https://api.staging.bonsai.xyz";
   const client = new Client(url, apiKey, version);
 

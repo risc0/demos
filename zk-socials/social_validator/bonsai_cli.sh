@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-RISC0_VERSION="0.21.0"
+RISC0_VERSION="1.0.5"
 BONSAI_API_URL="https://api.staging.bonsai.xyz"
 
 if [ -z "$BONSAI_API_KEY" ]; then

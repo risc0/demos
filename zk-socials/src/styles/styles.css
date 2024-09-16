@@ -1,51 +1,67 @@
+@import "@risc0/ui/styles/globals.css";
+
 @font-face {
-  /* includes font-weights from 600-900 */
+  /* includes font-weights 900 */
+  font-family: "Europa";
+  src: url("/fonts/EuropaGroteskSH-Bold.otf") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: fallback;
+}
+
+@font-face {
+  /* includes font-weights from 600-800 */
   font-family: "Europa";
   src: url("/fonts/EuropaGroteskSH-Med.otf") format("opentype");
-  font-weight: 600 900;
+  font-weight: 600 800;
   font-style: normal;
-  font-display: swap;
+  font-display: fallback;
 }
 
 @font-face {
-  /* includes font-weights from 400-500 */
+  /* includes font-weights from 100-500 */
   font-family: "Europa";
   src: url("/fonts/EuropaGroteskSH-Reg.otf") format("opentype");
-  font-weight: 400 500;
+  font-weight: 100 500;
   font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  /* includes font-weights from 100-300 */
-  font-family: "Europa";
-  src: url("/fonts/EuropaGroteskSH-Lig.otf") format("opentype");
-  font-weight: 100 300;
-  font-style: normal;
-  font-display: swap;
+  font-display: fallback;
 }
 
 :root {
   /* define custom css var for the Europa font */
   --font-europa-sans: "Europa", sans-serif;
   --removed-body-scroll-bar-size: 0px;
+
+  /* tailwind/shadcn overrides */
+  --radius: 0.75rem;
 }
 
 * {
   /* apply letter-spacing to all html elements */
-  @apply tracking-wider;
+  @apply tracking-wide;
 }
 
 html {
-  @apply scroll-smooth
+  @apply scroll-smooth;
+}
+
+code {
+  @apply !font-mono;
+}
+
+table {
+  width: 100%;
+}
+
+a {
+  @apply focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring
 }
 
 .font-mono {
-  /* reset the `tracking-wider` on the monospace font */
+  /* reset the `tracking-wide` on the monospace font */
   letter-spacing: initial;
 }
 
 .lucide {
-  /* bigger stroke for ALL icons */
-  stroke-width: 1.75px !important;
+  stroke-width: 1.5px!important;
 }
