@@ -11,6 +11,7 @@ export function middleware(request: NextRequest) {
 	const origin = request.headers.get("origin") ?? "";
 	const isAllowedOrigin = allowedOrigins.includes(origin);
 	const isImageRoute = request.nextUrl.pathname.startsWith("/images");
+	const isApiRoute = request.nextUrl.pathname.startsWith("/api");
 
 	// Allow all origins for image routes
 	if (isImageRoute) {
@@ -20,32 +21,46 @@ export function middleware(request: NextRequest) {
 		// Add additional headers that might be required
 		response.headers.set("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS");
 		response.headers.set("Access-Control-Allow-Headers", "Content-Type");
+
 		return response;
 	}
 
-	// Handle preflighted requests
-	if (request.method === "OPTIONS") {
-		const preflightHeaders = {
-			...(isAllowedOrigin && { "Access-Control-Allow-Origin": origin }),
-			...corsOptions,
-		};
-		return NextResponse.json({}, { headers: preflightHeaders });
+	// Handle CORS for API routes
+	if (isApiRoute) {
+		console.log("API route detected:", request.nextUrl.pathname);
+
+		// Handle preflight requests
+		if (request.method === "OPTIONS") {
+			const response = new NextResponse(null, { status: 204 });
+			response.headers.set(
+				"Access-Control-Allow-Origin",
+				isAllowedOrigin ? origin : (allowedOrigins[0] ?? ""),
+			);
+			response.headers.set(
+				"Access-Control-Allow-Methods",
+				corsOptions["Access-Control-Allow-Methods"],
+			);
+			response.headers.set(
+				"Access-Control-Allow-Headers",
+				corsOptions["Access-Control-Allow-Headers"],
+			);
+			response.headers.set("Access-Control-Max-Age", "86400");
+			return response;
+		}
+
+		// Handle actual requests
+		const response = NextResponse.next();
+		response.headers.set(
+			"Access-Control-Allow-Origin",
+			isAllowedOrigin ? origin : (allowedOrigins[0] ?? ""),
+		);
+		Object.entries(corsOptions).forEach(([key, value]) => {
+			response.headers.set(key, value);
+		});
+
+		return response;
 	}
 
-	// Handle simple requests
-	const response = NextResponse.next();
-
-	if (isAllowedOrigin) {
-		response.headers.set("Access-Control-Allow-Origin", origin);
-	}
-
-	Object.entries(corsOptions).forEach(([key, value]) => {
-		response.headers.set(key, value);
-	});
-
-	return response;
+	// For all other routes, proceed without modifying headers
+	return NextResponse.next();
 }
-
-export const config = {
-	matcher: ["/(.*?)"],
-};
