@@ -11,7 +11,6 @@ async function bonsaiSnarkProving(uuid: string): Promise<string> {
 		"https://zkauth.vercel.app/api/bonsai/snark-proving",
 		{
 			method: "POST",
-			mode: "no-cors",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({ uuid }),
 		},
@@ -31,9 +30,6 @@ async function getBonsaiSnarkStatus(
 ): Promise<SnarkSessionStatusRes> {
 	const response = await fetch(
 		`https://zkauth.vercel.app/api/bonsai/snark-status?uuid=${uuid}`,
-		{
-			mode: "no-cors",
-		},
 	);
 
 	if (!response.ok) {

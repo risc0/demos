@@ -5,17 +5,51 @@ export async function GET(request: NextRequest) {
 	const uuid = request.nextUrl.searchParams.get("uuid");
 
 	if (!uuid) {
-		return NextResponse.json({ error: "Invalid UUID" }, { status: 400 });
+		const errorResponse = NextResponse.json(
+			{ error: "Invalid UUID" },
+			{ status: 400 },
+		);
+		// Add CORS headers to error response
+		errorResponse.headers.set(
+			"Access-Control-Allow-Origin",
+			"http://localhost:3000",
+		);
+		errorResponse.headers.set("Access-Control-Allow-Methods", "GET");
+		return errorResponse;
 	}
 
 	try {
 		const status = await getBonsaiStarkStatus({ uuid });
 
-		return NextResponse.json(status);
+		const response = NextResponse.json(status);
+		// Add CORS headers
+		response.headers.set(
+			"Access-Control-Allow-Origin",
+			"http://localhost:3000",
+		);
+		response.headers.set("Access-Control-Allow-Methods", "GET");
+		return response;
 	} catch (error) {
-		return NextResponse.json(
+		const errorResponse = NextResponse.json(
 			{ error: "Internal Server Error" },
 			{ status: 500 },
 		);
+		// Add CORS headers to error response
+		errorResponse.headers.set(
+			"Access-Control-Allow-Origin",
+			"http://localhost:3000",
+		);
+		errorResponse.headers.set("Access-Control-Allow-Methods", "GET");
+		return errorResponse;
 	}
+}
+
+// Handle OPTIONS request for preflight
+export function OPTIONS() {
+	const response = new NextResponse(null, { status: 204 });
+
+	response.headers.set("Access-Control-Allow-Origin", "http://localhost:3000");
+	response.headers.set("Access-Control-Allow-Methods", "GET");
+
+	return response;
 }

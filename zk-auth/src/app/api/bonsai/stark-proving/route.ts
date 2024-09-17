@@ -7,11 +7,42 @@ export async function POST(request: NextRequest) {
 	try {
 		const uuid = await bonsaiStarkProving({ iss, token });
 
-		return NextResponse.json({ uuid });
+		const response = NextResponse.json({ uuid });
+
+		// Add CORS headers
+		response.headers.set(
+			"Access-Control-Allow-Origin",
+			"http://localhost:3000",
+		);
+		response.headers.set("Access-Control-Allow-Methods", "POST");
+		response.headers.set("Access-Control-Allow-Headers", "Content-Type");
+
+		return response;
 	} catch (error) {
-		return NextResponse.json(
+		const errorResponse = NextResponse.json(
 			{ error: "Internal Server Error" },
 			{ status: 500 },
 		);
+
+		// Add CORS headers to error response as well
+		errorResponse.headers.set(
+			"Access-Control-Allow-Origin",
+			"http://localhost:3000",
+		);
+		errorResponse.headers.set("Access-Control-Allow-Methods", "POST");
+		errorResponse.headers.set("Access-Control-Allow-Headers", "Content-Type");
+
+		return errorResponse;
 	}
+}
+
+// Handle OPTIONS request for preflight
+export function OPTIONS() {
+	const response = new NextResponse(null, { status: 204 });
+
+	response.headers.set("Access-Control-Allow-Origin", "http://localhost:3000");
+	response.headers.set("Access-Control-Allow-Methods", "POST");
+	response.headers.set("Access-Control-Allow-Headers", "Content-Type");
+
+	return response;
 }

@@ -17,7 +17,6 @@ async function bonsaiStarkProving({
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({ iss, token }),
-			mode: "no-cors",
 		},
 	);
 	if (!response.ok) {
@@ -34,9 +33,6 @@ async function getBonsaiStarkStatus(
 ): Promise<StarkSessionStatusRes> {
 	const response = await fetch(
 		`https://zkauth.vercel.app/api/bonsai/stark-status?uuid=${uuid}`,
-		{
-			mode: "no-cors",
-		},
 	);
 
 	if (!response.ok) {
