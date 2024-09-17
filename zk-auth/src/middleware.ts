@@ -8,14 +8,19 @@ const corsOptions = {
 };
 
 export function middleware(request: NextRequest) {
-	// Check the origin from the request
 	const origin = request.headers.get("origin") ?? "";
 	const isAllowedOrigin = allowedOrigins.includes(origin);
+	const isImageRoute = request.nextUrl.pathname.startsWith("/images");
+
+	// Allow all origins for image routes
+	if (isImageRoute) {
+		const response = NextResponse.next();
+		response.headers.set("Access-Control-Allow-Origin", "*");
+		return response;
+	}
 
 	// Handle preflighted requests
-	const isPreflight = request.method === "OPTIONS";
-
-	if (isPreflight) {
+	if (request.method === "OPTIONS") {
 		const preflightHeaders = {
 			...(isAllowedOrigin && { "Access-Control-Allow-Origin": origin }),
 			...corsOptions,
@@ -38,13 +43,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-	matcher: [
-		/*
-		 * Match all request paths except for the ones starting with:
-		 * - _next/static (static files)
-		 * - _next/image (image optimization files)
-		 * - favicon.ico, sitemap.xml, robots.txt (metadata files)
-		 */
-		"/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
-	],
+	matcher: ["/(.*?)"],
 };
