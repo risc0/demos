@@ -1,10 +1,3 @@
-"use client";
-
-import { Alert, AlertDescription, AlertTitle } from "@risc0/ui/alert";
-import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
-import { useEffect, useState } from "react";
-import { ProveButton } from "./_components/prove-button";
-import { SignInButton } from "./_components/sign-in-button";
 import { Button } from "@risc0/ui/button";
 import { cn } from "@risc0/ui/cn";
 import {
@@ -15,11 +8,10 @@ import {
 	TableHeader,
 	TableRow,
 } from "@risc0/ui/table";
-import { DownloadIcon } from "lucide-react";
-import Link from "next/link";
 import { capitalize, toLowerCase } from "string-ts";
+import { DownloadIcon } from "lucide-react";
 
-function StarkTable({ starkData }) {
+export function StarkTable({ starkData }: any) {
 	const isSuccess = starkData.status === "SUCCEEDED";
 
 	return (
@@ -71,69 +63,15 @@ function StarkTable({ starkData }) {
 					</TableCell>
 					{isSuccess && (
 						<TableCell className="text-right">
-							<Link href={starkData.receipt_url}>
+							<a href={starkData.receipt_url}>
 								<Button size="sm" startIcon={<DownloadIcon />}>
 									Download
 								</Button>
-							</Link>
+							</a>
 						</TableCell>
 					)}
 				</TableRow>
 			</TableBody>
 		</Table>
-	);
-}
-
-export default function AppPage() {
-	const address = "0xeB4Fc761FAb7501abe8cD04b2d831a45E8913DdF"; // @todo: replace with the address of the user
-	const [googleUserToken] = useLocalStorage("google-token", null);
-	const [currentStep, setCurrentStep] = useState<number>(1);
-	const [starkResults] = useLocalStorage<any | undefined>(
-		"stark-results",
-		undefined,
-	);
-	const [snarkResults] = useLocalStorage<any | undefined>(
-		"snark-results",
-		undefined,
-	);
-
-	useEffect(() => {
-		if (!googleUserToken) {
-			setCurrentStep(2);
-			return;
-		}
-
-		if (starkResults || snarkResults) {
-			setCurrentStep(4);
-			return;
-		}
-
-		setCurrentStep(3);
-	}, [address, googleUserToken, starkResults, snarkResults]);
-
-	return currentStep === 2 ? (
-		<SignInButton />
-	) : currentStep === 3 ? (
-		<ProveButton />
-	) : (
-		<>
-			{starkResults && (
-				<Alert className="border-none px-0">
-					<AlertTitle>STARK Results</AlertTitle>
-					<AlertDescription className="rounded border bg-neutral-50 dark:bg-neutral-900">
-						<StarkTable starkData={starkResults} />
-					</AlertDescription>
-				</Alert>
-			)}
-
-			{snarkResults && (
-				<Alert className="border-none px-0 pb-0">
-					<AlertTitle>SNARK Results</AlertTitle>
-					<AlertDescription className="rounded border bg-neutral-50 dark:bg-neutral-900">
-						<SnarkTable snarkData={snarkResults} />
-					</AlertDescription>
-				</Alert>
-			)}
-		</>
 	);
 }

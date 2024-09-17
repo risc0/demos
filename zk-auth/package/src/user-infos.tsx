@@ -1,6 +1,9 @@
 import { Alert, AlertDescription } from "@risc0/ui/alert";
 
-export function UserInfos({ userInfos, type }: { userInfos; type: "google" }) {
+export function UserInfos({
+	userInfos,
+	type,
+}: { userInfos: any; type: "google" }) {
 	return (
 		<Alert className="flex flex-row items-center gap-4 bg-neutral-50 p-5 dark:bg-neutral-900">
 			<AlertDescription className="grid w-full">
