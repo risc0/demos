@@ -1,6 +1,6 @@
 {
   "name": "@risc0/zkauth",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "private": false,
   "keywords": ["zk", "auth", "zero-knowledge", "authentication", "web3"],
   "sideEffects": false,
@@ -18,7 +18,7 @@
       "import": "./dist/react/index.js",
       "require": "./dist/react/index.js"
     },
-    "./dist/index.css": "./dist/index.css"
+    "./index.css": "./dist/index.css"
   },
   "type": "module",
   "files": ["dist"],
