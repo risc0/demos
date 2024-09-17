@@ -7,21 +7,7 @@ const corsOptions = {
 	"Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
 
-function isImageRequest(request: NextRequest) {
-	return (
-		request.method === "GET" &&
-		request.nextUrl.pathname.match(/\.(svg|png|jpg|jpeg|gif)$/i)
-	);
-}
-
 export function middleware(request: NextRequest) {
-	// Handle image requests
-	if (isImageRequest(request)) {
-		const response = NextResponse.next();
-		response.headers.set("Access-Control-Allow-Origin", "*");
-		return response;
-	}
-
 	// Check the origin from the request
 	const origin = request.headers.get("origin") ?? "";
 	const isAllowedOrigin = allowedOrigins.includes(origin);
