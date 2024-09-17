@@ -19,7 +19,7 @@ type SnarkSessionReceipt = {
 	journal: number[];
 };
 
-type StarkSessionStatusRes = {
+export type StarkSessionStatusRes = {
 	status: string;
 	receipt_url?: string;
 	error_msg?: string;
@@ -28,7 +28,7 @@ type StarkSessionStatusRes = {
 	stats?: StarkSessionStats;
 };
 
-type SnarkSessionStatusRes = {
+export type SnarkSessionStatusRes = {
 	status: string;
 	output?: SnarkSessionReceipt;
 	error_msg?: string;

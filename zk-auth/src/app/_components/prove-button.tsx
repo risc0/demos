@@ -9,13 +9,13 @@ import { AlertTriangleIcon, Loader2Icon } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useState, useTransition } from "react";
-import type {
-	SnarkSessionStatusRes,
-	StarkSessionStatusRes,
-} from "../_actions/bonsai-proving";
 import { doSnarkProving } from "../_utils/do-snark-proving";
 import { doStarkProving } from "../_utils/do-stark-proving";
 import { UserInfos } from "./user-infos";
+import type {
+	SnarkSessionStatusRes,
+	StarkSessionStatusRes,
+} from "../_lib/bonsai-proving";
 
 export function ProveButton() {
 	const { resolvedTheme } = useTheme();
