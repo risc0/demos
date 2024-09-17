@@ -9,8 +9,8 @@ import { SnarkTable } from "./snark-table";
 import { SignInButton } from "./sign-in-button";
 import { ProveButton } from "./prove-button";
 
-export function App() {
-	const address = "0xeB4Fc761FAb7501abe8cD04b2d831a45E8913DdF"; // @todo: replace with the address of the user
+export function App({ address }: { address: string }) {
+	console.log("YOUR ADDRESS IS:", address);
 	const [googleUserToken] = useLocalStorage("google-token", null);
 	const [currentStep, setCurrentStep] = useState<number>(1);
 	const [starkResults] = useLocalStorage<any | undefined>(
@@ -39,9 +39,9 @@ export function App() {
 	return (
 		<GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
 			{currentStep === 2 ? (
-				<SignInButton />
+				<SignInButton address={address} />
 			) : currentStep === 3 ? (
-				<ProveButton />
+				<ProveButton address={address} />
 			) : (
 				<>
 					{starkResults && (

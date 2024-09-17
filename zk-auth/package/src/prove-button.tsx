@@ -11,7 +11,7 @@ import { doSnarkProving } from "./do-snark-proving";
 import { doStarkProving } from "./do-stark-proving";
 import { UserInfos } from "./user-infos";
 
-export function ProveButton() {
+export function ProveButton({ address }: { address: string }) {
 	const [isPending, startTransition] = useTransition();
 	const [_starkResults, setStarkResults] = useLocalStorage<any | undefined>(
 		"stark-results",
@@ -27,7 +27,6 @@ export function ProveButton() {
 		undefined,
 	);
 	const [error, setError] = useState<any>();
-	const address = "0xeB4Fc761FAb7501abe8cD04b2d831a45E8913DdF"; // @todo: replace with the address of the user
 	const [snarkPollingResults, setSnarkPollingResults] = useState<any>();
 	const [starkPollingResults, setStarkPollingResults] = useState<any>();
 
