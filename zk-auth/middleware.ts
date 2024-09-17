@@ -1,45 +1,40 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-const allowedOrigins = [
-	// 'https://your-allowed-domain1.com',
-	// 'https://your-allowed-domain2.com',
-	"http://localhost:3000", // For local development
-	"https://zk-auth.vercel.app",
-];
+const allowedOrigins = ["https://zkauth.vercel.app", "http://localhost:3000"];
+
+const corsOptions = {
+	"Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+	"Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
 
 export function middleware(request: NextRequest) {
-	if (request.nextUrl.pathname.startsWith("/api/")) {
-		const origin = request.headers.get("origin");
+	// Check the origin from the request
+	const origin = request.headers.get("origin") ?? "";
+	const isAllowedOrigin = allowedOrigins.includes(origin);
 
-		if (origin && !allowedOrigins.includes(origin)) {
-			return new NextResponse(null, {
-				status: 403,
-				statusText: "Forbidden",
-				headers: {
-					"Content-Type": "text/plain",
-				},
-			});
-		}
+	// Handle preflighted requests
+	const isPreflight = request.method === "OPTIONS";
 
-		// For successful requests, add CORS headers
-		const response = NextResponse.next();
-
-		if (origin) {
-			response.headers.set("Access-Control-Allow-Origin", origin);
-		}
-		response.headers.set(
-			"Access-Control-Allow-Methods",
-			"GET, POST, PUT, DELETE, OPTIONS",
-		);
-		response.headers.set(
-			"Access-Control-Allow-Headers",
-			"Content-Type, Authorization",
-		);
-		return response;
+	if (isPreflight) {
+		const preflightHeaders = {
+			...(isAllowedOrigin && { "Access-Control-Allow-Origin": origin }),
+			...corsOptions,
+		};
+		return NextResponse.json({}, { headers: preflightHeaders });
 	}
 
-	return NextResponse.next();
+	// Handle simple requests
+	const response = NextResponse.next();
+
+	if (isAllowedOrigin) {
+		response.headers.set("Access-Control-Allow-Origin", origin);
+	}
+
+	Object.entries(corsOptions).forEach(([key, value]) => {
+		response.headers.set(key, value);
+	});
+
+	return response;
 }
 
 export const config = {
