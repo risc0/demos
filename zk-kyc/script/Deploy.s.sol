@@ -35,7 +35,7 @@ import {zkKYC} from "../contracts/zkKYC.sol";
 /// https://book.getfoundry.sh/tutorials/solidity-scripting
 /// https://book.getfoundry.sh/reference/forge/forge-script
 
-contract EvenNumberDeploy is Script {
+contract zkKYCDeploy is Script {
     // Path to deployment config file, relative to the project root.
     string constant CONFIG_FILE = "script/config.toml";
 
