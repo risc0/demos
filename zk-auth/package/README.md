@@ -5,7 +5,7 @@
 1. Ask us to add your domain to the list of allowed domains on Google Cloud Console
 2. Integrate the following code to your project:
 
-#### HTML Example:
+##### HTML Example:
 
 ```html
 <html>
@@ -27,7 +27,7 @@
 
 ---
 
-#### React Example:
+##### React Example:
 
 ### Install
 
@@ -41,19 +41,13 @@ npm install @risc0/zkauth
 import "@risc0/zkauth/dist/index.css"; // load the zkAuth stylesheet
 import { useZkAuth } from "@risc0/zkauth/react";
 
-function ZkAuth({ address }: { address: string }) {
+function App() {
   useZkAuth();
 
   return (
-    <div id="zkauth" data-address={address} />
-  );
-}
-
-function App() {
-  return (
     <>
       <h1>My App</h1>
-      <ZkAuth address="0x123.....A728" />
+      <div id="zkauth" data-address={address} />
     </>
   );
 }
