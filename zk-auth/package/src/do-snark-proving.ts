@@ -8,7 +8,7 @@ type SnarkSessionStatusRes = {
 
 async function bonsaiSnarkProving(uuid: string): Promise<string> {
 	const response = await fetch(
-		"https://zk-auth.vercel.app/api/bonsai/snark-proving",
+		"https://zkauth.vercel.app/api/bonsai/snark-proving",
 		{
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
@@ -29,7 +29,7 @@ async function getBonsaiSnarkStatus(
 	uuid: string,
 ): Promise<SnarkSessionStatusRes> {
 	const response = await fetch(
-		`https://zk-auth.vercel.app/api/bonsai/snark-status?uuid=${uuid}`,
+		`https://zkauth.vercel.app/api/bonsai/snark-status?uuid=${uuid}`,
 	);
 
 	if (!response.ok) {

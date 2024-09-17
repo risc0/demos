@@ -12,7 +12,7 @@ async function bonsaiStarkProving({
 	token,
 }: { iss: "Google" | "test"; token: string }): Promise<string> {
 	const response = await fetch(
-		"https://zk-auth.vercel.app/api/bonsai/stark-proving",
+		"https://zkauth.vercel.app/api/bonsai/stark-proving",
 		{
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
@@ -32,7 +32,7 @@ async function getBonsaiStarkStatus(
 	uuid: string,
 ): Promise<StarkSessionStatusRes> {
 	const response = await fetch(
-		`https://zk-auth.vercel.app/api/bonsai/stark-status?uuid=${uuid}`,
+		`https://zkauth.vercel.app/api/bonsai/stark-status?uuid=${uuid}`,
 	);
 
 	if (!response.ok) {
