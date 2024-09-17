@@ -1,7 +1,6 @@
 {
 	"extends": "@risc0/ui/config/tsconfig.base.json",
 	"compilerOptions": {
-		/* Path Aliases */
 		"baseUrl": ".",
 		"paths": {
 			"~/*": ["./src/*"]
