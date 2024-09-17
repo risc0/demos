@@ -1,5 +1,7 @@
 # zk-auth
 
+URL: https://zkauth.vercel.app
+
 ## Getting Started 🚀
 
 > [!IMPORTANT]
