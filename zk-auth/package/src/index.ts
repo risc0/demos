@@ -5,6 +5,8 @@ export function useZkAuth() {
     const script = document.createElement("script");
     script.src = "https://unpkg.com/@risc0/zkauth@latest/dist/index.js";
     script.async = true;
+    script.type = "module";
+    script.crossOrigin = "anonymous";
     document.body.appendChild(script);
 
     return () => {

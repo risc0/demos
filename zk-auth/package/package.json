@@ -1,28 +1,29 @@
 {
   "name": "@risc0/zkauth",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "private": false,
   "keywords": ["zk", "auth", "zero-knowledge", "authentication", "web3"],
   "sideEffects": false,
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "type": "module",
-  "files": ["dist"],
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/react/index.d.ts",
-      "import": "./dist/react/index.js",
-      "require": "./dist/react/index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
     },
     "./react": {
       "types": "./dist/react/index.d.ts",
-      "import": "./dist/react/index.js",
+      "import": "./dist/react/index.mjs",
       "require": "./dist/react/index.js"
-    }
+    },
+    "./dist/index.css": "./dist/index.css"
   },
+  "type": "module",
+  "files": ["dist"],
   "scripts": {
-    "build": "tsc -b && vite build && tsup src/index.ts --format esm --dts --external react,react-dom --outDir dist/react",
+    "build": "tsc -b && vite build && tsup src/index.ts --format cjs,esm --dts --external react,react-dom --outDir dist/react",
     "dev": "vite --port 3000",
     "package": "bun run build && rm dist/index.html && npm pack",
     "preview": "vite preview"
