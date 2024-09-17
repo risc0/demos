@@ -9,6 +9,18 @@
   "types": "dist/index.d.ts",
   "type": "module",
   "files": ["dist"],
+  "exports": {
+    ".": {
+      "import": "./dist/react/index.js",
+      "require": "./dist/react/index.js",
+      "types": "./dist/react/index.d.ts"
+    },
+    "./react": {
+      "import": "./dist/react/index.js",
+      "require": "./dist/react/index.js",
+      "types": "./dist/react/index.d.ts"
+    }
+  },
   "scripts": {
     "build": "tsc -b && vite build && tsup src/index.ts --format esm --dts --external react,react-dom --outDir dist/react",
     "dev": "vite --port 3000",
