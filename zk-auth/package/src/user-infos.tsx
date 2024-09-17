@@ -19,7 +19,12 @@ export function UserInfos({
 				<p className="mt-1 flex flex-row gap-2 font-mono text-[10px]">
 					{type === "google" && (
 						<>
-							<img src="/google.svg" width={16} height={16} alt="Google" />{" "}
+							<img
+								src="https://zkauth.vercel.app/google.svg"
+								width={16}
+								height={16}
+								alt="Google"
+							/>{" "}
 							Google
 						</>
 					)}

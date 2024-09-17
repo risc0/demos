@@ -6,14 +6,12 @@ import { cn } from "@risc0/ui/cn";
 import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
 import { Loader } from "@risc0/ui/loader";
 import { AlertTriangleIcon, Loader2Icon } from "lucide-react";
-import { useTheme } from "next-themes";
 import { useState, useTransition } from "react";
 import { doSnarkProving } from "./do-snark-proving";
 import { doStarkProving } from "./do-stark-proving";
 import { UserInfos } from "./user-infos";
 
 export function ProveButton() {
-	const { resolvedTheme } = useTheme();
 	const [isPending, startTransition] = useTransition();
 	const [_starkResults, setStarkResults] = useLocalStorage<any | undefined>(
 		"stark-results",
@@ -68,7 +66,10 @@ export function ProveButton() {
 	return address ? (
 		<>
 			{isPending ? (
-				<Loader loadingText="☕️ This will take a couple of minutes… Do not close your browser…" />
+				<Loader
+					loadingSrc="https://zkauth.vercel.app/loading.gif"
+					loadingText="☕️ This will take a couple of minutes… Do not close your browser…"
+				/>
 			) : (
 				<>
 					<p className="mb-3 break-words text-xs">
@@ -97,11 +98,7 @@ export function ProveButton() {
 						className="-top-[1px] relative"
 						width={58}
 						height={16}
-						src={
-							resolvedTheme === "dark"
-								? "/bonsai-logo-light.svg"
-								: "/bonsai-logo-dark.svg"
-						}
+						src="https://zkauth.vercel.app/bonsai-logo-light.svg"
 						alt="bonsai logo"
 					/>
 				</Button>

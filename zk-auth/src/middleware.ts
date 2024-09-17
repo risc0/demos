@@ -7,7 +7,21 @@ const corsOptions = {
 	"Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
 
+function isImageRequest(request: NextRequest) {
+	return (
+		request.method === "GET" &&
+		request.nextUrl.pathname.match(/\.(svg|png|jpg|jpeg|gif)$/i)
+	);
+}
+
 export function middleware(request: NextRequest) {
+	// Handle image requests
+	if (isImageRequest(request)) {
+		const response = NextResponse.next();
+		response.headers.set("Access-Control-Allow-Origin", "*");
+		return response;
+	}
+
 	// Check the origin from the request
 	const origin = request.headers.get("origin") ?? "";
 	const isAllowedOrigin = allowedOrigins.includes(origin);
@@ -38,5 +52,14 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-	matcher: "/api/:path*",
+	matcher: [
+		"/api/:path*",
+		/*
+		 * Match all request paths except for the ones starting with:
+		 * - _next/static (static files)
+		 * - _next/image (image optimization files)
+		 * - favicon.ico, sitemap.xml, robots.txt (metadata files)
+		 */
+		"/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+	],
 };
