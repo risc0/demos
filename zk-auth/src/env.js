@@ -18,20 +18,13 @@ const env = createEnv({
    * Specify client-side environment variables schema here.
    * To expose them to the client, prefix them with `NEXT_PUBLIC_`.
    */
-  client: {
-    NEXT_PUBLIC_GOOGLE_CLIENT_ID: z.string(),
-    NEXT_PUBLIC_VERCEL_BRANCH_URL: z.string(),
-  },
+  client: {},
 
   /**
    * You can't destruct `process.env` as a regular object in the Next.js edge runtimes
    * (e.g. middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
-    // Client-side environment variables
-    NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-    NEXT_PUBLIC_VERCEL_BRANCH_URL: process.env.NEXT_PUBLIC_VERCEL_BRANCH_URL,
-
     // Server-side environment variables
     BONSAI_API_KEY: process.env.BONSAI_API_KEY,
     IMAGE_ID: process.env.IMAGE_ID,
