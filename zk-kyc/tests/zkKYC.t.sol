@@ -16,7 +16,7 @@
 
 pragma solidity ^0.8.20;
 
-import {RiscZeroCheats} from "risc0/RiscZeroCheats.sol";
+import {RiscZeroCheats} from "risc0-test/RiscZeroCheats.sol";
 import {console2} from "forge-std/console2.sol";
 import {Test} from "forge-std/Test.sol";
 import {IRiscZeroVerifier} from "risc0/IRiscZeroVerifier.sol";
@@ -46,11 +46,10 @@ contract EvenNumberTest is RiscZeroCheats, Test {
 
         Input memory input = Input({id_provider: id_provider, jwt: jwt});
 
-        (bytes memory journal, bytes32 post_state_digest, bytes memory seal) =
-            prove(Elf.JWT_VALIDATOR_PATH, abi.encode(input));
+        (bytes memory journal, bytes memory seal) = prove(Elf.JWT_VALIDATOR_PATH, abi.encode(input));
 
         vm.prank(bob);
-        kyc.mint(bob, keccak256(abi.encodePacked("test")), post_state_digest, seal);
+        kyc.mint(bob, keccak256(abi.encodePacked("test")), seal);
     }
 
     function testFail_TransferFrom() public {
@@ -60,10 +59,9 @@ contract EvenNumberTest is RiscZeroCheats, Test {
 
         Input memory input = Input({id_provider: id_provider, jwt: jwt});
 
-        (bytes memory journal, bytes32 post_state_digest, bytes memory seal) =
-            prove(Elf.JWT_VALIDATOR_PATH, abi.encode(input));
+        (bytes memory journal, bytes memory seal) = prove(Elf.JWT_VALIDATOR_PATH, abi.encode(input));
 
-        kyc.mint(alice, keccak256(abi.encodePacked("test")), post_state_digest, seal);
+        kyc.mint(alice, keccak256(abi.encodePacked("test")), seal);
 
         kyc.transferFrom(alice, address(this), 0);
     }
@@ -75,10 +73,9 @@ contract EvenNumberTest is RiscZeroCheats, Test {
 
         Input memory input = Input({id_provider: id_provider, jwt: jwt});
 
-        (bytes memory journal, bytes32 post_state_digest, bytes memory seal) =
-            prove(Elf.JWT_VALIDATOR_PATH, abi.encode(input));
+        (bytes memory journal, bytes memory seal) = prove(Elf.JWT_VALIDATOR_PATH, abi.encode(input));
 
-        kyc.mint(alice, keccak256(abi.encodePacked("test")), post_state_digest, seal);
+        kyc.mint(alice, keccak256(abi.encodePacked("test")), seal);
 
         vm.prank(alice);
         kyc.burn(uint256(keccak256(abi.encodePacked("test"))));
@@ -91,10 +88,9 @@ contract EvenNumberTest is RiscZeroCheats, Test {
 
         Input memory input = Input({id_provider: id_provider, jwt: jwt});
 
-        (bytes memory journal, bytes32 post_state_digest, bytes memory seal) =
-            prove(Elf.JWT_VALIDATOR_PATH, abi.encode(input));
+        (bytes memory journal, bytes memory seal) = prove(Elf.JWT_VALIDATOR_PATH, abi.encode(input));
 
-        kyc.mint(alice, keccak256(abi.encodePacked("test")), post_state_digest, seal);
+        kyc.mint(alice, keccak256(abi.encodePacked("test")), seal);
 
         vm.prank(alice);
 
@@ -108,10 +104,9 @@ contract EvenNumberTest is RiscZeroCheats, Test {
 
         Input memory input = Input({id_provider: id_provider, jwt: jwt});
 
-        (bytes memory journal, bytes32 post_state_digest, bytes memory seal) =
-            prove(Elf.JWT_VALIDATOR_PATH, abi.encode(input));
+        (bytes memory _journal, bytes memory seal) = prove(Elf.JWT_VALIDATOR_PATH, abi.encode(input));
 
-        kyc.mint(alice, keccak256(abi.encodePacked("test")), post_state_digest, seal);
+        kyc.mint(alice, keccak256(abi.encodePacked("test")), seal);
 
         vm.prank(alice);
         kyc.setApprovalForAll(address(this), true);
@@ -124,10 +119,9 @@ contract EvenNumberTest is RiscZeroCheats, Test {
 
         Input memory input = Input({id_provider: id_provider, jwt: jwt});
 
-        (bytes memory journal, bytes32 post_state_digest, bytes memory seal) =
-            prove(Elf.JWT_VALIDATOR_PATH, abi.encode(input));
+        (bytes memory journal, bytes memory seal) = prove(Elf.JWT_VALIDATOR_PATH, abi.encode(input));
 
-        kyc.mint(alice, keccak256(abi.encodePacked("test")), post_state_digest, seal);
+        kyc.mint(alice, keccak256(abi.encodePacked("test")), seal);
 
         vm.prank(alice);
         kyc.safeTransferFrom(alice, bob, uint256(keccak256(abi.encodePacked("test"))), "0x");
@@ -140,10 +134,9 @@ contract EvenNumberTest is RiscZeroCheats, Test {
 
         Input memory input = Input({id_provider: id_provider, jwt: jwt});
 
-        (bytes memory journal, bytes32 post_state_digest, bytes memory seal) =
-            prove(Elf.JWT_VALIDATOR_PATH, abi.encode(input));
+        (bytes memory _journal, bytes memory seal) = prove(Elf.JWT_VALIDATOR_PATH, abi.encode(input));
 
-        kyc.mint(alice, keccak256(abi.encodePacked("test")), post_state_digest, seal);
+        kyc.mint(alice, keccak256(abi.encodePacked("test")), seal);
 
         vm.prank(bob);
         kyc.burn(uint256(keccak256(abi.encodePacked("test"))));
@@ -155,10 +148,9 @@ contract EvenNumberTest is RiscZeroCheats, Test {
 
         Input memory input = Input({id_provider: id_provider, jwt: jwt});
 
-        (bytes memory journal, bytes32 post_state_digest, bytes memory seal) =
-            prove(Elf.JWT_VALIDATOR_PATH, abi.encode(input));
+        (bytes memory _journal, bytes memory seal) = prove(Elf.JWT_VALIDATOR_PATH, abi.encode(input));
 
-        kyc.mint(msg.sender, keccak256(abi.encodePacked("test")), post_state_digest, seal);
+        kyc.mint(msg.sender, keccak256(abi.encodePacked("test")), seal);
     }
 
     function testFail_MintMany() public {
@@ -168,14 +160,13 @@ contract EvenNumberTest is RiscZeroCheats, Test {
 
         Input memory input = Input({id_provider: id_provider, jwt: jwt});
 
-        (bytes memory journal, bytes32 post_state_digest, bytes memory seal) =
-            prove(Elf.JWT_VALIDATOR_PATH, abi.encode(input));
+        (bytes memory _journal, bytes memory seal) = prove(Elf.JWT_VALIDATOR_PATH, abi.encode(input));
 
         vm.prank(alice);
-        kyc.mint(alice, keccak256(abi.encodePacked("test")), post_state_digest, seal);
+        kyc.mint(alice, keccak256(abi.encodePacked("test")), seal);
 
         vm.prank(alice);
-        kyc.mint(alice, keccak256(abi.encodePacked("test_agian")), post_state_digest, seal);
+        kyc.mint(alice, keccak256(abi.encodePacked("test_agian")), seal);
     }
 
     function test_MintBurnMint() public {
@@ -185,16 +176,15 @@ contract EvenNumberTest is RiscZeroCheats, Test {
 
         Input memory input = Input({id_provider: id_provider, jwt: jwt});
 
-        (bytes memory journal, bytes32 post_state_digest, bytes memory seal) =
-            prove(Elf.JWT_VALIDATOR_PATH, abi.encode(input));
+        (bytes memory _journal, bytes memory seal) = prove(Elf.JWT_VALIDATOR_PATH, abi.encode(input));
 
         vm.prank(alice);
-        kyc.mint(alice, keccak256(abi.encodePacked("test")), post_state_digest, seal);
+        kyc.mint(alice, keccak256(abi.encodePacked("test")), seal);
 
-        vm.prank(alice); 
+        vm.prank(alice);
         kyc.burn(uint256(keccak256(abi.encodePacked("test"))));
 
         vm.prank(alice);
-        kyc.mint(alice, keccak256(abi.encodePacked("test")), post_state_digest, seal);
+        kyc.mint(alice, keccak256(abi.encodePacked("test")), seal);
     }
 }
