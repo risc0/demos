@@ -1,26 +1,30 @@
 {
-	"name": "package",
-	"private": true,
-	"version": "0.0.0",
-	"type": "module",
-	"scripts": {
-		"dev": "vite --port 3000",
-		"build": "tsc -b && vite build",
-		"preview": "vite preview"
-	},
-	"dependencies": {
-		"@react-oauth/google": "0.12.1",
-		"@risc0/ui": "0.0.168",
-		"react": "19.0.0-rc-f2df5694-20240916",
-		"react-dom": "19.0.0-rc-f2df5694-20240916",
-		"string-ts": "2.2.0"
-	},
-	"devDependencies": {
-		"@types/react": "18.3.3",
-		"@types/react-dom": "18.3.0",
-		"@vitejs/plugin-react-swc": "3.5.0",
-		"globals": "15.9.0",
-		"typescript": "5.5.3",
-		"vite": "5.4.1"
-	}
+  "name": "@risc0/zkauth",
+  "version": "0.0.2",
+  "private": false,
+  "sideEffects": false,
+  "type": "module",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -b && vite build",
+    "dev": "vite --port 3000",
+    "package": "bun run build && rm dist/index.html && npm pack",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@react-oauth/google": "0.12.1",
+    "@risc0/ui": "0.0.168",
+    "@types/react": "18.3.3",
+    "@types/react-dom": "18.3.0",
+    "@vitejs/plugin-react-swc": "3.5.0",
+    "globals": "15.9.0",
+    "react": "19.0.0-rc-f2df5694-20240916",
+    "react-dom": "19.0.0-rc-f2df5694-20240916",
+    "string-ts": "2.2.0",
+    "typescript": "5.5.3",
+    "vite": "5.4.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }

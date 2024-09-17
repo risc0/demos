@@ -3,16 +3,13 @@ import deepmerge from "deepmerge";
 import type { Config } from "tailwindcss";
 
 const config = deepmerge(tailwindConfig, {
-	theme: {
-		fontFamily: {
-			sans: ["system-ui"],
-		},
-	},
+  theme: {
+    fontFamily: {
+      sans: ["system-ui"],
+    },
+  },
 }) satisfies Config;
 
-config.content = [
-	"./node_modules/@risc0/ui/**/*.{ts,tsx}",
-	"./src/**/*.{js,jsx,ts,tsx,mdx}",
-];
+config.content = ["./node_modules/@risc0/ui/**/*.{ts,tsx}", "./src/**/*.{js,jsx,ts,tsx,mdx}"];
 
 export default config;

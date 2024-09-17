@@ -1,6 +1,6 @@
 {
-  "extends": ["./zk-socials/node_modules/@risc0/ui/biome.base.jsonc"],
-  "files": {
-    "include": ["zk-socials"]
-  }
+	"extends": ["./zk-auth/node_modules/@risc0/ui/config/biome.base.jsonc"],
+	"files": {
+		"include": ["zk-socials", "zk-auth"]
+	}
 }

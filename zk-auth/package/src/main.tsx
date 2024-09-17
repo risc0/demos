@@ -5,7 +5,7 @@ import { App } from "./App.tsx";
 const address = document.getElementById("zkauth")?.getAttribute("data-address");
 
 createRoot(document.getElementById("zkauth")!).render(
-	<StrictMode>
-		<App address={address ?? ""} />
-	</StrictMode>,
+  <StrictMode>
+    <App address={address ?? ""} />
+  </StrictMode>,
 );

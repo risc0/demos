@@ -1,0 +1,4 @@
+#!/bin/bash
+
+bun run pre-commit
+git add .
