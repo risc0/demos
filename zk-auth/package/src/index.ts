@@ -1,4 +1,3 @@
-import "@risc0/zkauth/dist/index.css";
 import { useEffect } from "react";
 
 export function useZkAuth() {

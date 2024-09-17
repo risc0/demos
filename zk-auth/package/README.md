@@ -38,6 +38,7 @@ npm install @risc0/zkauth
 ### Usage
 
 ```tsx
+import "@risc0/zkauth/dist/index.css"; // load the zkAuth stylesheet
 import { useZkAuth } from "@risc0/zkauth/react";
 
 function ZkAuth({ address }: { address: string }) {
