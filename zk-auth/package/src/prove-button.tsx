@@ -6,13 +6,12 @@ import { cn } from "@risc0/ui/cn";
 import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
 import { Loader } from "@risc0/ui/loader";
 import { AlertTriangleIcon, Loader2Icon } from "lucide-react";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { doSnarkProving } from "./do-snark-proving";
 import { doStarkProving } from "./do-stark-proving";
 import { UserInfos } from "./user-infos";
 
 export function ProveButton({ address }: { address: string }) {
-  const [isPending, startTransition] = useTransition();
   const [_starkResults, setStarkResults] = useLocalStorage<any>(`stark-results-${address}`, undefined);
   const [_snarkResults, setSnarkResults] = useLocalStorage<any>(`snark-results-${address}`, undefined);
   const [googleUserInfos] = useLocalStorage(`google-infos-${address}`, undefined);
@@ -20,42 +19,45 @@ export function ProveButton({ address }: { address: string }) {
   const [error, setError] = useState<any>();
   const [snarkPollingResults, setSnarkPollingResults] = useState<any>();
   const [starkPollingResults, setStarkPollingResults] = useState<any>();
+  const [isLoading, setIsLoading] = useState(false);
 
   // this function takes care of creating the STARK session, which then returns a UUID
   // we then use this UUID to create a SNARK session
   // lastly, we get all the results from the STARK and SNARK sessions
   // this gets around Vercel's time limit for serverless functions
-  function handleClick() {
+  async function handleClick() {
     if (!googleUserToken) {
       console.error("JWT not found");
       return;
     }
 
-    //@ts-expect-error idk why this is not working
-    startTransition(async () => {
-      try {
-        const { starkUuid, starkStatus } = await doStarkProving({
-          iss: googleUserInfos ? "Google" : "test",
-          setStarkPollingResults,
-          token: googleUserToken ?? "",
-        });
-        const { snarkStatus } = await doSnarkProving({
-          setSnarkPollingResults,
-          starkUuid,
-        });
+    setError(null);
+    setIsLoading(true);
 
-        setStarkResults(starkStatus);
-        setSnarkResults(snarkStatus);
-      } catch (error) {
-        console.error("Error proving:", error);
-        setError(error);
-      }
-    });
+    try {
+      const { starkUuid, starkStatus } = await doStarkProving({
+        iss: googleUserInfos ? "Google" : "test",
+        setStarkPollingResults,
+        token: googleUserToken ?? "",
+      });
+      const { snarkStatus } = await doSnarkProving({
+        setSnarkPollingResults,
+        starkUuid,
+      });
+
+      setStarkResults(starkStatus);
+      setSnarkResults(snarkStatus);
+    } catch (error) {
+      console.error("Error proving:", error);
+      setError(error);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return address ? (
     <>
-      {isPending ? (
+      {isLoading ? (
         <Loader
           loadingSrc="https://zkauth.vercel.app/loading.gif"
           loadingText="☕️ This will take a couple of minutes… Do not close your browser…"
@@ -73,12 +75,12 @@ export function ProveButton({ address }: { address: string }) {
 
       <div className="mt-6 w-full">
         <Button
-          isLoading={isPending}
+          isLoading={isLoading}
           onClick={handleClick}
           size="lg"
           autoFocus
           className="flex w-full flex-row items-center gap-1.5"
-          disabled={!!error || isPending}
+          disabled={!!error || isLoading}
         >
           Prove with{" "}
           <img

@@ -29,13 +29,15 @@
 
 ##### React Example:
 
-### Install
+### 1. Install
 
 ```bash
 npm install @risc0/zkauth
 ```
 
-### Usage
+### 2. For local development, make sure you are using port 3000
+
+### 3. Usage
 
 ```tsx
 import "@risc0/zkauth/dist/index.css"; // load the zkAuth stylesheet
