@@ -1,0 +1,40 @@
+{
+	"name": "zk-socials",
+	"version": "0.0.1",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"build": "next build",
+		"dev": "next dev --turbo",
+		"start": "next start",
+		"test": "bun test spec"
+	},
+	"dependencies": {
+		"@react-oauth/google": "0.12.1",
+		"@risc0/ui": "0.0.166",
+		"@t3-oss/env-nextjs": "0.11.1",
+		"@tanstack/react-query": "5.56.2",
+		"axios": "1.7.7",
+		"deepmerge": "4.3.1",
+		"encoding": "0.1.13",
+		"jwt-decode": "3.1.2",
+		"lucide-react": "0.441.0",
+		"next": "15.0.0-rc.0",
+		"next-themes": "0.3.0",
+		"react": "19.0.0-rc-f2df5694-20240916",
+		"react-dom": "19.0.0-rc-f2df5694-20240916",
+		"sharp": "0.33.5",
+		"string-ts": "2.2.0",
+		"typescript": "5.6.2",
+		"viem": "2.21.7",
+		"wagmi": "2.12.12",
+		"zod": "3.23.8"
+	},
+	"devDependencies": {
+		"@types/node": "22.5.5",
+		"@types/react": "18.3.6",
+		"@types/react-dom": "18.3.0",
+		"@types/uuid": "9.0.8",
+		"pino-pretty": "11.2.2"
+	}
+}
