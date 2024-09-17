@@ -26,13 +26,14 @@ export function ProveButton({ address }: { address: string }) {
   // lastly, we get all the results from the STARK and SNARK sessions
   // this gets around Vercel's time limit for serverless functions
   async function handleClick() {
+    setIsLoading(true);
+
     if (!googleUserToken) {
       console.error("JWT not found");
+      setIsLoading(false);
+
       return;
     }
-
-    setError(null);
-    setIsLoading(true);
 
     try {
       const { starkUuid, starkStatus } = await doStarkProving({
@@ -40,10 +41,7 @@ export function ProveButton({ address }: { address: string }) {
         setStarkPollingResults,
         token: googleUserToken ?? "",
       });
-      const { snarkStatus } = await doSnarkProving({
-        setSnarkPollingResults,
-        starkUuid,
-      });
+      const { snarkStatus } = await doSnarkProving({ setSnarkPollingResults, starkUuid });
 
       setStarkResults(starkStatus);
       setSnarkResults(snarkStatus);
