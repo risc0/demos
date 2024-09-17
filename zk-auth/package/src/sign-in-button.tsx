@@ -4,8 +4,11 @@ import jwtDecode from "jwt-decode";
 import { useEffect } from "react";
 
 export function SignInButton({ address }: { address: string }) {
-  const [googleUserInfos, setGoogleUserInfos] = useLocalStorage<any | undefined>("google-infos", undefined);
-  const [googleUserToken, setGoogleUserToken] = useLocalStorage<string | undefined>("google-token", undefined);
+  const [googleUserInfos, setGoogleUserInfos] = useLocalStorage(`google-infos-${address}`, undefined);
+  const [googleUserToken, setGoogleUserToken] = useLocalStorage<string | undefined>(
+    `google-token-${address}`,
+    undefined,
+  );
 
   useEffect(() => {
     if (!googleUserToken || googleUserInfos) {
@@ -18,7 +21,6 @@ export function SignInButton({ address }: { address: string }) {
   return (
     <GoogleLogin
       auto_select
-      theme="filled_black"
       nonce={address}
       onSuccess={(response) => {
         if (response.credential) {

@@ -10,10 +10,10 @@ import { SnarkTable } from "./snark-table";
 import { StarkTable } from "./stark-table";
 
 export function App({ address }: { address: string }) {
-  const [googleUserToken] = useLocalStorage("google-token", null);
-  const [currentStep, setCurrentStep] = useState<number>(1);
-  const [starkResults] = useLocalStorage<any | undefined>("stark-results", undefined);
-  const [snarkResults] = useLocalStorage<any | undefined>("snark-results", undefined);
+  const [googleUserToken] = useLocalStorage(`google-token-${address}`, null);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [starkResults] = useLocalStorage(`stark-results-${address}`, undefined);
+  const [snarkResults] = useLocalStorage(`snark-results-${address}`, undefined);
 
   useEffect(() => {
     if (!googleUserToken) {
@@ -27,7 +27,7 @@ export function App({ address }: { address: string }) {
     }
 
     setCurrentStep(3);
-  }, [address, googleUserToken, starkResults, snarkResults]);
+  }, [googleUserToken, starkResults, snarkResults]);
 
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>

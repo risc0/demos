@@ -13,10 +13,10 @@ import { UserInfos } from "./user-infos";
 
 export function ProveButton({ address }: { address: string }) {
   const [isPending, startTransition] = useTransition();
-  const [_starkResults, setStarkResults] = useLocalStorage<any | undefined>("stark-results", undefined);
-  const [_snarkResults, setSnarkResults] = useLocalStorage<any | undefined>("snark-results", undefined);
-  const [googleUserInfos] = useLocalStorage("google-infos", undefined);
-  const [googleUserToken] = useLocalStorage<string | undefined>("google-token", undefined);
+  const [_starkResults, setStarkResults] = useLocalStorage<any>(`stark-results-${address}`, undefined);
+  const [_snarkResults, setSnarkResults] = useLocalStorage<any>(`snark-results-${address}`, undefined);
+  const [googleUserInfos] = useLocalStorage(`google-infos-${address}`, undefined);
+  const [googleUserToken] = useLocalStorage(`google-token-${address}`, undefined);
   const [error, setError] = useState<any>();
   const [snarkPollingResults, setSnarkPollingResults] = useState<any>();
   const [starkPollingResults, setStarkPollingResults] = useState<any>();
