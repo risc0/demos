@@ -6,6 +6,7 @@ import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
 import { useEffect, useState } from "react";
 import { ProveButton } from "./prove-button";
 import { SignInButton } from "./sign-in-button";
+import { SignOutButton } from "./sign-out-button";
 import { SnarkTable } from "./snark-table";
 import { StarkTable } from "./stark-table";
 
@@ -31,6 +32,8 @@ export function App({ address }: { address: string }) {
 
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <SignOutButton address={address} />
+
       {currentStep === 2 ? (
         <SignInButton address={address} />
       ) : currentStep === 3 ? (

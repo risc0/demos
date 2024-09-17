@@ -3,7 +3,9 @@
 ## In order to implement this flow you need to:
 
 1. Ask us to add your domain to the list of allowed domains on Google Cloud Console
-2. Add the following code to your project:
+2. Integrate the following code to your project:
+
+#### HTML Example:
 
 ```html
 <html>
@@ -21,3 +23,37 @@
     <script type="module" crossorigin src="https://unpkg.com/@risc0/zkauth@latest/dist/index.js"></script>
   </body>
 </html>
+```
+
+---
+
+#### React Example:
+
+### Install
+
+```bash
+npm install @risc0/zkauth
+```
+
+### Usage
+
+```tsx
+import { useZkAuth } from "@risc0/zkauth/react";
+
+function ZkAuth({ address }: { address: string }) {
+  useZkAuth();
+
+  return (
+    <div id="zkauth" data-address={address} />
+  );
+}
+
+function App() {
+  return (
+    <>
+      <h1>My App</h1>
+      <ZkAuth address="0x123.....A728" />
+    </>
+  );
+}
+```

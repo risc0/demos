@@ -1,12 +1,15 @@
 {
   "name": "@risc0/zkauth",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": false,
   "sideEffects": false,
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "files": ["dist"],
   "scripts": {
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && tsup src/index.ts --format esm --dts --external react,react-dom --outDir dist/react",
     "dev": "vite --port 3000",
     "package": "bun run build && rm dist/index.html && npm pack",
     "preview": "vite preview"
@@ -14,15 +17,19 @@
   "devDependencies": {
     "@react-oauth/google": "0.12.1",
     "@risc0/ui": "0.0.168",
-    "@types/react": "18.3.3",
-    "@types/react-dom": "18.3.0",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
     "@vitejs/plugin-react-swc": "3.5.0",
     "globals": "15.9.0",
-    "react": "19.0.0-rc-f2df5694-20240916",
-    "react-dom": "19.0.0-rc-f2df5694-20240916",
+    "react": "^18",
+    "react-dom": "^18",
     "string-ts": "2.2.0",
+    "tsup": "8.3.0",
     "typescript": "5.5.3",
     "vite": "5.4.1"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
   },
   "publishConfig": {
     "access": "public"
