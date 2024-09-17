@@ -1,4 +1,4 @@
-//import "@risc0/ui/styles/globals.css";
+import "@risc0/ui/styles/globals.css";
 
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";

@@ -5,6 +5,7 @@ const allowedOrigins = [
 	// 'https://your-allowed-domain1.com',
 	// 'https://your-allowed-domain2.com',
 	"http://localhost:3000", // For local development
+	"https://zk-auth.vercel.app",
 ];
 
 export function middleware(request: NextRequest) {
