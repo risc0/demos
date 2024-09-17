@@ -104,8 +104,8 @@ export function ProveButton() {
 						height={16}
 						src={
 							resolvedTheme === "dark"
-								? "/bonsai-logo-light.svg"
-								: "/bonsai-logo-dark.svg"
+								? "/images/bonsai-logo-light.svg"
+								: "/images/bonsai-logo-dark.svg"
 						}
 						alt="bonsai logo"
 					/>

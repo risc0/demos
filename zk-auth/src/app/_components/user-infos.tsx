@@ -16,7 +16,12 @@ export function UserInfos({ userInfos, type }: { userInfos; type: "google" }) {
 				<p className="mt-1 flex flex-row gap-2 font-mono text-[10px]">
 					{type === "google" && (
 						<>
-							<img src="/google.svg" width={16} height={16} alt="Google" />{" "}
+							<img
+								src="/images/google.svg"
+								width={16}
+								height={16}
+								alt="Google"
+							/>{" "}
 							Google
 						</>
 					)}

@@ -93,7 +93,14 @@ export function ProveButton() {
 					className="flex w-full flex-row items-center gap-1.5"
 					disabled={!!error || isPending}
 				>
-					Prove with Bonsai
+					Prove with{" "}
+					<img
+						className="-top-[1px] relative"
+						width={58}
+						height={16}
+						src="https://zkauth.vercel.app/images/bonsai-logo-light.svg"
+						alt="bonsai logo"
+					/>
 				</Button>
 
 				{starkPollingResults && starkPollingResults.length > 0 && (

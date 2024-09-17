@@ -17,7 +17,17 @@ export function UserInfos({
 					{userInfos.email}
 				</p>
 				<p className="mt-1 flex flex-row gap-2 font-mono text-[10px]">
-					{type === "google" && "Google"}
+					{type === "google" && (
+						<>
+							<img
+								src="https://zkauth.vercel.app/images/google.svg"
+								width={16}
+								height={16}
+								alt="Google"
+							/>{" "}
+							Google
+						</>
+					)}
 				</p>
 			</AlertDescription>
 		</Alert>
