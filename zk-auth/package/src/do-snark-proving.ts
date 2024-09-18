@@ -17,9 +17,7 @@ async function bonsaiSnarkProving(uuid: string): Promise<string> {
     throw new Error("Failed to start SNARK proving");
   }
 
-  const data = await response.json();
-
-  return data.uuid;
+  return (await response.json()).uuid;
 }
 
 async function getBonsaiSnarkStatus(uuid: string): Promise<SnarkSessionStatusRes> {

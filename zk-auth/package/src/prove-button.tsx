@@ -62,9 +62,14 @@ export function ProveButton({ address }: { address: string }) {
         />
       ) : (
         <>
-          <p className="mb-3 break-words text-xs">
-            You are about to prove that address <strong title={address}>{address}</strong> owns the following social
-            account:
+          <p className="mb-3 break-words text-xs w-full">
+            You are about to prove that address
+            <br />
+            <strong className="w-full" title={address}>
+              {address}
+            </strong>
+            <br />
+            owns the following social account:
           </p>
 
           {googleUserInfos && <UserInfos type="google" userInfos={googleUserInfos} />}
@@ -80,14 +85,8 @@ export function ProveButton({ address }: { address: string }) {
           className="flex w-full flex-row items-center gap-1.5"
           disabled={!!error || isLoading}
         >
-          Prove with{" "}
-          <img
-            className="-top-[1px] relative"
-            width={58}
-            height={16}
-            src="https://zkauth.vercel.app/bonsai-logo-dark.svg"
-            alt="bonsai logo"
-          />
+          {isLoading ? "Proving" : "Prove"} with{" "}
+          <img width={58} height={16} src="https://zkauth.vercel.app/bonsai-logo-dark.svg" alt="bonsai logo" />
         </Button>
 
         {starkPollingResults && starkPollingResults.length > 0 && (
@@ -97,15 +96,15 @@ export function ProveButton({ address }: { address: string }) {
               <span
                 className={cn(
                   "text-muted-foreground",
-                  starkPollingResults.at(-1)?.status === "SUCCEEDED" && "font-bold text-green-600 dark:text-green-500",
-                  starkPollingResults.at(-1)?.status === "FAILED" && "font-bold text-red-600 dark:text-red-500",
+                  starkPollingResults.at(-1)?.status === "SUCCEEDED" && "font-bold text-green-600",
+                  starkPollingResults.at(-1)?.status === "FAILED" && "font-bold text-red-600",
                 )}
               >
                 ({starkPollingResults.at(-1)?.status})
               </span>
             </AlertTitle>
             {starkPollingResults.at(-1)?.status !== "SUCCEEDED" && (
-              <AlertDescription className="rounded border bg-neutral-50 font-mono dark:bg-neutral-900">
+              <AlertDescription className="rounded border bg-neutral-50">
                 <div className="flex flex-row items-start justify-between gap-2 px-3 py-2">
                   <div className="flex flex-col">
                     {starkPollingResults.map((result: any, index: any) => (
@@ -127,16 +126,16 @@ export function ProveButton({ address }: { address: string }) {
               SNARK Results{" "}
               <span
                 className={cn(
-                  snarkPollingResults.status === "SUCCEEDED" && "font-bold text-green-600 dark:text-green-500",
-                  snarkPollingResults.status === "FAILED" && "font-bold text-red-600 dark:text-red-500",
+                  snarkPollingResults.status === "SUCCEEDED" && "font-bold text-green-600",
+                  snarkPollingResults.status === "FAILED" && "font-bold text-red-600",
                 )}
               >
                 ({snarkPollingResults.status})
               </span>
             </AlertTitle>
-            <AlertDescription className="rounded border bg-neutral-50 font-mono dark:bg-neutral-900">
+            <AlertDescription className="rounded border bg-neutral-50">
               <div className="flex flex-row items-center justify-between gap-2 px-3 py-2 text-xs">
-                This will take ~2 minutes <Loader2Icon className="size-3.5 animate-spin text-border" />
+                This will take around 2 minutes <Loader2Icon className="size-3.5 animate-spin text-border" />
               </div>
             </AlertDescription>
           </Alert>

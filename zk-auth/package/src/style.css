@@ -41,25 +41,8 @@
   @apply tracking-wide;
 }
 
-html {
-  @apply scroll-smooth;
-}
-
-code {
-  @apply !font-mono;
-}
-
 table {
   width: 100%;
-}
-
-a {
-  @apply focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring
-}
-
-.font-mono {
-  /* reset the `tracking-wide` on the monospace font */
-  letter-spacing: initial;
 }
 
 .lucide {

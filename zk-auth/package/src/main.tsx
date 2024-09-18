@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { App } from "./App.tsx";
+import { ZkAuth } from "./zk-auth";
 
 const container = document.getElementById("zkauth");
 
@@ -18,6 +18,6 @@ if (!address) {
 
 createRoot(container).render(
   <StrictMode>
-    <App address={address} />
+    <ZkAuth address={address} />
   </StrictMode>,
 );

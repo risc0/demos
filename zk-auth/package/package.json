@@ -1,49 +1,43 @@
 {
   "name": "@risc0/zkauth",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "private": false,
   "keywords": ["zk", "auth", "zero-knowledge", "authentication", "web3"],
   "sideEffects": false,
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "type": "module",
+  "main": "./dist/zk-auth.js",
+  "module": "./dist/zk-auth.js",
+  "files": ["dist"],
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.js"
-    },
-    "./react": {
-      "types": "./dist/react/index.d.ts",
-      "import": "./dist/react/index.js",
-      "require": "./dist/react/index.js"
+      "import": "./dist/zk-auth.js",
+      "require": "./dist/zk-auth.js"
     },
     "./index.css": "./dist/index.css"
   },
-  "type": "module",
-  "files": ["dist"],
   "scripts": {
-    "build": "tsc -b && vite build && tsup src/index.ts --format esm --dts --external react,react-dom --outDir dist/react",
+    "build": "vite build",
     "dev": "vite --port 3000",
     "package": "bun run build && rm dist/index.html && npm pack",
     "preview": "vite preview"
   },
   "devDependencies": {
-    "@react-oauth/google": "0.12.1",
-    "@risc0/ui": "0.0.168",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@vitejs/plugin-react-swc": "3.5.0",
-    "globals": "15.9.0",
-    "react": "^18",
-    "react-dom": "^18",
-    "string-ts": "2.2.0",
-    "tsup": "8.3.0",
     "typescript": "5.5.3",
-    "vite": "5.4.1"
+    "vite": "5.4.1",
+    "vite-plugin-dts": "4.2.1"
+  },
+  "dependencies": {
+    "@react-oauth/google": "0.12.1",
+    "@risc0/ui": "0.0.168",
+    "react": "^18",
+    "react-dom": "^18"
   },
   "peerDependencies": {
-    "react": "^18.0.0 || ^19.0.0"
+    "react": "^18.2.0 || ^19.0.0",
+    "react-dom": "^18.2.0 || ^19.0.0"
   },
   "publishConfig": {
     "access": "public"

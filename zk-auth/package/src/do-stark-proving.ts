@@ -13,13 +13,12 @@ async function bonsaiStarkProving({ iss, token }: { iss: "Google" | "test"; toke
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ iss, token }),
   });
+
   if (!response.ok) {
     throw new Error("Failed to start STARK proving");
   }
 
-  const data = await response.json();
-
-  return data.uuid;
+  return (await response.json()).uuid;
 }
 
 async function getBonsaiStarkStatus(uuid: string): Promise<StarkSessionStatusRes> {

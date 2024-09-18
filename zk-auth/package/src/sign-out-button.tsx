@@ -14,12 +14,12 @@ export function SignOutButton({ address }: { address: string }) {
   }
 
   if (!address || !googleUserInfos) {
-    return null;
+    return <div className="h-8" />;
   }
 
   return (
-    <Button size="sm" variant="ghost" startIcon={<LogOutIcon />} onClick={signOut}>
-      Sign Out
+    <Button size="sm" variant="ghost" endIcon={<LogOutIcon />} onClick={signOut}>
+      Change Account
     </Button>
   );
 }
