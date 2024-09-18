@@ -21,16 +21,16 @@ export function ZkAuth({ address, onStarkComplete, onSnarkComplete }: ZkAuthProp
 
   useEffect(() => {
     if (!googleUserToken) {
-      setCurrentStep(2);
+      setCurrentStep(1);
       return;
     }
 
     if (starkResults || snarkResults) {
-      setCurrentStep(4);
+      setCurrentStep(3);
       return;
     }
 
-    setCurrentStep(3);
+    setCurrentStep(2);
   }, [googleUserToken, starkResults, snarkResults]);
 
   useEffect(() => {
@@ -54,9 +54,9 @@ export function ZkAuth({ address, onStarkComplete, onSnarkComplete }: ZkAuthProp
         </div>
 
         <div className="flex flex-col items-center justify-center flex-1 w-full">
-          {currentStep === 2 ? (
+          {currentStep === 1 ? (
             <SignInButton address={address} />
-          ) : currentStep === 3 ? (
+          ) : currentStep === 2 ? (
             <ProveButton address={address} />
           ) : (
             <>Proving complete</>
