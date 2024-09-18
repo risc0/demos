@@ -18,8 +18,8 @@ bun install @risc0/zkauth
 ### 3. Usage
 
 ```tsx
-import "@risc0/zkauth/index.css"; // load the zkAuth stylesheet
-import { ZkAuth } from "@risc0/zkauth/react";
+import "@risc0/zkauth/style.css"; // load the zkAuth stylesheet
+import { ZkAuth } from "@risc0/zkauth";
 
 function App() {
   return (
@@ -27,7 +27,7 @@ function App() {
       <h1>My App</h1>
       
       <ZkAuth 
-        address={address} 
+        address="0xc8915cc592583036e18724b6a7cBE9685f49FC98" // address to prove ownership of
         onStarkComplete={(starkResults) => {
           console.info("Stark completed:", starkResults);
         }}
