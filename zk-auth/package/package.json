@@ -18,7 +18,7 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite --port 3000",
-    "package": "bun run build && rm dist/index.html && npm pack",
+    "package": "bun run build && npm pack",
     "preview": "vite preview"
   },
   "devDependencies": {
