@@ -9,6 +9,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ uuid: snarkUuid });
   } catch (error) {
+    console.error(error);
+
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

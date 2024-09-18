@@ -9,7 +9,9 @@ const env = createEnv({
    * Specify server-side environment variables schema here.
    */
   server: {
+    BONSAI_VERSION: z.string(),
     BONSAI_API_KEY: z.string(),
+    BONSAI_URL: z.string(),
     IMAGE_ID: z.string(),
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   },
@@ -26,7 +28,9 @@ const env = createEnv({
    */
   runtimeEnv: {
     // Server-side environment variables
+    BONSAI_VERSION: process.env.BONSAI_VERSION,
     BONSAI_API_KEY: process.env.BONSAI_API_KEY,
+    BONSAI_URL: process.env.BONSAI_URL,
     IMAGE_ID: process.env.IMAGE_ID,
     NODE_ENV: process.env.NODE_ENV,
   },
