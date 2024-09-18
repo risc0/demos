@@ -39,3 +39,5 @@ function App() {
   );
 }
 ```
+
+*Note: if you are using Next.js, you need to mark the page as a client component with `"use client"`.*
