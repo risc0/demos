@@ -1,6 +1,14 @@
 import { Alert, AlertDescription } from "@risc0/ui/alert";
 
-export function GoogleUserInfos({ userInfos }: { userInfos: any }) {
+export function GoogleUserInfos({
+  userInfos,
+}: {
+  userInfos: {
+    name: string;
+    email: string;
+    picture?: string;
+  };
+}) {
   return (
     <Alert className="flex flex-row items-center gap-6 border-neutral-100 bg-neutral-50 p-5">
       <div className="flex min-h-[64px] min-w-[64px] items-center justify-center">

@@ -1,6 +1,14 @@
 import { Alert, AlertDescription } from "@risc0/ui/alert";
 
-export function TwitchUserInfos({ userInfos }: { userInfos: any }) {
+export function TwitchUserInfos({
+  userInfos,
+}: {
+  userInfos: {
+    display_name: string;
+    profile_image_url?: string;
+    email: string;
+  };
+}) {
   return (
     <Alert className="flex flex-row items-center gap-6 border-neutral-100 bg-neutral-50 px-4 py-3">
       <div className="flex min-h-[64px] min-w-[64px] items-center justify-center">

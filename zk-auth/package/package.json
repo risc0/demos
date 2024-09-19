@@ -1,8 +1,9 @@
 {
   "name": "@risc0/zkauth",
-  "version": "0.0.17",
+  "version": "0.0.19",
   "private": false,
-  "keywords": ["zk", "auth", "zero-knowledge", "authentication", "web3"],
+  "author": "RISC Zero",
+  "keywords": ["zk", "auth", "zero-knowledge", "authentication", "web3", "risczero"],
   "sideEffects": false,
   "type": "module",
   "main": "./dist/zk-auth.js",

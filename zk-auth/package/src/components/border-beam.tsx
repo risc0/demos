@@ -1,7 +1,7 @@
 import { cn } from "@risc0/ui/cn";
 import type { CSSProperties } from "react";
 
-interface BorderBeamProps {
+type BorderBeamProps = {
   className?: string;
   size?: number;
   duration?: number;
@@ -10,7 +10,7 @@ interface BorderBeamProps {
   colorFrom?: string;
   colorTo?: string;
   delay?: number;
-}
+};
 
 export const BorderBeam = ({
   className,
