@@ -25,17 +25,17 @@ async function getLinkedInTokensAndUserInfo(code: string) {
     const tokenData = await tokenResponse.json();
 
     // Get user profile information
-    const profileResponse = await fetch("https://api.linkedin.com/v2/me", {
+    const userInfoResponse = await fetch("https://api.linkedin.com/v2/userinfo", {
       headers: {
         Authorization: `Bearer ${tokenData.access_token}`,
       },
     });
 
-    if (!profileResponse.ok) {
-      throw new Error(`HTTP error! status: ${profileResponse.status}`);
+    if (!userInfoResponse.ok) {
+      throw new Error(`HTTP error! status: ${userInfoResponse.status}`);
     }
 
-    const profileData = await profileResponse.json();
+    const profileData = await userInfoResponse.json();
 
     // Get user email address
     const emailResponse = await fetch(
