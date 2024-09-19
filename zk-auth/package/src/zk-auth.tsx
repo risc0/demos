@@ -3,22 +3,21 @@ import "./style.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
 import { useEffect, useState } from "react";
-import { ProveButton } from "./prove-button";
-import { SignInButton } from "./sign-in-button";
-import { SignOutButton } from "./sign-out-button";
+import { ProveButton } from "./components/prove-button";
+import { SignInButton } from "./components/sign-in-button";
+import { useSocialsLocalStorage } from "./hooks/use-socials";
 
 export type ZkAuthProps = {
-  address: string;
+  address: `0x${string}`;
   onStarkComplete?: (starkResults: any) => void;
   onSnarkComplete?: (snarkResults: any) => void;
 };
 
 export function ZkAuth({ address, onStarkComplete, onSnarkComplete }: ZkAuthProps) {
-  const [twitchUserToken] = useLocalStorage(`twitch-token-${address}`, null);
-  const [googleUserToken] = useLocalStorage(`google-token-${address}`, null);
-  const [currentStep, setCurrentStep] = useState<number>(1);
+  const { googleUserToken, twitchUserToken } = useSocialsLocalStorage({ address });
   const [starkResults] = useLocalStorage(`stark-results-${address}`, undefined);
   const [snarkResults] = useLocalStorage(`snark-results-${address}`, undefined);
+  const [currentStep, setCurrentStep] = useState<number>(1);
 
   useEffect(() => {
     if (!googleUserToken && !twitchUserToken) {

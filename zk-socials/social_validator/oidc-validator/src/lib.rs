@@ -28,6 +28,7 @@ struct Extra {
 #[derive(Deserialize, Serialize)]
 pub enum IdentityProvider {
     Google,
+    Twitch,
     Test,
 }
 
@@ -48,6 +49,14 @@ impl IdentityProvider {
                 let iat = decoded.issued_at.unwrap().timestamp().to_string();
                 Ok((email, nonce, exp, iat, jwk_str.to_string()))
             }
+            Self::Twitch => {
+              let decoded = decode_token::<TwitchClaims>(token, &jwk).unwrap();
+              let email = decoded.custom.email.to_string();
+              let nonce = decoded.custom.nonce.to_string();
+              let exp = decoded.expiration.unwrap().timestamp().to_string();
+              let iat = decoded.issued_at.unwrap().timestamp().to_string();
+              Ok((email, nonce, exp, iat, jwk_str.to_string()))
+          }
             Self::Test => {
                 let decoded = decode_token::<TestClaims>(token, &jwk).unwrap();
                 let email = decoded.custom.email.to_string();
@@ -64,10 +73,24 @@ impl From<String> for IdentityProvider {
     fn from(value: String) -> Self {
         match value.to_lowercase().as_str() {
             "google" => Self::Google,
+            "twitch" => Self::Twitch,
             "test" => Self::Test,
             _ => panic!("invalid identity provider"),
         }
     }
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct TwitchClaims {
+    pub aud: String,
+    pub exp: i64,
+    pub iat: i64,
+    pub iss: String,
+    pub sub: String,
+    pub email: String,
+    pub nonce: String,
+    pub preferred_username: Option<String>,
+    pub picture: Option<String>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]

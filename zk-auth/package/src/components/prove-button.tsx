@@ -7,25 +7,18 @@ import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
 import { Loader } from "@risc0/ui/loader";
 import { AlertTriangleIcon } from "lucide-react";
 import { useState } from "react";
+import { useSocialsLocalStorage } from "../hooks/use-socials";
+import { doSnarkProving } from "../utils/do-snark-proving";
+import { doStarkProving } from "../utils/do-stark-proving";
 import { BorderBeam } from "./border-beam";
-import { doSnarkProving } from "./do-snark-proving";
-import { doStarkProving } from "./do-stark-proving";
 import { GoogleUserInfos } from "./google-user-infos";
 import { SignOutButton } from "./sign-out-button";
 import { TwitchUserInfos } from "./twitch-user-infos";
 
-export function ProveButton({ address }: { address: string }) {
+export function ProveButton({ address }: { address: `0x${string}` }) {
   const [_starkResults, setStarkResults] = useLocalStorage<any>(`stark-results-${address}`, undefined);
   const [_snarkResults, setSnarkResults] = useLocalStorage<any>(`snark-results-${address}`, undefined);
-
-  // google
-  const [googleUserInfos] = useLocalStorage(`google-infos-${address}`, undefined);
-  const [googleUserToken] = useLocalStorage(`google-token-${address}`, undefined);
-
-  // twitch
-  const [twitchUserInfos] = useLocalStorage(`twitch-infos-${address}`, undefined);
-  const [twitchUserToken] = useLocalStorage(`twitch-token-${address}`, undefined);
-
+  const { googleUserInfos, twitchUserInfos, googleUserToken, twitchUserToken } = useSocialsLocalStorage({ address });
   const [error, setError] = useState<any>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [snarkPollingResults, setSnarkPollingResults] = useState<any>();
@@ -62,6 +55,8 @@ export function ProveButton({ address }: { address: string }) {
       setIsLoading(false);
     }
   }
+
+  console.log("starkPollingResults", starkPollingResults);
 
   return address ? (
     <>
@@ -121,7 +116,6 @@ export function ProveButton({ address }: { address: string }) {
                       <span
                         className={cn(
                           "text-muted-foreground font-normal",
-                          starkPollingResults.at(-1)?.status === "SUCCEEDED" && "font-bold text-green-600",
                           starkPollingResults.at(-1)?.status === "FAILED" && "font-bold text-red-600",
                         )}
                       >
@@ -129,12 +123,12 @@ export function ProveButton({ address }: { address: string }) {
                       </span>
                     </AlertTitle>
 
-                    <BorderBeam size={110.5} duration={5} />
+                    {starkPollingResults.at(-1)?.status === "RUNNING" && <BorderBeam size={110.5} duration={5} />}
 
                     <div className="flex flex-row items-start justify-between gap-2 px-3 py-2">
                       <div className="flex flex-col leading-tight">
-                        {starkPollingResults.slice(-5).map((result: any) => (
-                          <code key={result} className="block text-[10px]">
+                        {starkPollingResults.slice(-5).map((result: any, index: number) => (
+                          <code key={`${result}-${index}`} className="block text-[10px]">
                             {result.state}
                           </code>
                         ))}

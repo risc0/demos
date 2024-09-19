@@ -46,8 +46,13 @@ fn main() {
         .read_to_string(&mut input_str)
         .expect("could not read input string");
 
+    // Trim the input string
+    let trimmed_input = input_str.trim();
+
     // Deserialize user input
-    let input: Input = serde_json::from_str(&input_str).expect("could not deserialize input");
+    let input: Input = serde_json::from_str(trimmed_input).unwrap_or_else(|e| {
+        panic!("could not deserialize input: {:?}\nInput was: {}", e, trimmed_input);
+    });
 
     // Validate the JWT
     let (email, public_key, expiration, issued_at, jwks) = input

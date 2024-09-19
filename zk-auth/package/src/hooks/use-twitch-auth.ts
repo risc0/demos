@@ -2,10 +2,9 @@ import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
 import { useCallback, useState } from "react";
 
 const TWITCH_CLIENT_ID = "h7i920jmp37f1gwafkndd8xx1fcud1";
-const REDIRECT_URI = "http://localhost:3000";
-const TWITCH_AUTH_URL = `https://id.twitch.tv/oauth2/authorize?client_id=${TWITCH_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=user:read:email`;
+const TWITCH_REDIRECT_URI = window.location.origin;
 
-export function useTwitchAuth({ address }: { address: string }) {
+export function useTwitchAuth({ address }: { address: `0x${string}` }) {
   const [_twitchUserInfos, setTwitchUserInfos] = useLocalStorage(`twitch-infos-${address}`, undefined);
   const [_twitchUserToken, setTwitchUserToken] = useLocalStorage<string | undefined>(
     `twitch-token-${address}`,
@@ -14,7 +13,7 @@ export function useTwitchAuth({ address }: { address: string }) {
   const [error, setError] = useState<string | null>(null);
 
   const signInWithTwitch = useCallback(() => {
-    window.location.href = TWITCH_AUTH_URL;
+    window.location.href = `https://id.twitch.tv/oauth2/authorize?client_id=${TWITCH_CLIENT_ID}&redirect_uri=${encodeURIComponent(TWITCH_REDIRECT_URI)}&response_type=token&scope=user:read:email`;
   }, []);
 
   const handleTwitchAuthCallback = useCallback(async () => {
@@ -24,6 +23,7 @@ export function useTwitchAuth({ address }: { address: string }) {
 
     if (accessToken) {
       setTwitchUserToken(accessToken);
+
       try {
         const response = await fetch("https://api.twitch.tv/helix/users", {
           headers: {
@@ -33,13 +33,13 @@ export function useTwitchAuth({ address }: { address: string }) {
         });
 
         if (!response.ok) {
-          throw new Error("Failed to fetch user info");
+          throw new Error("Failed to fetch twitch user info");
         }
 
         const data = await response.json();
         setTwitchUserInfos(data.data[0]);
       } catch (err) {
-        setError("Failed to fetch user info");
+        setError("Failed to fetch twitch user info");
         console.error(err);
       }
     }

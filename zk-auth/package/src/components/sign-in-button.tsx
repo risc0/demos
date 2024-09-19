@@ -1,18 +1,13 @@
 import { GoogleLogin } from "@react-oauth/google";
 import { Button } from "@risc0/ui/button";
-import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
 import jwtDecode from "jwt-decode";
 import { useEffect } from "react";
-import { useTwitchAuth } from "./use-twitch-auth";
+import { useSocialsLocalStorage } from "../hooks/use-socials";
+import { useTwitchAuth } from "../hooks/use-twitch-auth";
 
-export function SignInButton({ address }: { address: string }) {
-  const [googleUserInfos, setGoogleUserInfos] = useLocalStorage(`google-infos-${address}`, undefined);
-  const [googleUserToken, setGoogleUserToken] = useLocalStorage<string | undefined>(
-    `google-token-${address}`,
-    undefined,
-  );
-  const [twitchUserInfos] = useLocalStorage(`twitch-infos-${address}`, undefined);
-  const [twitchUserToken] = useLocalStorage(`twitch-token-${address}`, undefined);
+export function SignInButton({ address }: { address: `0x${string}` }) {
+  const { googleUserInfos, twitchUserInfos, googleUserToken, twitchUserToken, setGoogleUserInfos, setGoogleUserToken } =
+    useSocialsLocalStorage({ address });
   const { handleTwitchAuthCallback, signInWithTwitch } = useTwitchAuth({ address });
 
   useEffect(() => {
