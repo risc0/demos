@@ -5,13 +5,15 @@ import { useEffect } from "react";
 import { useSocialsLocalStorage } from "../hooks/use-socials";
 import { useTwitchAuth } from "../hooks/use-twitch-auth";
 
-function getQueryParam(param: string): string | null {
-  const searchParams = new URLSearchParams(window.location.search);
-  return searchParams.get(param);
+function cleanUrl() {
+  const url = new URL(window.location.href);
+  url.search = "";
+  url.hash = "";
+  window.history.replaceState({}, document.title, url.toString());
 }
 
 export function SignInButton({ address }: { address: `0x${string}` }) {
-  const { googleUserInfos, twitchUserInfos, googleUserToken, twitchUserToken, setGoogleUserInfos, setGoogleUserToken } =
+  const { googleUserInfos, twitchUserToken, googleUserToken, setGoogleUserInfos, setGoogleUserToken } =
     useSocialsLocalStorage({ address });
   const { handleTwitchAuthCallback, signInWithTwitch } = useTwitchAuth({ address });
 
@@ -30,17 +32,26 @@ export function SignInButton({ address }: { address: `0x${string}` }) {
   }, [googleUserToken, setGoogleUserInfos, googleUserInfos]);
 
   useEffect(() => {
-    if (twitchUserToken && twitchUserInfos) {
+    if (twitchUserToken) {
       return;
     }
 
-    const code = getQueryParam("code");
+    async function handleAuth() {
+      const code = new URLSearchParams(window.location.search).get("code");
 
-    // Handle the Twitch auth callback
-    if (code && !twitchUserInfos) {
-      handleTwitchAuthCallback(code);
+      if (code) {
+        try {
+          await handleTwitchAuthCallback(code);
+
+          cleanUrl();
+        } catch (error) {
+          console.error("Auth error:", error);
+        }
+      }
     }
-  }, [handleTwitchAuthCallback, twitchUserInfos, twitchUserToken]);
+
+    handleAuth();
+  }, [handleTwitchAuthCallback, twitchUserToken]);
 
   return (
     <>

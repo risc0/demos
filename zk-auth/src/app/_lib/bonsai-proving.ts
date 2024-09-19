@@ -124,6 +124,9 @@ class Client {
 
 // STARK
 export async function bonsaiStarkProving({ iss, token }: { iss: "Google" | "Twitch" | "test"; token: string }) {
+  console.log("iss", iss);
+  console.log("token", token);
+
   // TODO: Add others, if applicable
   let jwks = "";
 
@@ -134,6 +137,15 @@ export async function bonsaiStarkProving({ iss, token }: { iss: "Google" | "Twit
   if (iss === "Twitch") {
     jwks = await getTwitchCerts();
   }
+
+  console.log("jwks", jwks);
+  console.log(
+    JSON.stringify({
+      iss,
+      jwks,
+      jwt: token,
+    }),
+  );
 
   const inputData = Buffer.from(
     encodeString(
