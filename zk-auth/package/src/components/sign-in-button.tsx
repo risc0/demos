@@ -121,7 +121,7 @@ export function SignInButton({ address }: { address: `0x${string}` }) {
           fontFamily: "arial, sans-serif",
           letterSpacing: "0.25px",
         }}
-        className="relative flex h-8 w-full max-w-[197px] flex-row items-center gap-1.5 rounded-full bg-[#A970FF] pl-7 font-normal text-[14px] text-white tracking-wider hover:bg-[#BF94FF] hover:text-white"
+        className="relative flex h-8 w-full max-w-[197px] flex-row items-center gap-1.5 rounded-full bg-[#A970FF] pl-6 font-normal text-[14px] text-white tracking-wider hover:bg-[#BF94FF] hover:text-white"
       >
         <div className="absolute left-[2px] flex size-7 items-center justify-center rounded-full bg-white p-[0.35rem]">
           <img src="https://zkauth.vercel.app/twitch.svg" width={16} height={16} alt="Twitch" />
@@ -136,10 +136,10 @@ export function SignInButton({ address }: { address: `0x${string}` }) {
           fontFamily: "arial, sans-serif",
           letterSpacing: "0.25px",
         }}
-        className="relative flex h-8 w-full max-w-[197px] flex-row items-center gap-1.5 rounded-full bg-[#0077B5] pl-7 font-normal text-[14px] text-white tracking-wider hover:bg-[#BF94FF] hover:text-white"
+        className="relative flex h-8 w-full max-w-[197px] flex-row items-center gap-1.5 rounded-full bg-[#0077B5] pl-9 font-normal text-[14px] text-white tracking-wider hover:bg-[#0077B5] hover:text-white"
       >
         <div className="absolute left-[2px] flex size-7 items-center justify-center rounded-full bg-white p-[0.35rem]">
-          <img src="https://zkauth.vercel.app/linkedin.svg" width={16} height={16} alt="LinkedIn" />
+          <img src="https://zkauth.vercel.app/linkedin.svg" width={12} height={12} alt="LinkedIn" />
         </div>
         Continue with LinkedIn
       </Button>
