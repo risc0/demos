@@ -1,21 +1,21 @@
 import { NextResponse } from "next/server";
 import env from "~/env";
 
-async function getTwitchTokensAndEmail(code: string) {
+async function getTwitchTokensAndUserInfo(code: string) {
   try {
-    const body = new URLSearchParams();
-    body.append("client_id", env.TWITCH_CLIENT_ID);
-    body.append("client_secret", env.TWITCH_CLIENT_SECRET);
-    body.append("code", code);
-    body.append("grant_type", "authorization_code");
-    body.append("redirect_uri", "http://localhost:3000");
+    const params = new URLSearchParams();
+    params.append("client_id", env.TWITCH_CLIENT_ID);
+    params.append("client_secret", env.TWITCH_CLIENT_SECRET);
+    params.append("code", code);
+    params.append("grant_type", "authorization_code");
+    params.append("redirect_uri", "http://localhost:3000");
 
     const response = await fetch("https://id.twitch.tv/oauth2/token", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      body,
+      body: params,
     });
 
     if (!response.ok) {
@@ -44,15 +44,17 @@ async function getTwitchTokensAndEmail(code: string) {
     }
 
     const userInfo = await userInfoResponse.json();
-    const email = userInfo.data[0]?.email;
+    const userData = userInfo.data[0];
 
     return {
       id_token: data.id_token,
       access_token: data.access_token,
-      email: email,
+      email: userData?.email,
+      profile_image_url: userData?.profile_image_url,
+      display_name: userData?.display_name,
     };
   } catch (error) {
-    console.error("Error getting Twitch tokens and email:", error);
+    console.error("Error getting Twitch tokens and user info:", error);
     throw error;
   }
 }
@@ -60,15 +62,17 @@ async function getTwitchTokensAndEmail(code: string) {
 export async function POST(request: Request) {
   try {
     const { code } = await request.json();
-    const { id_token, access_token, email } = await getTwitchTokensAndEmail(code);
+    const { id_token, access_token, email, profile_image_url, display_name } = await getTwitchTokensAndUserInfo(code);
 
     return NextResponse.json({
       jwt: id_token,
-      access_token: access_token,
-      email: email,
+      access_token,
+      display_name,
+      email,
+      profile_image_url,
     });
   } catch (error) {
-    console.error("Failed to get tokens and email:", error);
+    console.error("Failed to get tokens and user info:", error);
     return NextResponse.json({ error: String(error) }, { status: 500 });
   }
 }

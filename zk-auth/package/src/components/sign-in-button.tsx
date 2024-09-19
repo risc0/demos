@@ -20,7 +20,13 @@ export function SignInButton({ address }: { address: `0x${string}` }) {
       return;
     }
 
-    setGoogleUserInfos(jwtDecode(googleUserToken));
+    const { name, email, picture } = jwtDecode(googleUserToken) as any;
+
+    setGoogleUserInfos({
+      name,
+      email,
+      picture,
+    });
   }, [googleUserToken, setGoogleUserInfos, googleUserInfos]);
 
   useEffect(() => {

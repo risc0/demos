@@ -10,7 +10,7 @@ export function useSocialsLocalStorage({
   address: `0x${string}`;
 }) {
   // google
-  const [googleUserInfos, setGoogleUserInfos] = useLocalStorage(
+  const [googleUserInfos, setGoogleUserInfos] = useLocalStorage<any>(
     generateLocalStorageKey("google", "infos", address),
     undefined,
   );
@@ -20,7 +20,7 @@ export function useSocialsLocalStorage({
   );
 
   // twitch
-  const [twitchUserInfos, setTwitchUserInfos] = useLocalStorage(
+  const [twitchUserInfos, setTwitchUserInfos] = useLocalStorage<any>(
     generateLocalStorageKey("twitch", "infos", address),
     undefined,
   );

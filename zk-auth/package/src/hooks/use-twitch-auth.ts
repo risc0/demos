@@ -5,7 +5,7 @@ const TWITCH_CLIENT_ID = "sue2yrycv0enft61awlptyw4xfpl7z";
 const TWITCH_REDIRECT_URI = window.location.origin;
 
 export function useTwitchAuth({ address }: { address: `0x${string}` }) {
-  const { setTwitchUserToken } = useSocialsLocalStorage({ address });
+  const { setTwitchUserToken, setTwitchUserInfos } = useSocialsLocalStorage({ address });
   const [error, setError] = useState<string | null>(null);
 
   const signInWithTwitch = useCallback(() => {
@@ -15,7 +15,7 @@ export function useTwitchAuth({ address }: { address: `0x${string}` }) {
     authUrl.searchParams.append("client_id", TWITCH_CLIENT_ID);
     authUrl.searchParams.append("redirect_uri", TWITCH_REDIRECT_URI);
     authUrl.searchParams.append("response_type", "code");
-    authUrl.searchParams.append("scope", "openid user:read:email");
+    authUrl.searchParams.append("scope", "openid user:read:email ");
     authUrl.searchParams.append("nonce", nonce);
 
     window.location.href = authUrl.toString();
@@ -31,7 +31,14 @@ export function useTwitchAuth({ address }: { address: `0x${string}` }) {
           body: JSON.stringify({ code }),
         });
 
-        const { jwt } = await response.json();
+        // wipe the url
+        window.history.replaceState({}, "", window.location.href);
+
+        console.log("response", response);
+        const { jwt, email, profile_image_url, display_name } = await response.json();
+        console.log("{ email, profile_image_url, display_name }", { email, profile_image_url, display_name });
+
+        setTwitchUserInfos({ email, profile_image_url, display_name });
 
         console.log("jwt", jwt);
 
@@ -43,7 +50,7 @@ export function useTwitchAuth({ address }: { address: `0x${string}` }) {
         console.error(err);
       }
     },
-    [setTwitchUserToken],
+    [setTwitchUserToken, setTwitchUserInfos],
   );
 
   return {
