@@ -50,13 +50,13 @@ impl IdentityProvider {
                 Ok((email, nonce, exp, iat, jwk_str.to_string()))
             }
             Self::Twitch => {
-              let decoded = decode_token::<TwitchClaims>(token, &jwk).unwrap();
-              let email = decoded.custom.email.to_string();
-              let nonce = decoded.custom.nonce.to_string();
-              let exp = decoded.expiration.unwrap().timestamp().to_string();
-              let iat = decoded.issued_at.unwrap().timestamp().to_string();
-              Ok((email, nonce, exp, iat, jwk_str.to_string()))
-          }
+                let decoded = decode_token::<TwitchClaims>(token, &jwk).unwrap();
+                let nonce = decoded.custom.nonce.to_string();
+                let exp = decoded.expiration.unwrap().timestamp().to_string();
+                let iat = decoded.issued_at.unwrap().timestamp().to_string();
+                let preferred_username = decoded.custom.preferred_username.to_string();
+                Ok((preferred_username, nonce, exp, iat, jwk_str.to_string())) // Return preferred_username instead of email
+            }
             Self::Test => {
                 let decoded = decode_token::<TestClaims>(token, &jwk).unwrap();
                 let email = decoded.custom.email.to_string();
@@ -87,10 +87,8 @@ pub struct TwitchClaims {
     pub iat: i64,
     pub iss: String,
     pub sub: String,
-    pub email: String,
     pub nonce: String,
-    pub preferred_username: Option<String>,
-    pub picture: Option<String>,
+    pub preferred_username: String,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
