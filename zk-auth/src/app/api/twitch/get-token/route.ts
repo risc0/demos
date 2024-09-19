@@ -13,7 +13,7 @@ async function getTwitchJWT(code: string) {
         client_secret: env.TWITCH_CLIENT_SECRET,
         code,
         grant_type: "authorization_code",
-        //redirect_uri: `${redirectUri}/api/twitch/get-token`,
+        redirect_uri: "http://localhost:3000",
       }),
     });
 
