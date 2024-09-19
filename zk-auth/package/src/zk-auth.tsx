@@ -1,7 +1,9 @@
+"use client";
+
 import "./style.css";
 
 import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { ProveButton } from "./components/prove-button";
 import { SignInButton } from "./components/sign-in-button";
 import { useSocialsLocalStorage } from "./hooks/use-socials";

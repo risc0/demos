@@ -1,3 +1,5 @@
+"use client";
+
 export function cleanUrl() {
   const url = new URL(window.location.href);
   url.search = "";

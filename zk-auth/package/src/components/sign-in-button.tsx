@@ -1,3 +1,5 @@
+"use client";
+
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import { Button } from "@risc0/ui/button";
 import jwtDecode from "jwt-decode";

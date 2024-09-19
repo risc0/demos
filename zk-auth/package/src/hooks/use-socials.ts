@@ -1,3 +1,5 @@
+"use client";
+
 import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
 import type { SupportedProviders } from "../types/supported-providers";
 
