@@ -3,13 +3,15 @@ import { Alert, AlertDescription } from "@risc0/ui/alert";
 export function UserInfos({ userInfos, type }: { userInfos: any; type: "google" }) {
   return (
     <Alert className="flex flex-row items-center border-neutral-100 gap-6 bg-neutral-50 p-5">
-      <img
-        src={userInfos.picture}
-        alt={userInfos.name}
-        width={96}
-        height={96}
-        className="rounded-md shadow-xs pointer-events-none"
-      />
+      <div className="size-[80px] flex items-center justify-center">
+        <img
+          src={userInfos.picture}
+          alt={userInfos.name}
+          width={80}
+          height={80}
+          className="rounded-md shadow-xs pointer-events-none"
+        />
+      </div>
       <AlertDescription className="grid w-full">
         <p title={userInfos.name} className="truncate font-bold text-xl">
           {userInfos.name}

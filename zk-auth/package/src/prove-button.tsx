@@ -5,10 +5,12 @@ import { Button } from "@risc0/ui/button";
 import { cn } from "@risc0/ui/cn";
 import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
 import { Loader } from "@risc0/ui/loader";
-import { AlertTriangleIcon, Loader2Icon } from "lucide-react";
+import { AlertTriangleIcon } from "lucide-react";
 import { useState } from "react";
+import { BorderBeam } from "./border-beam";
 import { doSnarkProving } from "./do-snark-proving";
 import { doStarkProving } from "./do-stark-proving";
+import { SignOutButton } from "./sign-out-button";
 import { UserInfos } from "./user-infos";
 
 export function ProveButton({ address }: { address: string }) {
@@ -55,99 +57,119 @@ export function ProveButton({ address }: { address: string }) {
 
   return address ? (
     <>
-      {isLoading ? (
-        <Loader
-          loadingSrc="https://zkauth.vercel.app/loading.gif"
-          loadingText="☕️ This will take a couple of minutes… Do not close your browser…"
-        />
-      ) : (
-        <>
-          <p className="mb-3 break-words text-xs w-full">
-            You are about to prove that address
-            <br />
-            <strong className="w-full" title={address}>
-              {address}
-            </strong>
-            <br />
-            owns the following social account:
-          </p>
+      <div className="flex flex-row w-full items-center justify-end min-h-8">
+        {!isLoading && <SignOutButton address={address} />}
+      </div>
 
-          {googleUserInfos && <UserInfos type="google" userInfos={googleUserInfos} />}
-        </>
-      )}
+      <div className="w-full flex flex-1">
+        <div className="flex flex-col flex-1 justify-end w-full">
+          {isLoading ? (
+            <Loader
+              loadingSrc="https://zkauth.vercel.app/loading.gif"
+              loadingText="☕️ This process will take a couple of minutes… Do not close your browser…"
+            />
+          ) : (
+            <>
+              <p className="mb-3 break-words text-xs w-full">
+                You are about to prove that address
+                <br />
+                <strong className="w-full" title={address}>
+                  {address}
+                </strong>
+                <br />
+                owns the following social account:
+              </p>
 
-      <div className="mt-6 w-full">
-        <Button
-          isLoading={isLoading}
-          onClick={handleClick}
-          size="lg"
-          autoFocus
-          className="flex w-full flex-row items-center gap-1.5"
-          disabled={!!error || isLoading}
-        >
-          {isLoading ? "Proving" : "Prove"} with{" "}
-          <img width={58} height={16} src="https://zkauth.vercel.app/bonsai-logo-dark.svg" alt="bonsai logo" />
-        </Button>
+              {googleUserInfos && <UserInfos type="google" userInfos={googleUserInfos} />}
+            </>
+          )}
 
-        {starkPollingResults && starkPollingResults.length > 0 && (
-          <Alert className="mt-4 border-none px-0">
-            <AlertTitle>
-              STARK Results{" "}
-              <span
-                className={cn(
-                  "text-muted-foreground",
-                  starkPollingResults.at(-1)?.status === "SUCCEEDED" && "font-bold text-green-600",
-                  starkPollingResults.at(-1)?.status === "FAILED" && "font-bold text-red-600",
+          <div className="mt-6 w-full">
+            <Button
+              isLoading={isLoading}
+              onClick={handleClick}
+              size="lg"
+              autoFocus
+              className="flex w-full mb-4 flex-row items-center gap-1.5"
+              disabled={!!error || isLoading}
+            >
+              {isLoading ? "Proving" : "Prove"} with{" "}
+              <img
+                width={58}
+                height={16}
+                src="https://zkauth.vercel.app/bonsai-logo-dark.svg"
+                alt="bonsai logo"
+                className="relative -top-[1px]"
+              />
+            </Button>
+
+            {starkPollingResults && starkPollingResults.length > 0 && (
+              <Alert className="border-none py-0 px-0 animate-fade-in-up">
+                {starkPollingResults.at(-1)?.status !== "SUCCEEDED" && (
+                  <AlertDescription className="rounded border bg-neutral-50 font-mono relative min-h-[110.5px]">
+                    <AlertTitle className="px-3 pt-3">
+                      STARK{" "}
+                      <span
+                        className={cn(
+                          "text-muted-foreground font-normal",
+                          starkPollingResults.at(-1)?.status === "SUCCEEDED" && "font-bold text-green-600",
+                          starkPollingResults.at(-1)?.status === "FAILED" && "font-bold text-red-600",
+                        )}
+                      >
+                        ({starkPollingResults.at(-1)?.status})
+                      </span>
+                    </AlertTitle>
+
+                    <BorderBeam size={110.5} duration={5} />
+
+                    <div className="flex flex-row items-start justify-between gap-2 px-3 py-2">
+                      <div className="flex flex-col leading-tight">
+                        {starkPollingResults.slice(-5).map((result: any) => (
+                          <code key={result} className="block text-[10px]">
+                            {result.state}
+                          </code>
+                        ))}
+                      </div>
+                    </div>
+                  </AlertDescription>
                 )}
-              >
-                ({starkPollingResults.at(-1)?.status})
-              </span>
-            </AlertTitle>
-            {starkPollingResults.at(-1)?.status !== "SUCCEEDED" && (
-              <AlertDescription className="rounded border bg-neutral-50">
-                <div className="flex flex-row items-start justify-between gap-2 px-3 py-2">
-                  <div className="flex flex-col">
-                    {starkPollingResults.map((result: any, index: any) => (
-                      <code key={index} className="block text-[10px]">
-                        {result.state}
-                      </code>
-                    ))}
-                  </div>
-                  <Loader2Icon className="mt-[0.25rem] size-3.5 animate-spin text-border" />
-                </div>
-              </AlertDescription>
+              </Alert>
             )}
-          </Alert>
-        )}
 
-        {snarkPollingResults && (
-          <Alert className="border-none px-0 pb-0">
-            <AlertTitle>
-              SNARK Results{" "}
-              <span
-                className={cn(
-                  snarkPollingResults.status === "SUCCEEDED" && "font-bold text-green-600",
-                  snarkPollingResults.status === "FAILED" && "font-bold text-red-600",
-                )}
-              >
-                ({snarkPollingResults.status})
-              </span>
-            </AlertTitle>
-            <AlertDescription className="rounded border bg-neutral-50">
-              <div className="flex flex-row items-center justify-between gap-2 px-3 py-2 text-xs">
-                This will take around 2 minutes <Loader2Icon className="size-3.5 animate-spin text-border" />
-              </div>
-            </AlertDescription>
-          </Alert>
-        )}
+            {snarkPollingResults && (
+              <Alert className="border-none py-0 px-0 animate-fade-in-up">
+                <AlertDescription className="rounded border bg-neutral-50 font-mono relative min-h-[64px] ">
+                  <AlertTitle className="px-3 pt-3">
+                    SNARK{" "}
+                    <span
+                      className={cn(
+                        "text-muted-foreground",
+                        snarkPollingResults.status === "SUCCEEDED" && "font-bold text-green-600",
+                        snarkPollingResults.status === "FAILED" && "font-bold text-red-600",
+                      )}
+                    >
+                      ({snarkPollingResults.status})
+                    </span>
+                  </AlertTitle>
 
-        {error && (
-          <Alert variant="destructive" className="mt-2">
-            <AlertTriangleIcon className="size-4" />
-            <AlertTitle>Error {error.status}</AlertTitle>
-            <AlertDescription>{error.message}</AlertDescription>
-          </Alert>
-        )}
+                  <BorderBeam size={64} duration={5} />
+
+                  <div className="flex flex-row items-center justify-between gap-2 px-3 py-2 text-xs">
+                    This should take around 2 minutes…
+                  </div>
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {error && (
+              <Alert variant="destructive" className="mt-2">
+                <AlertTriangleIcon className="size-4" />
+                <AlertTitle>Error {error.status}</AlertTitle>
+                <AlertDescription>{error.message}</AlertDescription>
+              </Alert>
+            )}
+          </div>
+        </div>
       </div>
     </>
   ) : null;

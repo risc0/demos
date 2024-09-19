@@ -6,6 +6,19 @@ const config = deepmerge(tailwindConfig, {
   theme: {
     fontFamily: {
       sans: ["var(--font-europa-sans)", "system-ui"],
+      mono: ["var(--font-mono)", "monospace"],
+    },
+    extend: {
+      animation: {
+        "border-beam": "border-beam calc(var(--duration)*1s) infinite linear",
+      },
+      keyframes: {
+        "border-beam": {
+          "100%": {
+            "offset-distance": "100%",
+          },
+        },
+      },
     },
   },
 }) satisfies Config;

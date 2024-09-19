@@ -47,21 +47,25 @@ export function ZkAuth({ address, onStarkComplete, onSnarkComplete }: ZkAuthProp
 
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-      <div className="font-sans size-[320px] flex flex-col items-center justify-between relative">
-        <div className="flex flex-row w-full items-center justify-between">
-          <h1 className="text-lg font-bold">zkAuth</h1>
-          <SignOutButton address={address} />
-        </div>
-
-        <div className="flex flex-col items-center justify-center flex-1 w-full">
-          {currentStep === 1 ? (
-            <SignInButton address={address} />
-          ) : currentStep === 2 ? (
-            <ProveButton address={address} />
-          ) : (
-            <>Proving complete</>
-          )}
-        </div>
+      <div className="font-sans w-[320px] min-h-[320px] flex flex-col items-center justify-between relative">
+        {currentStep === 1 ? (
+          <SignInButton address={address} />
+        ) : currentStep === 2 ? (
+          <ProveButton address={address} />
+        ) : (
+          <>
+            Proving complete (check console for results)
+            <button
+              type="button"
+              onClick={() => {
+                localStorage.clear();
+                window.location.reload();
+              }}
+            >
+              wipe local storage
+            </button>
+          </>
+        )}
       </div>
     </GoogleOAuthProvider>
   );
