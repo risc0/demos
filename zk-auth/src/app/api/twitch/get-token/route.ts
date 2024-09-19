@@ -10,6 +10,8 @@ async function getTwitchJWT(accessToken: string) {
       scope: "openid",
     });
 
+    console.log("params", params);
+
     const response = await fetch(`https://id.twitch.tv/oauth2/token?${params}`, {
       method: "POST",
       headers: {
@@ -18,13 +20,24 @@ async function getTwitchJWT(accessToken: string) {
       },
     });
 
+    console.log("response", response);
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const data = await response.json();
 
-    return data.id_token; // This is the JWT
+    console.log("data", data);
+
+    if (!data.id_token) {
+      console.error("Twitch response:", data);
+      throw new Error("No id_token in Twitch response");
+    }
+
+    console.log("data.id_token", data.id_token);
+
+    return data.id_token;
   } catch (error) {
     console.error("Error getting Twitch JWT:", error);
     throw error;
@@ -36,9 +49,11 @@ export async function POST(request: Request) {
     const { accessToken } = await request.json();
     const jwt = await getTwitchJWT(accessToken);
 
+    console.log("jwt", jwt);
+
     return NextResponse.json({ jwt });
   } catch (error) {
     console.error("Failed to get JWT:", error);
-    return NextResponse.json({ error: "Failed to get JWT" }, { status: 500 });
+    return NextResponse.json({ error: String(error) }, { status: 500 });
   }
 }
