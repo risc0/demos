@@ -7,7 +7,10 @@ type StarkSessionStatusRes = {
   // Add other properties as needed
 };
 
-async function bonsaiStarkProving({ iss, token }: { iss: "Google" | "test"; token: string }): Promise<string> {
+async function bonsaiStarkProving({
+  iss,
+  token,
+}: { iss: "Google" | "Twitch" | "test"; token: string }): Promise<string> {
   const response = await fetch("https://zkauth.vercel.app/api/bonsai/stark-proving", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -36,7 +39,7 @@ export async function doStarkProving({
   token,
   setStarkPollingResults,
 }: {
-  iss: "Google" | "test";
+  iss: "Google" | "Twitch" | "test";
   token: string;
   setStarkPollingResults: Dispatch<SetStateAction<StarkSessionStatusRes[] | undefined>>;
 }) {

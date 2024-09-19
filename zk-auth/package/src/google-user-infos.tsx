@@ -1,6 +1,6 @@
 import { Alert, AlertDescription } from "@risc0/ui/alert";
 
-export function UserInfos({ userInfos, type }: { userInfos: any; type: "google" }) {
+export function GoogleUserInfos({ userInfos }: { userInfos: any }) {
   return (
     <Alert className="flex flex-row items-center border-neutral-100 gap-6 bg-neutral-50 p-5">
       <div className="size-[80px] flex items-center justify-center">
@@ -20,12 +20,8 @@ export function UserInfos({ userInfos, type }: { userInfos: any; type: "google" 
           {userInfos.email}
         </p>
         <p className="mt-1 flex flex-row gap-1.5 items-center text-[10px]">
-          {type === "google" && (
-            <>
-              <img src="https://zkauth.vercel.app/google.svg" width={16} height={16} alt="Google" />
-              <span>Google</span>
-            </>
-          )}
+          <img src="https://zkauth.vercel.app/google.svg" width={16} height={16} alt="Google" />
+          <span>Google</span>
         </p>
       </AlertDescription>
     </Alert>

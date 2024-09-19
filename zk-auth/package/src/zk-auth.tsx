@@ -14,13 +14,14 @@ export type ZkAuthProps = {
 };
 
 export function ZkAuth({ address, onStarkComplete, onSnarkComplete }: ZkAuthProps) {
+  const [twitchUserToken] = useLocalStorage(`twitch-token-${address}`, null);
   const [googleUserToken] = useLocalStorage(`google-token-${address}`, null);
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [starkResults] = useLocalStorage(`stark-results-${address}`, undefined);
   const [snarkResults] = useLocalStorage(`snark-results-${address}`, undefined);
 
   useEffect(() => {
-    if (!googleUserToken) {
+    if (!googleUserToken && !twitchUserToken) {
       setCurrentStep(1);
       return;
     }
@@ -31,7 +32,7 @@ export function ZkAuth({ address, onStarkComplete, onSnarkComplete }: ZkAuthProp
     }
 
     setCurrentStep(2);
-  }, [googleUserToken, starkResults, snarkResults]);
+  }, [googleUserToken, twitchUserToken, starkResults, snarkResults]);
 
   useEffect(() => {
     if (starkResults && onStarkComplete) {

@@ -2,6 +2,7 @@ import axios, { type AxiosInstance, type AxiosResponse } from "axios";
 import env from "~/env";
 import { encodeString } from "./encode-string";
 import { getGoogleCerts } from "./get-google-certs";
+import { getTwitchCerts } from "./get-twitch-certs";
 import type {
   CreateSnarkSessionRes,
   CreateStarkSessionRes,
@@ -122,12 +123,16 @@ class Client {
 }
 
 // STARK
-export async function bonsaiStarkProving({ iss, token }: { iss: "Google" | "test"; token: string }) {
+export async function bonsaiStarkProving({ iss, token }: { iss: "Google" | "Twitch" | "test"; token: string }) {
   // TODO: Add others, if applicable
   let jwks = "";
 
   if (iss === "Google") {
     jwks = await getGoogleCerts();
+  }
+
+  if (iss === "Twitch") {
+    jwks = await getTwitchCerts();
   }
 
   const inputData = Buffer.from(

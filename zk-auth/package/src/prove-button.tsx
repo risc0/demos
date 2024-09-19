@@ -10,18 +10,26 @@ import { useState } from "react";
 import { BorderBeam } from "./border-beam";
 import { doSnarkProving } from "./do-snark-proving";
 import { doStarkProving } from "./do-stark-proving";
+import { GoogleUserInfos } from "./google-user-infos";
 import { SignOutButton } from "./sign-out-button";
-import { UserInfos } from "./user-infos";
+import { TwitchUserInfos } from "./twitch-user-infos";
 
 export function ProveButton({ address }: { address: string }) {
   const [_starkResults, setStarkResults] = useLocalStorage<any>(`stark-results-${address}`, undefined);
   const [_snarkResults, setSnarkResults] = useLocalStorage<any>(`snark-results-${address}`, undefined);
+
+  // google
   const [googleUserInfos] = useLocalStorage(`google-infos-${address}`, undefined);
   const [googleUserToken] = useLocalStorage(`google-token-${address}`, undefined);
+
+  // twitch
+  const [twitchUserInfos] = useLocalStorage(`twitch-infos-${address}`, undefined);
+  const [twitchUserToken] = useLocalStorage(`twitch-token-${address}`, undefined);
+
   const [error, setError] = useState<any>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [snarkPollingResults, setSnarkPollingResults] = useState<any>();
   const [starkPollingResults, setStarkPollingResults] = useState<any>();
-  const [isLoading, setIsLoading] = useState(false);
 
   // this function takes care of creating the STARK session, which then returns a UUID
   // we then use this UUID to create a SNARK session
@@ -30,7 +38,7 @@ export function ProveButton({ address }: { address: string }) {
   async function handleClick() {
     setIsLoading(true);
 
-    if (!googleUserToken) {
+    if (!googleUserToken && !twitchUserToken) {
       console.error("JWT not found");
       setIsLoading(false);
 
@@ -39,9 +47,9 @@ export function ProveButton({ address }: { address: string }) {
 
     try {
       const { starkUuid, starkStatus } = await doStarkProving({
-        iss: googleUserInfos ? "Google" : "test",
+        iss: googleUserInfos ? "Google" : twitchUserInfos ? "Twitch" : "test",
         setStarkPollingResults,
-        token: googleUserToken ?? "",
+        token: googleUserToken ?? twitchUserToken ?? "",
       });
       const { snarkStatus } = await doSnarkProving({ setSnarkPollingResults, starkUuid });
 
@@ -80,7 +88,8 @@ export function ProveButton({ address }: { address: string }) {
                 owns the following social account:
               </p>
 
-              {googleUserInfos && <UserInfos type="google" userInfos={googleUserInfos} />}
+              {googleUserInfos && <GoogleUserInfos userInfos={googleUserInfos} />}
+              {twitchUserInfos && <TwitchUserInfos userInfos={twitchUserInfos} />}
             </>
           )}
 
