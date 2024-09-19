@@ -9,7 +9,7 @@ export function TwitchUserInfos({ userInfos }: { userInfos: any }) {
           alt={userInfos.display_name}
           width={64}
           height={64}
-          className="rounded-md shadow-xs pointer-events-none"
+          className="rounded-sm shadow-xs pointer-events-none"
         />
       </div>
       <AlertDescription className="grid w-full">
@@ -19,7 +19,7 @@ export function TwitchUserInfos({ userInfos }: { userInfos: any }) {
         <p title={userInfos.email} className="truncate text-muted-foreground text-sm">
           {userInfos.email}
         </p>
-        <p className="mt-1 flex flex-row gap-1.5 items-center text-[10px]">
+        <p className="mt-1 flex flex-row gap-1 items-center text-[10px]">
           <img src="https://zkauth.vercel.app/twitch.svg" width={16} height={16} alt="Twitch" />
           <span>Twitch</span>
         </p>
