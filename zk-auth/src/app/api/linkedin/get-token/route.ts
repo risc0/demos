@@ -8,7 +8,6 @@ async function getLinkedInTokensAndUserInfo(code: string) {
     params.append("client_secret", env.LINKEDIN_CLIENT_SECRET);
     params.append("code", code);
     params.append("grant_type", "authorization_code");
-    params.append("nonce", "0x000");
     params.append("redirect_uri", "http://localhost:3000");
 
     const response = await fetch("https://www.linkedin.com/oauth/v2/accessToken", {
