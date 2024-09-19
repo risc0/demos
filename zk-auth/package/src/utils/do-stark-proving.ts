@@ -2,15 +2,14 @@ import { sleep } from "@risc0/ui/utils/sleep";
 import isEqual from "lodash-es/isEqual";
 import type { Dispatch, SetStateAction } from "react";
 
+type Iss = "Google" | "Twitch" | "test";
+
 type StarkSessionStatusRes = {
   status: string;
   // Add other properties as needed
 };
 
-async function bonsaiStarkProving({
-  iss,
-  token,
-}: { iss: "Google" | "Twitch" | "test"; token: string }): Promise<string> {
+async function bonsaiStarkProving({ iss, token }: { iss: Iss; token: string }): Promise<string> {
   const response = await fetch("https://zkauth.vercel.app/api/bonsai/stark-proving", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -39,7 +38,7 @@ export async function doStarkProving({
   token,
   setStarkPollingResults,
 }: {
-  iss: "Google" | "Twitch" | "test";
+  iss: Iss;
   token: string;
   setStarkPollingResults: Dispatch<SetStateAction<StarkSessionStatusRes[] | undefined>>;
 }) {

@@ -1,12 +1,12 @@
 {
-	"extends": "@risc0/ui/config/tsconfig.base.json",
-	"compilerOptions": {
-		"baseUrl": ".",
-		"paths": {
-			"~/*": ["./src/*"]
-		},
-		"types": ["node"]
-	},
-	"include": [".next/types/**/*.ts", "**/*.ts", "**/*.tsx", "next-env.d.ts"],
-	"exclude": ["node_modules"]
+  "extends": "@risc0/ui/config/tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./src/*"]
+    },
+    "types": ["node"]
+  },
+  "include": [".next/types/**/*.ts", "**/*.ts", "**/*.tsx", "next-env.d.ts"],
+  "exclude": ["node_modules"]
 }

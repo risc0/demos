@@ -56,16 +56,14 @@ export function ProveButton({ address }: { address: `0x${string}` }) {
     }
   }
 
-  console.log("starkPollingResults", starkPollingResults);
-
   return address ? (
     <>
-      <div className="flex flex-row w-full items-center justify-end min-h-8">
+      <div className="flex min-h-8 w-full flex-row items-center justify-end">
         {!isLoading && <SignOutButton address={address} />}
       </div>
 
-      <div className="w-full flex flex-1">
-        <div className="flex flex-col flex-1 justify-end w-full">
+      <div className="flex w-full flex-1">
+        <div className="flex w-full flex-1 flex-col justify-end">
           {isLoading ? (
             <Loader
               loadingSrc="https://zkauth.vercel.app/loading.gif"
@@ -73,7 +71,7 @@ export function ProveButton({ address }: { address: `0x${string}` }) {
             />
           ) : (
             <>
-              <p className="mb-3 break-words text-xs w-full">
+              <p className="mb-3 w-full break-words text-xs">
                 You are about to prove that address
                 <br />
                 <strong className="w-full" title={address}>
@@ -94,7 +92,7 @@ export function ProveButton({ address }: { address: `0x${string}` }) {
               onClick={handleClick}
               size="lg"
               autoFocus
-              className="flex w-full mb-4 flex-row items-center gap-1.5"
+              className="mb-4 flex w-full flex-row items-center gap-1.5"
               disabled={!!error || isLoading}
             >
               {isLoading ? "Proving" : "Prove"} with{" "}
@@ -103,19 +101,19 @@ export function ProveButton({ address }: { address: `0x${string}` }) {
                 height={16}
                 src="https://zkauth.vercel.app/bonsai-logo-dark.svg"
                 alt="bonsai logo"
-                className="relative -top-[1px]"
+                className="-top-[1px] relative"
               />
             </Button>
 
             {starkPollingResults && starkPollingResults.length > 0 && (
-              <Alert className="border-none py-0 px-0 animate-fade-in-up">
+              <Alert className="animate-fade-in-up border-none px-0 py-0">
                 {starkPollingResults.at(-1)?.status !== "SUCCEEDED" && (
-                  <AlertDescription className="rounded border bg-neutral-50 font-mono relative min-h-[110.5px]">
+                  <AlertDescription className="relative min-h-[110.5px] rounded border bg-neutral-50 font-mono">
                     <AlertTitle className="px-3 pt-3">
                       STARK{" "}
                       <span
                         className={cn(
-                          "text-muted-foreground font-normal",
+                          "font-normal text-muted-foreground",
                           starkPollingResults.at(-1)?.status === "FAILED" && "font-bold text-red-600",
                         )}
                       >
@@ -140,8 +138,8 @@ export function ProveButton({ address }: { address: `0x${string}` }) {
             )}
 
             {snarkPollingResults && (
-              <Alert className="border-none py-0 px-0 animate-fade-in-up">
-                <AlertDescription className="rounded border bg-neutral-50 font-mono relative min-h-[64px] ">
+              <Alert className="animate-fade-in-up border-none px-0 py-0">
+                <AlertDescription className="relative min-h-[64px] rounded border bg-neutral-50 font-mono ">
                   <AlertTitle className="px-3 pt-3">
                     SNARK{" "}
                     <span

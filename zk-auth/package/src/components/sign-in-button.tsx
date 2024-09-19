@@ -65,7 +65,7 @@ export function SignInButton({ address }: { address: `0x${string}` }) {
         }}
       />
 
-      <Button onClick={signInWithTwitch} size="lg" className="flex w-full mb-4 flex-row items-center gap-1.5">
+      <Button onClick={signInWithTwitch} size="lg" className="mb-4 flex w-full flex-row items-center gap-1.5">
         Sign in with Twitch
       </Button>
     </>

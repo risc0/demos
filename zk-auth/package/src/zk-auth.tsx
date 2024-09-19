@@ -47,7 +47,7 @@ export function ZkAuth({ address, onStarkComplete, onSnarkComplete }: ZkAuthProp
 
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-      <div className="font-sans w-[320px] min-h-[320px] flex flex-col items-center justify-between relative">
+      <div className="relative flex min-h-[320px] w-[320px] flex-col items-center justify-between font-sans">
         {currentStep === 1 ? (
           <SignInButton address={address} />
         ) : currentStep === 2 ? (

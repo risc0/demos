@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "next build",
+    "check": "bunx @biomejs/biome check --write --unsafe .",
     "dev": "next dev --turbo",
     "start": "next start"
   },

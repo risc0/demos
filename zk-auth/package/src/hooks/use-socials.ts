@@ -1,6 +1,7 @@
 import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
+import type { SupportedProviders } from "../types/supported-providers";
 
-function generateLocalStorageKey(provider: "google" | "twitch", identifier: string, address: `0x${string}`) {
+function generateLocalStorageKey(provider: SupportedProviders, identifier: string, address: `0x${string}`) {
   return `${provider}-${identifier}-${address}`;
 }
 

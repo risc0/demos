@@ -36,7 +36,7 @@ export const BorderBeam = ({
         } as CSSProperties
       }
       className={cn(
-        "pointer-events-none absolute -inset-[1px] rounded-[inherit] [border:calc(var(--border-width)*1px)_solid_transparent]",
+        "-inset-[1px] pointer-events-none absolute rounded-[inherit] [border:calc(var(--border-width)*1px)_solid_transparent]",
 
         // mask styles
         "![mask-clip:padding-box,border-box] ![mask-composite:intersect] [mask:linear-gradient(transparent,transparent),linear-gradient(white,white)]",
