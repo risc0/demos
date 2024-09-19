@@ -22,6 +22,7 @@ export function SignInButton({ address }: { address: `0x${string}` }) {
   const { handleTwitchAuthCallback, signInWithTwitch } = useTwitchAuth({ address });
   const { handleLinkedInAuthCallback, signInWithLinkedIn } = useLinkedInAuth({ address });
   const code = new URLSearchParams(window.location.search).get("code");
+  const urlState = new URLSearchParams(window.location.search).get("state");
 
   // google auth callback
   useEffect(() => {
@@ -45,10 +46,7 @@ export function SignInButton({ address }: { address: `0x${string}` }) {
     }
 
     async function handleLinkedInAuth() {
-      const code = new URLSearchParams(window.location.search).get("code");
-      const urlState = new URLSearchParams(window.location.search).get("state");
-
-      if (urlState === "linkedin" && code) {
+      if (urlState?.startsWith("linkedin") && code) {
         try {
           await handleLinkedInAuthCallback(code);
 
@@ -60,7 +58,7 @@ export function SignInButton({ address }: { address: `0x${string}` }) {
     }
 
     handleLinkedInAuth();
-  }, [handleLinkedInAuthCallback, linkedInUserToken]);
+  }, [handleLinkedInAuthCallback, linkedInUserToken, code, urlState]);
 
   // twitch auth callback
   useEffect(() => {
@@ -69,9 +67,6 @@ export function SignInButton({ address }: { address: `0x${string}` }) {
     }
 
     async function handleTwitchAuth() {
-      const code = new URLSearchParams(window.location.search).get("code");
-      const urlState = new URLSearchParams(window.location.search).get("state");
-
       if (urlState === "twitch" && code) {
         try {
           await handleTwitchAuthCallback(code);
@@ -84,7 +79,7 @@ export function SignInButton({ address }: { address: `0x${string}` }) {
     }
 
     handleTwitchAuth();
-  }, [handleTwitchAuthCallback, twitchUserToken]);
+  }, [handleTwitchAuthCallback, twitchUserToken, code, urlState]);
 
   // loading state
   if (code) {
