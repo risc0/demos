@@ -11,7 +11,7 @@ export default function RootLayout({ children }) {
           <br />
           <br />
 
-          <div className="border-2">{children}</div>
+          <div>{children}</div>
         </div>
       </body>
     </html>
