@@ -1,23 +1,19 @@
 import { NextResponse } from "next/server";
 import env from "~/env";
 
-async function getTwitchJWT(accessToken: string) {
+async function getTwitchJWT(code: string) {
   try {
     const params = new URLSearchParams({
       client_id: env.TWITCH_CLIENT_ID,
       client_secret: env.TWITCH_CLIENT_SECRET,
-      grant_type: "client_credentials",
-      scope: "openid",
+      code,
+      grant_type: "authorization_code",
     });
 
     console.log("params", params);
 
     const response = await fetch(`https://id.twitch.tv/oauth2/token?${params}`, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
     });
 
     console.log("response", response);
@@ -46,8 +42,8 @@ async function getTwitchJWT(accessToken: string) {
 
 export async function POST(request: Request) {
   try {
-    const { accessToken } = await request.json();
-    const jwt = await getTwitchJWT(accessToken);
+    const { code } = await request.json();
+    const jwt = await getTwitchJWT(code);
 
     console.log("jwt", jwt);
 

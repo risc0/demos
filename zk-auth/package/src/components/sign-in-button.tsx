@@ -5,6 +5,11 @@ import { useEffect } from "react";
 import { useSocialsLocalStorage } from "../hooks/use-socials";
 import { useTwitchAuth } from "../hooks/use-twitch-auth";
 
+function getQueryParam(param: string): string | null {
+  const searchParams = new URLSearchParams(window.location.search);
+  return searchParams.get(param);
+}
+
 export function SignInButton({ address }: { address: `0x${string}` }) {
   const { googleUserInfos, twitchUserInfos, googleUserToken, twitchUserToken, setGoogleUserInfos, setGoogleUserToken } =
     useSocialsLocalStorage({ address });
@@ -23,9 +28,11 @@ export function SignInButton({ address }: { address: `0x${string}` }) {
       return;
     }
 
+    const code = getQueryParam("code");
+
     // Handle the Twitch auth callback
-    if (window.location.hash.includes("access_token") && !twitchUserInfos) {
-      handleTwitchAuthCallback();
+    if (code && !twitchUserInfos) {
+      handleTwitchAuthCallback(code);
     }
   }, [handleTwitchAuthCallback, twitchUserInfos, twitchUserToken]);
 

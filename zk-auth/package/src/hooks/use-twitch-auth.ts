@@ -1,65 +1,43 @@
-import { useState } from "react";
-import { useSocialsLocalStorage } from "./use-socials";
+import { useCallback, useState } from "react";
 
-const TWITCH_CLIENT_ID = "h7i920jmp37f1gwafkndd8xx1fcud1";
+const TWITCH_CLIENT_ID = "sue2yrycv0enft61awlptyw4xfpl7z";
 const TWITCH_REDIRECT_URI = window.location.origin;
 
 export function useTwitchAuth({ address }: { address: `0x${string}` }) {
   const [error, setError] = useState<string | null>(null);
-  const { setTwitchUserInfos, setTwitchUserToken } = useSocialsLocalStorage({ address });
 
-  function signInWithTwitch() {
-    window.location.href = `https://id.twitch.tv/oauth2/authorize?client_id=${TWITCH_CLIENT_ID}&redirect_uri=${encodeURIComponent(TWITCH_REDIRECT_URI)}&response_type=token&scope=user:read:email openid`;
-  }
+  const signInWithTwitch = useCallback(() => {
+    const nonce = address;
 
-  async function handleTwitchAuthCallback() {
-    console.log("handleTwitchAuthCallback");
-    const hash = window.location.hash.substring(1);
-    const params = new URLSearchParams(hash);
-    const accessToken = params.get("access_token");
-    console.log("accessToken", accessToken);
+    const authUrl = new URL("https://id.twitch.tv/oauth2/authorize");
+    authUrl.searchParams.append("client_id", TWITCH_CLIENT_ID);
+    authUrl.searchParams.append("redirect_uri", TWITCH_REDIRECT_URI);
+    authUrl.searchParams.append("response_type", "code");
+    authUrl.searchParams.append("scope", "openid");
+    authUrl.searchParams.append("nonce", nonce);
 
-    if (accessToken) {
-      try {
-        // Fetch user info
-        const userInfoResponse = await fetch("https://api.twitch.tv/helix/users", {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Client-Id": TWITCH_CLIENT_ID,
-          },
-        });
-        console.log("userInfoResponse", userInfoResponse);
-        if (!userInfoResponse.ok) {
-          throw new Error("Failed to fetch twitch user info");
-        }
+    window.location.href = authUrl.toString();
+  }, [address]);
 
-        const userData = await userInfoResponse.json();
-        console.log("userData", userData);
+  const handleTwitchAuthCallback = useCallback(async (code: string) => {
+    console.log("code", code);
+    try {
+      const response = await fetch("/api/twitch/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      });
 
-        setTwitchUserInfos(userData.data[0]);
-
-        // Fetch JWT from our endpoint
-        const jwtResponse = await fetch("https://zkauth.vercel.app/api/twitch/get-token", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ accessToken }),
-        });
-        console.log("jwtResponse", jwtResponse);
-        if (!jwtResponse.ok) {
-          throw new Error("Failed to fetch JWT");
-        }
-
-        const { jwt: twitchJwt } = await jwtResponse.json();
-        console.log("twitchJwt", twitchJwt);
-        setTwitchUserToken(twitchJwt);
-      } catch (err) {
-        setError("Failed to fetch twitch user info or JWT");
-        console.error(err);
+      if (!response.ok) {
+        throw new Error("Failed to fetch tokens");
       }
+
+      const { id_token, user_info } = await response.json();
+    } catch (err) {
+      setError("Failed to authenticate with Twitch");
+      console.error(err);
     }
-  }
+  }, []);
 
   return {
     error,
