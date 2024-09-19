@@ -11,14 +11,8 @@ import { useTwitchAuth } from "../hooks/use-twitch-auth";
 import { cleanUrl } from "../utils/clean-url";
 
 export function SignInButton({ address }: { address: `0x${string}` }) {
-  const {
-    googleUserInfos,
-    twitchUserToken,
-    googleUserToken,
-    linkedInUserToken,
-    setGoogleUserInfos,
-    setGoogleUserToken,
-  } = useSocialsLocalStorage({ address });
+  const { twitchUserToken, googleUserToken, linkedInUserToken, setGoogleUserInfos, setGoogleUserToken } =
+    useSocialsLocalStorage({ address });
   const { handleTwitchAuthCallback, signInWithTwitch } = useTwitchAuth({ address });
   const { handleLinkedInAuthCallback, signInWithLinkedIn } = useLinkedInAuth({ address });
   const code = new URLSearchParams(window.location.search).get("code");
@@ -26,7 +20,7 @@ export function SignInButton({ address }: { address: `0x${string}` }) {
 
   // google auth callback
   useEffect(() => {
-    if (!googleUserToken || googleUserInfos) {
+    if (!googleUserToken) {
       return;
     }
 
@@ -37,7 +31,7 @@ export function SignInButton({ address }: { address: `0x${string}` }) {
       email,
       picture,
     });
-  }, [googleUserToken, setGoogleUserInfos, googleUserInfos]);
+  }, [googleUserToken, setGoogleUserInfos]);
 
   // linkedin auth callback
   useEffect(() => {
@@ -116,7 +110,7 @@ export function SignInButton({ address }: { address: `0x${string}` }) {
           fontFamily: "arial, sans-serif",
           letterSpacing: "0.25px",
         }}
-        className="relative flex h-8 w-full max-w-[197px] flex-row items-center gap-1.5 rounded-full bg-[#A970FF] pl-6 font-normal text-[14px] text-white tracking-wider hover:bg-[#BF94FF] hover:text-white"
+        className="relative flex h-8 w-full max-w-[197px] transition-colors flex-row items-center gap-1.5 rounded-full bg-[#A970FF] pl-6 font-normal text-[14px] text-white tracking-wider hover:bg-[#BF94FF] hover:text-white"
       >
         <div className="absolute left-[2px] flex size-7 items-center justify-center rounded-full bg-white p-[0.35rem]">
           <img src="https://zkauth.vercel.app/twitch.svg" width={16} height={16} alt="Twitch" />
@@ -131,7 +125,7 @@ export function SignInButton({ address }: { address: `0x${string}` }) {
           fontFamily: "arial, sans-serif",
           letterSpacing: "0.25px",
         }}
-        className="relative flex h-8 w-full max-w-[197px] flex-row items-center gap-1.5 rounded-full bg-[#0077B5] pl-9 font-normal text-[14px] text-white tracking-wider hover:bg-[#0077B5] hover:text-white"
+        className="relative flex h-8 w-full transition-colors max-w-[197px] flex-row items-center gap-1.5 rounded-full bg-[#0077B5] pl-9 font-normal text-[14px] text-white tracking-wider hover:bg-[#005d8e] hover:text-white"
       >
         <div className="absolute left-[2px] flex size-7 items-center justify-center rounded-full bg-white p-[0.35rem]">
           <img src="https://zkauth.vercel.app/linkedin.svg" width={12} height={12} alt="LinkedIn" />
