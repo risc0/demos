@@ -3,33 +3,41 @@ import env from "~/env";
 
 async function getLinkedInTokensAndUserInfo(code: string) {
   try {
-    // Exchange code for access token
-    const tokenResponse = await fetch("https://www.linkedin.com/oauth/v2/accessToken", {
+    const params = new URLSearchParams();
+    params.append("client_id", env.TWITCH_CLIENT_ID);
+    params.append("client_secret", env.TWITCH_CLIENT_SECRET);
+    params.append("code", code);
+    params.append("grant_type", "authorization_code");
+    params.append("redirect_uri", "http://localhost:3000");
+
+    const response = await fetch("https://www.linkedin.com/oauth/v2/accessToken", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: new URLSearchParams({
-        grant_type: "authorization_code",
-        code,
-        redirect_uri: "http://localhost:3000",
-        client_id: env.LINKEDIN_CLIENT_ID,
-        client_secret: env.LINKEDIN_CLIENT_SECRET,
-      }),
+      body: params,
     });
 
-    if (!tokenResponse.ok) {
-      throw new Error(`HTTP error! status: ${tokenResponse.status}`);
+    console.log("response", response);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("LinkedIn API Error:", response.status, errorText);
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const tokenData = await tokenResponse.json();
+    const data = await response.json();
+
+    console.log("data", data);
 
     // Get user profile information
     const userInfoResponse = await fetch("https://api.linkedin.com/v2/userinfo", {
       headers: {
-        Authorization: `Bearer ${tokenData.access_token}`,
+        Authorization: `Bearer ${data.access_token}`,
       },
     });
+
+    console.log("userInfoResponse", userInfoResponse);
 
     if (!userInfoResponse.ok) {
       throw new Error(`HTTP error! status: ${userInfoResponse.status}`);
@@ -37,12 +45,14 @@ async function getLinkedInTokensAndUserInfo(code: string) {
 
     const profileData = await userInfoResponse.json();
 
+    console.log("profileData", profileData);
+
     // Get user email address
     const emailResponse = await fetch(
       "https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))",
       {
         headers: {
-          Authorization: `Bearer ${tokenData.access_token}`,
+          Authorization: `Bearer ${data.access_token}`,
         },
       },
     );
@@ -54,7 +64,7 @@ async function getLinkedInTokensAndUserInfo(code: string) {
     const emailData = await emailResponse.json();
 
     return {
-      access_token: tokenData.access_token,
+      access_token: data.access_token,
       email: emailData.elements[0]["handle~"].emailAddress,
       firstName: profileData.localizedFirstName,
       lastName: profileData.localizedLastName,

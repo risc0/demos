@@ -11,12 +11,19 @@ import { useTwitchAuth } from "../hooks/use-twitch-auth";
 import { cleanUrl } from "../utils/clean-url";
 
 export function SignInButton({ address }: { address: `0x${string}` }) {
-  const { googleUserInfos, twitchUserToken, googleUserToken, setGoogleUserInfos, setGoogleUserToken } =
-    useSocialsLocalStorage({ address });
+  const {
+    googleUserInfos,
+    twitchUserToken,
+    googleUserToken,
+    linkedInUserToken,
+    setGoogleUserInfos,
+    setGoogleUserToken,
+  } = useSocialsLocalStorage({ address });
   const { handleTwitchAuthCallback, signInWithTwitch } = useTwitchAuth({ address });
-  const { signInWithLinkedIn } = useLinkedInAuth({ address });
+  const { handleLinkedInAuthCallback, signInWithLinkedIn } = useLinkedInAuth({ address });
   const code = new URLSearchParams(window.location.search).get("code");
 
+  // google auth callback
   useEffect(() => {
     if (!googleUserToken || googleUserInfos) {
       return;
@@ -31,28 +38,55 @@ export function SignInButton({ address }: { address: `0x${string}` }) {
     });
   }, [googleUserToken, setGoogleUserInfos, googleUserInfos]);
 
+  // linkedin auth callback
+  useEffect(() => {
+    if (linkedInUserToken) {
+      return;
+    }
+
+    async function handleLinkedInAuth() {
+      const code = new URLSearchParams(window.location.search).get("code");
+      const urlState = new URLSearchParams(window.location.search).get("state");
+
+      if (urlState === "linkedin" && code) {
+        try {
+          await handleLinkedInAuthCallback(code);
+
+          cleanUrl();
+        } catch (error) {
+          console.error("LinkedIn Auth error:", error);
+        }
+      }
+    }
+
+    handleLinkedInAuth();
+  }, [handleLinkedInAuthCallback, linkedInUserToken]);
+
+  // twitch auth callback
   useEffect(() => {
     if (twitchUserToken) {
       return;
     }
 
-    async function handleAuth() {
+    async function handleTwitchAuth() {
       const code = new URLSearchParams(window.location.search).get("code");
+      const urlState = new URLSearchParams(window.location.search).get("state");
 
-      if (code) {
+      if (urlState === "twitch" && code) {
         try {
           await handleTwitchAuthCallback(code);
 
           cleanUrl();
         } catch (error) {
-          console.error("Auth error:", error);
+          console.error("Twitch Auth error:", error);
         }
       }
     }
 
-    handleAuth();
+    handleTwitchAuth();
   }, [handleTwitchAuthCallback, twitchUserToken]);
 
+  // loading state
   if (code) {
     return <Loader2Icon className="animate-spin" />;
   }

@@ -18,6 +18,7 @@ export function useTwitchAuth({ address }: { address: `0x${string}` }) {
     authUrl.searchParams.append("redirect_uri", TWITCH_REDIRECT_URI);
     authUrl.searchParams.append("response_type", "code");
     authUrl.searchParams.append("scope", "openid user:read:email");
+    authUrl.searchParams.append("state", "twitch");
     authUrl.searchParams.append("nonce", nonce);
 
     window.location.href = authUrl.toString();

@@ -11,14 +11,13 @@ export function useLinkedInAuth({ address }: { address: `0x${string}` }) {
   const [error, setError] = useState<string | null>(null);
 
   const signInWithLinkedIn = useCallback(() => {
-    const state = address;
-
     const authUrl = new URL("https://www.linkedin.com/oauth/v2/authorization");
     authUrl.searchParams.append("response_type", "code");
     authUrl.searchParams.append("client_id", LINKEDIN_CLIENT_ID);
     authUrl.searchParams.append("redirect_uri", LINKEDIN_REDIRECT_URI);
-    authUrl.searchParams.append("state", state);
-    authUrl.searchParams.append("scope", "r_liteprofile r_emailaddress");
+    authUrl.searchParams.append("nonce", address);
+    authUrl.searchParams.append("state", "linkedin");
+    authUrl.searchParams.append("scope", "openid profile email");
 
     window.location.href = authUrl.toString();
   }, [address]);
@@ -31,6 +30,8 @@ export function useLinkedInAuth({ address }: { address: `0x${string}` }) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ code }),
         });
+
+        console.log("response", response);
 
         if (!response.ok) {
           setError("Failed to authenticate with LinkedIn");
