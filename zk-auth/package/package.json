@@ -1,6 +1,6 @@
 {
   "name": "@risc0/zkauth",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "private": false,
   "author": "RISC Zero",
   "keywords": ["zk", "auth", "zero-knowledge", "authentication", "web3", "risczero"],
@@ -25,14 +25,14 @@
   "devDependencies": {
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "@vitejs/plugin-react-swc": "3.5.0",
-    "typescript": "5.5.3",
-    "vite": "5.4.1",
+    "@vitejs/plugin-react-swc": "3.7.0",
+    "typescript": "5.6.2",
+    "vite": "5.4.6",
     "vite-plugin-dts": "4.2.1"
   },
   "dependencies": {
     "@react-oauth/google": "0.12.1",
-    "@risc0/ui": "0.0.168",
+    "@risc0/ui": "0.0.169",
     "react": "^18",
     "react-dom": "^18"
   },
