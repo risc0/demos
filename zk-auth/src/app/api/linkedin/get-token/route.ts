@@ -4,8 +4,8 @@ import env from "~/env";
 async function getLinkedInTokensAndUserInfo(code: string) {
   try {
     const params = new URLSearchParams();
-    params.append("client_id", env.TWITCH_CLIENT_ID);
-    params.append("client_secret", env.TWITCH_CLIENT_SECRET);
+    params.append("client_id", env.LINKEDIN_CLIENT_ID);
+    params.append("client_secret", env.LINKEDIN_CLIENT_SECRET);
     params.append("code", code);
     params.append("grant_type", "authorization_code");
     params.append("redirect_uri", "http://localhost:3000");
