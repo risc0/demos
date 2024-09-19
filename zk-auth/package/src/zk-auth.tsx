@@ -1,6 +1,5 @@
 import "./style.css";
 
-import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useLocalStorage } from "@risc0/ui/hooks/use-local-storage";
 import { useEffect, useState } from "react";
 import { ProveButton } from "./components/prove-button";
@@ -14,24 +13,9 @@ export type ZkAuthProps = {
 };
 
 export function ZkAuth({ address, onStarkComplete, onSnarkComplete }: ZkAuthProps) {
-  const { googleUserToken, twitchUserToken } = useSocialsLocalStorage({ address });
+  const { googleUserInfos, twitchUserInfos } = useSocialsLocalStorage({ address });
   const [starkResults] = useLocalStorage(`stark-results-${address}`, undefined);
   const [snarkResults] = useLocalStorage(`snark-results-${address}`, undefined);
-  const [currentStep, setCurrentStep] = useState<number>(1);
-
-  useEffect(() => {
-    if (!googleUserToken && !twitchUserToken) {
-      setCurrentStep(1);
-      return;
-    }
-
-    if (starkResults || snarkResults) {
-      setCurrentStep(3);
-      return;
-    }
-
-    setCurrentStep(2);
-  }, [googleUserToken, twitchUserToken, starkResults, snarkResults]);
 
   useEffect(() => {
     if (starkResults && onStarkComplete) {
@@ -46,27 +30,22 @@ export function ZkAuth({ address, onStarkComplete, onSnarkComplete }: ZkAuthProp
   }, [snarkResults, onSnarkComplete]);
 
   return (
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-      <div className="relative flex min-h-[320px] w-[320px] flex-col items-center justify-between font-sans">
-        {currentStep === 1 ? (
-          <SignInButton address={address} />
-        ) : currentStep === 2 ? (
-          <ProveButton address={address} />
-        ) : (
-          <>
-            Proving complete (check console for results)
-            <button
-              type="button"
-              onClick={() => {
-                localStorage.clear();
-                window.location.reload();
-              }}
-            >
-              wipe local storage
-            </button>
-          </>
-        )}
-      </div>
-    </GoogleOAuthProvider>
+    <div className="relative flex min-h-[320px] w-[320px] flex-col items-center justify-between font-sans">
+      {snarkResults && starkResults ? (
+        <button
+          type="button"
+          onClick={() => {
+            localStorage.clear();
+            window.location.reload();
+          }}
+        >
+          wipe local storage
+        </button>
+      ) : googleUserInfos || twitchUserInfos ? (
+        <ProveButton address={address} />
+      ) : (
+        <SignInButton address={address} />
+      )}
+    </div>
   );
 }
