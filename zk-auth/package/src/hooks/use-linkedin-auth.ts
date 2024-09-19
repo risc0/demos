@@ -1,5 +1,6 @@
 "use client";
 
+import jwtDecode from "jwt-decode";
 import { useCallback, useState } from "react";
 import { useSocialsLocalStorage } from "./use-socials";
 
@@ -38,9 +39,14 @@ export function useLinkedInAuth({ address }: { address: `0x${string}` }) {
           return;
         }
 
-        const { jwt, email, profilePictureUrl, firstName, lastName } = await response.json();
+        const { jwt } = await response.json();
+        const { name, email, picture } = jwtDecode(jwt) as any;
 
-        setLinkedInUserInfos({ email, profilePictureUrl, firstName, lastName });
+        setLinkedInUserInfos({
+          name,
+          email,
+          picture,
+        });
 
         if (jwt) {
           setLinkedInUserToken(jwt);

@@ -18,8 +18,6 @@ async function getLinkedInTokensAndUserInfo(code: string) {
       body: params,
     });
 
-    console.log("response", response);
-
     if (!response.ok) {
       const errorText = await response.text();
       console.error("LinkedIn API Error:", response.status, errorText);
@@ -30,46 +28,7 @@ async function getLinkedInTokensAndUserInfo(code: string) {
 
     console.log("data", data);
 
-    // Get user profile information
-    const userInfoResponse = await fetch("https://api.linkedin.com/v2/userinfo", {
-      headers: {
-        Authorization: `Bearer ${data.access_token}`,
-      },
-    });
-
-    console.log("userInfoResponse", userInfoResponse);
-
-    if (!userInfoResponse.ok) {
-      throw new Error(`HTTP error! status: ${userInfoResponse.status}`);
-    }
-
-    const profileData = await userInfoResponse.json();
-
-    console.log("profileData", profileData);
-
-    // Get user email address
-    const emailResponse = await fetch(
-      "https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))",
-      {
-        headers: {
-          Authorization: `Bearer ${data.access_token}`,
-        },
-      },
-    );
-
-    if (!emailResponse.ok) {
-      throw new Error(`HTTP error! status: ${emailResponse.status}`);
-    }
-
-    const emailData = await emailResponse.json();
-
-    return {
-      access_token: data.access_token,
-      email: emailData.elements[0]["handle~"].emailAddress,
-      firstName: profileData.localizedFirstName,
-      lastName: profileData.localizedLastName,
-      profilePictureUrl: profileData.profilePicture?.["displayImage~"]?.elements[0]?.identifiers[0]?.identifier,
-    };
+    return data;
   } catch (error) {
     console.error("Error getting LinkedIn tokens and user info:", error);
     throw error;
@@ -79,15 +38,10 @@ async function getLinkedInTokensAndUserInfo(code: string) {
 export async function POST(request: Request) {
   try {
     const { code } = await request.json();
-    const { access_token, email, firstName, lastName, profilePictureUrl } = await getLinkedInTokensAndUserInfo(code);
+    const { id_token } = await getLinkedInTokensAndUserInfo(code);
 
     return NextResponse.json({
-      jwt: access_token, // Note: LinkedIn doesn't provide an id_token, so we're using access_token here
-      access_token,
-      email,
-      firstName,
-      lastName,
-      profilePictureUrl,
+      jwt: id_token,
     });
   } catch (error) {
     console.error("Failed to get tokens and user info:", error);
