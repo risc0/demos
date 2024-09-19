@@ -3,17 +3,20 @@ import env from "~/env";
 
 async function getTwitchJWT(code: string) {
   try {
-    const params = new URLSearchParams({
-      client_id: env.TWITCH_CLIENT_ID,
-      client_secret: env.TWITCH_CLIENT_SECRET,
-      code,
-      grant_type: "authorization_code",
-    });
-
     console.log("params", params);
 
-    const response = await fetch(`https://id.twitch.tv/oauth2/token?${params}`, {
+    const response = await fetch("https://id.twitch.tv/oauth2/token", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: JSON.stringify({
+        client_id: env.TWITCH_CLIENT_ID,
+        client_secret: env.TWITCH_CLIENT_SECRET,
+        code,
+        grant_type: "authorization_code",
+        //redirect_uri: `${redirectUri}/api/twitch/get-token`,
+      }),
     });
 
     console.log("response", response);

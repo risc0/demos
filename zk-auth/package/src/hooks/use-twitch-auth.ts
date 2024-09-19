@@ -22,7 +22,7 @@ export function useTwitchAuth({ address }: { address: `0x${string}` }) {
   const handleTwitchAuthCallback = useCallback(async (code: string) => {
     console.log("code", code);
     try {
-      const response = await fetch("/api/twitch/token", {
+      const response = await fetch("https://zkauth.vercel.app/api/twitch/get-token", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code }),
