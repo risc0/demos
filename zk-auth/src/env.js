@@ -9,8 +9,15 @@ const env = createEnv({
    * Specify server-side environment variables schema here.
    */
   server: {
+    // twitch
     TWITCH_CLIENT_ID: z.string(),
     TWITCH_CLIENT_SECRET: z.string(),
+
+    // linkedin
+    LINKEDIN_CLIENT_ID: z.string(),
+    LINKEDIN_CLIENT_SECRET: z.string(),
+
+    // bonsai
     BONSAI_VERSION: z.string(),
     BONSAI_API_KEY: z.string(),
     BONSAI_URL: z.string(),
@@ -32,6 +39,8 @@ const env = createEnv({
     // Server-side environment variables
     TWITCH_CLIENT_ID: process.env.TWITCH_CLIENT_ID,
     TWITCH_CLIENT_SECRET: process.env.TWITCH_CLIENT_SECRET,
+    LINKEDIN_CLIENT_ID: process.env.LINKEDIN_CLIENT_ID,
+    LINKEDIN_CLIENT_SECRET: process.env.LINKEDIN_CLIENT_SECRET,
     BONSAI_VERSION: process.env.BONSAI_VERSION,
     BONSAI_API_KEY: process.env.BONSAI_API_KEY,
     BONSAI_URL: process.env.BONSAI_URL,

@@ -32,15 +32,28 @@ export function useSocialsLocalStorage({
     undefined,
   );
 
+  // linkedin
+  const [linkedInUserInfos, setLinkedInUserInfos] = useLocalStorage<any>(
+    generateLocalStorageKey("twitch", "infos", address),
+    undefined,
+  );
+  const [linkedInUserToken, setLinkedInUserToken] = useLocalStorage<string | undefined>(
+    generateLocalStorageKey("linkedin", "token", address),
+    undefined,
+  );
+
   return {
     googleUserInfos,
     googleUserToken,
-    twitchUserInfos,
-    twitchUserToken,
-
+    linkedInUserInfos,
+    linkedInUserToken,
     setGoogleUserInfos,
     setGoogleUserToken,
+    setLinkedInUserInfos,
+    setLinkedInUserToken,
     setTwitchUserInfos,
     setTwitchUserToken,
+    twitchUserInfos,
+    twitchUserToken,
   };
 }
