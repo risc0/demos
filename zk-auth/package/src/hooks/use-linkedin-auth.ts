@@ -29,7 +29,7 @@ export function useLinkedInAuth({ address }: { address: `0x${string}` }) {
         const response = await fetch("https://zkauth.vercel.app/api/linkedin/get-token", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ code }),
+          body: JSON.stringify({ code, origin: window.location.origin }),
         });
 
         console.log("response", response);

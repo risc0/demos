@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 import env from "~/env";
 
-async function getLinkedInTokensAndUserInfo(code: string) {
+async function getLinkedInTokensAndUserInfo(code: string, origin: string) {
   try {
     const params = new URLSearchParams();
     params.append("client_id", env.LINKEDIN_CLIENT_ID);
     params.append("client_secret", env.LINKEDIN_CLIENT_SECRET);
     params.append("code", code);
     params.append("grant_type", "authorization_code");
-    params.append("redirect_uri", "http://localhost:3000");
+    params.append("redirect_uri", origin);
 
     const response = await fetch("https://www.linkedin.com/oauth/v2/accessToken", {
       method: "POST",
@@ -37,8 +37,8 @@ async function getLinkedInTokensAndUserInfo(code: string) {
 
 export async function POST(request: Request) {
   try {
-    const { code } = await request.json();
-    const { id_token } = await getLinkedInTokensAndUserInfo(code);
+    const { code, origin } = await request.json();
+    const { id_token } = await getLinkedInTokensAndUserInfo(code, origin);
 
     return NextResponse.json({
       jwt: id_token,
