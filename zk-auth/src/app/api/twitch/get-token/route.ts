@@ -3,8 +3,6 @@ import env from "~/env";
 
 async function getTwitchJWT(code: string) {
   try {
-    console.log("params", params);
-
     const response = await fetch("https://id.twitch.tv/oauth2/token", {
       method: "POST",
       headers: {
