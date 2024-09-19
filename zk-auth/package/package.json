@@ -1,6 +1,6 @@
 {
   "name": "@risc0/zkauth",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "private": false,
   "keywords": ["zk", "auth", "zero-knowledge", "authentication", "web3"],
   "sideEffects": false,
