@@ -16,7 +16,7 @@ export function usePaypalAuth({ address }: { address: `0x${string}` }) {
     authUrl.searchParams.append("response_type", "code");
     authUrl.searchParams.append("client_id", PAYPAL_CLIENT_ID);
     authUrl.searchParams.append("redirect_uri", PAYPAL_REDIRECT_URI);
-    authUrl.searchParams.append("scope", "openid profile");
+    authUrl.searchParams.append("scope", "openid profile email");
     //authUrl.searchParams.append("nonce", address);
     authUrl.searchParams.append("state", "paypal");
 
