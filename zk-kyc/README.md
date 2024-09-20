@@ -31,7 +31,7 @@ Next, use the [RISC Zero installation] instructions to install `v0.21` of the RI
 
 ### ID.me Developer Account
 
-This demo requires a ID.me developer account. You will also need an account to generate a client ID and secret to enable Sign-In-With-ID.me with OIDC. You can find more information about ID.me integration [here](https://developers.id.me/documentation) and the corresponding OIDC documentation [here](https://developers.id.me/documentation/federated-protocols/oidc).
+This demo requires an ID.me developer account. You will also need an account to generate a client ID and secret to enable Sign-In-With-ID.me with OIDC. You can find more information about ID.me integration [here](https://developers.id.me/documentation) and the corresponding OIDC documentation [here](https://developers.id.me/documentation/federated-protocols/oidc).
 
 ### Etherscan API Key
 
