@@ -18,7 +18,7 @@ async function getPayPalTokensAndUserInfo(code: string, origin: string) {
       body: params,
     });
 
-    console.log("response-----", response);
+    console.log("***response-----", response);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -27,6 +27,8 @@ async function getPayPalTokensAndUserInfo(code: string, origin: string) {
     }
 
     const data = await response.json();
+
+    console.log("***data", data);
 
     // Fetch user info using the access token
     const userInfoResponse = await fetch(
@@ -38,11 +40,15 @@ async function getPayPalTokensAndUserInfo(code: string, origin: string) {
       },
     );
 
+    console.log("***userInfoResponse", userInfoResponse);
+
     if (!userInfoResponse.ok) {
       throw new Error(`Failed to fetch user info: ${userInfoResponse.status}`);
     }
 
     const userInfo = await userInfoResponse.json();
+
+    console.log("***userInfo", userInfo);
 
     return {
       ...data,

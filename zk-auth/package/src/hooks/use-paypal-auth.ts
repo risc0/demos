@@ -16,8 +16,8 @@ export function usePaypalAuth({ address }: { address: `0x${string}` }) {
     authUrl.searchParams.append("response_type", "code");
     authUrl.searchParams.append("client_id", PAYPAL_CLIENT_ID);
     authUrl.searchParams.append("redirect_uri", PAYPAL_REDIRECT_URI);
-    authUrl.searchParams.append("scope", "openid profile email");
-    authUrl.searchParams.append("nonce", address);
+    authUrl.searchParams.append("scope", "openid profile");
+    //authUrl.searchParams.append("nonce", address);
     authUrl.searchParams.append("state", "paypal");
 
     window.location.href = authUrl.toString();
@@ -41,13 +41,14 @@ export function usePaypalAuth({ address }: { address: `0x${string}` }) {
 
         const { jwt } = await response.json();
         console.log("jwt", jwt);
-        const { name, email, picture } = jwtDecode(jwt) as any;
+        const decoded = jwtDecode(jwt) as any;
+        console.log("decoded", decoded);
 
-        setPaypalUserInfos({
+        /*setPaypalUserInfos({
           name,
           email,
           picture,
-        });
+        });*/
 
         if (jwt) {
           setPaypalUserToken(jwt);

@@ -125,7 +125,7 @@ class Client {
 export async function bonsaiStarkProving({
   iss,
   token,
-}: { iss: "Google" | "Twitch" | "LinkedIn" | "test"; token: string }) {
+}: { iss: "Google" | "Twitch" | "LinkedIn" | "Paypal" | "test"; token: string }) {
   let jwks = "";
 
   if (iss === "Google") {
@@ -138,6 +138,10 @@ export async function bonsaiStarkProving({
 
   if (iss === "LinkedIn") {
     jwks = await getCerts("linkedin");
+  }
+
+  if (iss === "Paypal") {
+    jwks = await getCerts("paypal");
   }
 
   const inputData = Buffer.from(

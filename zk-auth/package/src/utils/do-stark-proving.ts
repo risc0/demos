@@ -2,7 +2,7 @@ import { sleep } from "@risc0/ui/utils/sleep";
 import isEqual from "lodash-es/isEqual";
 import type { Dispatch, SetStateAction } from "react";
 
-type Iss = "Google" | "Twitch" | "LinkedIn" | "test";
+type Iss = "Google" | "Twitch" | "LinkedIn" | "Paypal" | "test";
 
 type StarkSessionStatusRes = {
   status: string;
