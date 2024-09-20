@@ -27,18 +27,17 @@ async function getPayPalTokensAndUserInfo(code: string, origin: string) {
     }
 
     const data = await response.json();
+    const { access_token } = data;
 
     console.log("***data", data);
+    console.log("***access_token", access_token);
 
     // Fetch user info using the access token
-    const userInfoResponse = await fetch(
-      "https://api-m.sandbox.paypal.com/v1/identity/oauth2/userinfo?schema=paypalv1.1",
-      {
-        headers: {
-          Authorization: `Bearer ${data.access_token}`,
-        },
+    const userInfoResponse = await fetch("https://api-m.sandbox.paypal.com/v1/identity/openidconnect/userinfo", {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
       },
-    );
+    });
 
     console.log("***userInfoResponse", userInfoResponse);
 
