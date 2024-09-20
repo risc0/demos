@@ -42,6 +42,16 @@ export function useSocialsLocalStorage({
     undefined,
   );
 
+  // paypal
+  const [paypalUserInfos, setPaypalUserInfos] = useLocalStorage<any>(
+    generateLocalStorageKey("paypal", "infos", address),
+    undefined,
+  );
+  const [paypalUserToken, setPaypalUserToken] = useLocalStorage<string | undefined>(
+    generateLocalStorageKey("paypal", "token", address),
+    undefined,
+  );
+
   return {
     googleUserInfos,
     googleUserToken,
@@ -55,5 +65,9 @@ export function useSocialsLocalStorage({
     setTwitchUserToken,
     twitchUserInfos,
     twitchUserToken,
+    paypalUserInfos,
+    paypalUserToken,
+    setPaypalUserInfos,
+    setPaypalUserToken,
   };
 }

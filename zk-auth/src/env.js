@@ -17,6 +17,10 @@ const env = createEnv({
     LINKEDIN_CLIENT_ID: z.string(),
     LINKEDIN_CLIENT_SECRET: z.string(),
 
+    // paypal
+    PAYPAL_CLIENT_ID: z.string(),
+    PAYPAL_CLIENT_SECRET: z.string(),
+
     // bonsai
     BONSAI_VERSION: z.string(),
     BONSAI_API_KEY: z.string(),
@@ -41,6 +45,8 @@ const env = createEnv({
     TWITCH_CLIENT_SECRET: process.env.TWITCH_CLIENT_SECRET,
     LINKEDIN_CLIENT_ID: process.env.LINKEDIN_CLIENT_ID,
     LINKEDIN_CLIENT_SECRET: process.env.LINKEDIN_CLIENT_SECRET,
+    PAYPAL_CLIENT_ID: process.env.PAYPAL_CLIENT_ID,
+    PAYPAL_CLIENT_SECRET: process.env.PAYPAL_CLIENT_SECRET,
     BONSAI_VERSION: process.env.BONSAI_VERSION,
     BONSAI_API_KEY: process.env.BONSAI_API_KEY,
     BONSAI_URL: process.env.BONSAI_URL,
