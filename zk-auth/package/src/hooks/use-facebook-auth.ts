@@ -36,7 +36,7 @@ export function useFacebookAuth({ address }: { address: `0x${string}` }) {
 
     localStorage.setItem("codeVerifier", codeVerifier);
 
-    const authUrl = new URL("https://www.facebook.com/v12.0/dialog/oauth");
+    const authUrl = new URL("https://www.facebook.com/v11.0/dialog/oauth");
     authUrl.searchParams.append("client_id", FACEBOOK_APP_ID);
     authUrl.searchParams.append("redirect_uri", window.location.origin);
     authUrl.searchParams.append("response_type", "code");
