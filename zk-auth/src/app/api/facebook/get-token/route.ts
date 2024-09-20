@@ -5,7 +5,7 @@ async function getFacebookTokensAndUserInfo(code: string, codeVerifier: string, 
   try {
     const tokenUrl = new URL("https://graph.facebook.com/v15.0/oauth/access_token");
     tokenUrl.searchParams.append("client_id", env.FACEBOOK_APP_ID);
-    tokenUrl.searchParams.append("redirect_uri", `${origin}/facebook/callback/`);
+    tokenUrl.searchParams.append("redirect_uri", `${origin}/`);
     tokenUrl.searchParams.append("code_verifier", codeVerifier);
     tokenUrl.searchParams.append("code", code);
 
