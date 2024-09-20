@@ -9,11 +9,14 @@ async function getFacebookTokensAndUserInfo(code: string, codeVerifier: string, 
       { method: "GET" },
     );
 
+    console.log("tokenResponse", tokenResponse);
+
     if (!tokenResponse.ok) {
       throw new Error(`HTTP error! status: ${tokenResponse.status}`);
     }
 
     const tokenData = await tokenResponse.json();
+    console.log("tokenData", tokenData);
 
     if (!tokenData.access_token || !tokenData.id_token) {
       throw new Error("No access_token or id_token in Facebook response");
@@ -24,11 +27,15 @@ async function getFacebookTokensAndUserInfo(code: string, codeVerifier: string, 
       `https://graph.facebook.com/me?fields=id,name,email,picture&access_token=${tokenData.access_token}`,
     );
 
+    console.log("userInfoResponse", userInfoResponse);
+
     if (!userInfoResponse.ok) {
       throw new Error(`HTTP error! status: ${userInfoResponse.status}`);
     }
 
     const userData = await userInfoResponse.json();
+
+    console.log("userData", userData);
 
     return {
       access_token: tokenData.access_token,
@@ -46,6 +53,10 @@ async function getFacebookTokensAndUserInfo(code: string, codeVerifier: string, 
 export async function POST(request: Request) {
   try {
     const { code, codeVerifier, nonce, origin } = await request.json();
+    console.log("code", code);
+    console.log("codeVerifier", codeVerifier);
+    console.log("nonce", nonce);
+    console.log("origin", origin);
     const { access_token, id_token, email, profile_image_url, display_name } = await getFacebookTokensAndUserInfo(
       code,
       codeVerifier,
