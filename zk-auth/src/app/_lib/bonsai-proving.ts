@@ -122,10 +122,7 @@ class Client {
 }
 
 // STARK
-export async function bonsaiStarkProving({
-  iss,
-  token,
-}: { iss: "Google" | "Twitch" | "LinkedIn" | "Paypal" | "test"; token: string }) {
+export async function bonsaiStarkProving({ iss, token }: { iss: "Google" | "Twitch" | "test"; token: string }) {
   let jwks = "";
 
   if (iss === "Google") {
@@ -134,14 +131,6 @@ export async function bonsaiStarkProving({
 
   if (iss === "Twitch") {
     jwks = await getCerts("twitch");
-  }
-
-  if (iss === "LinkedIn") {
-    jwks = await getCerts("linkedin");
-  }
-
-  if (iss === "Paypal") {
-    jwks = await getCerts("paypal");
   }
 
   const inputData = Buffer.from(

@@ -12,15 +12,13 @@ import { doSnarkProving } from "../utils/do-snark-proving";
 import { doStarkProving } from "../utils/do-stark-proving";
 import { BorderBeam } from "./border-beam";
 import { GoogleUserInfos } from "./google-user-infos";
-import { LinkedInUserInfos } from "./linkedin-user-infos";
 import { SignOutButton } from "./sign-out-button";
 import { TwitchUserInfos } from "./twitch-user-infos";
 
 export function ProveButton({ address }: { address: `0x${string}` }) {
   const [_starkResults, setStarkResults] = useLocalStorage<any>(`stark-results-${address}`, undefined);
   const [_snarkResults, setSnarkResults] = useLocalStorage<any>(`snark-results-${address}`, undefined);
-  const { googleUserInfos, twitchUserInfos, linkedInUserToken, linkedInUserInfos, googleUserToken, twitchUserToken } =
-    useSocialsLocalStorage({ address });
+  const { googleUserInfos, twitchUserInfos, googleUserToken, twitchUserToken } = useSocialsLocalStorage({ address });
   const [error, setError] = useState<any>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [snarkPollingResults, setSnarkPollingResults] = useState<any>();
@@ -33,7 +31,7 @@ export function ProveButton({ address }: { address: `0x${string}` }) {
   async function handleClick() {
     setIsLoading(true);
 
-    if (!googleUserToken && !twitchUserToken && !linkedInUserToken) {
+    if (!googleUserToken && !twitchUserToken) {
       console.error("JWT not found");
       setIsLoading(false);
 
@@ -42,9 +40,9 @@ export function ProveButton({ address }: { address: `0x${string}` }) {
 
     try {
       const { starkUuid, starkStatus } = await doStarkProving({
-        iss: googleUserInfos ? "Google" : twitchUserInfos ? "Twitch" : linkedInUserInfos ? "LinkedIn" : "test",
+        iss: googleUserInfos ? "Google" : twitchUserInfos ? "Twitch" : "test",
         setStarkPollingResults,
-        token: googleUserToken ?? twitchUserToken ?? linkedInUserToken ?? "",
+        token: googleUserToken ?? twitchUserToken ?? "",
       });
       const { snarkStatus } = await doSnarkProving({ setSnarkPollingResults, starkUuid });
 
@@ -85,7 +83,6 @@ export function ProveButton({ address }: { address: `0x${string}` }) {
 
               {googleUserInfos && <GoogleUserInfos userInfos={googleUserInfos} />}
               {twitchUserInfos && <TwitchUserInfos userInfos={twitchUserInfos} />}
-              {linkedInUserInfos && <LinkedInUserInfos userInfos={linkedInUserInfos} />}
             </>
           )}
 

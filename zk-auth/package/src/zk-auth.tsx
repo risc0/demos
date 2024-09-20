@@ -15,7 +15,7 @@ export type ZkAuthProps = {
 };
 
 export function ZkAuth({ address, onStarkComplete, onSnarkComplete }: ZkAuthProps) {
-  const { googleUserInfos, twitchUserInfos, linkedInUserInfos } = useSocialsLocalStorage({ address });
+  const { googleUserInfos, twitchUserInfos } = useSocialsLocalStorage({ address });
   const [starkResults] = useLocalStorage(`stark-results-${address}`, undefined);
   const [snarkResults] = useLocalStorage(`snark-results-${address}`, undefined);
 
@@ -43,7 +43,7 @@ export function ZkAuth({ address, onStarkComplete, onSnarkComplete }: ZkAuthProp
         >
           wipe local storage
         </button>
-      ) : googleUserInfos || twitchUserInfos || linkedInUserInfos ? (
+      ) : googleUserInfos || twitchUserInfos ? (
         <ProveButton address={address} />
       ) : (
         <SignInButton address={address} />

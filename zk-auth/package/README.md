@@ -2,7 +2,7 @@
 
 ## In order to implement this flow you need to:
 
-1. Ask us to add your domain to the list of allowed redirects (Google, Twitch, LinkedIn, etc)
+1. Ask us to add your domain to the list of allowed redirects (Google, Twitch, etc)
 2. Integrate the following code to your project:
 
 ##### React Example:

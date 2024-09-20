@@ -32,42 +32,14 @@ export function useSocialsLocalStorage({
     undefined,
   );
 
-  // linkedin
-  const [linkedInUserInfos, setLinkedInUserInfos] = useLocalStorage<any>(
-    generateLocalStorageKey("linkedin", "infos", address),
-    undefined,
-  );
-  const [linkedInUserToken, setLinkedInUserToken] = useLocalStorage<string | undefined>(
-    generateLocalStorageKey("linkedin", "token", address),
-    undefined,
-  );
-
-  // paypal
-  const [paypalUserInfos, setPaypalUserInfos] = useLocalStorage<any>(
-    generateLocalStorageKey("paypal", "infos", address),
-    undefined,
-  );
-  const [paypalUserToken, setPaypalUserToken] = useLocalStorage<string | undefined>(
-    generateLocalStorageKey("paypal", "token", address),
-    undefined,
-  );
-
   return {
     googleUserInfos,
     googleUserToken,
-    linkedInUserInfos,
-    linkedInUserToken,
     setGoogleUserInfos,
     setGoogleUserToken,
-    setLinkedInUserInfos,
-    setLinkedInUserToken,
     setTwitchUserInfos,
     setTwitchUserToken,
     twitchUserInfos,
     twitchUserToken,
-    paypalUserInfos,
-    paypalUserToken,
-    setPaypalUserInfos,
-    setPaypalUserToken,
   };
 }

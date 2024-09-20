@@ -13,10 +13,7 @@ export function SignOutButton({ address }: { address: `0x${string}` }) {
     setTwitchUserInfos,
     setTwitchUserToken,
     googleUserInfos,
-    linkedInUserInfos,
     twitchUserInfos,
-    setLinkedInUserInfos,
-    setLinkedInUserToken,
   } = useSocialsLocalStorage({ address });
 
   function signOut() {
@@ -31,13 +28,9 @@ export function SignOutButton({ address }: { address: `0x${string}` }) {
     // twitch
     setTwitchUserToken(undefined);
     setTwitchUserInfos(undefined);
-
-    // linkedin
-    setLinkedInUserToken(undefined);
-    setLinkedInUserInfos(undefined);
   }
 
-  if (!mounted || !address || (!googleUserInfos && !twitchUserInfos && !linkedInUserInfos)) {
+  if (!mounted || !address || (!googleUserInfos && !twitchUserInfos)) {
     return <div className="h-8" />;
   }
 
