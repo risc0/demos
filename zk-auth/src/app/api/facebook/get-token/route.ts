@@ -5,7 +5,7 @@ async function getFacebookTokensAndUserInfo(code: string, codeVerifier: string, 
   try {
     // Exchange code for access token and id_token
     const tokenResponse = await fetch(
-      `https://graph.facebook.com/v12.0/oauth/access_token?client_id=${env.FACEBOOK_APP_ID}&redirect_uri=${origin}&code_verifier=${codeVerifier}&code=${code}`,
+      `https://graph.facebook.com/v12.0/oauth/access_token?client_id=${env.FACEBOOK_APP_ID}&redirect_uri=${encodeURIComponent(origin)}&code_verifier=${codeVerifier}&code=${code}`,
       { method: "GET" },
     );
 
@@ -52,18 +52,15 @@ async function getFacebookTokensAndUserInfo(code: string, codeVerifier: string, 
 
 export async function POST(request: Request) {
   try {
-    const { code, codeVerifier, nonce, origin } = await request.json();
+    const { code, codeVerifier, origin } = await request.json();
     console.log("code", code);
     console.log("codeVerifier", codeVerifier);
-    console.log("nonce", nonce);
     console.log("origin", origin);
     const { access_token, id_token, email, profile_image_url, display_name } = await getFacebookTokensAndUserInfo(
       code,
       codeVerifier,
       origin,
     );
-
-    // TODO: Validate the id_token here (verify signature, check nonce, etc.)
 
     return NextResponse.json({
       jwt: id_token,
