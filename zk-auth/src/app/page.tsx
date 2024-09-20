@@ -1,6 +1,6 @@
 import dynamic from "next/dynamic";
 
-const ZkAuthExample = dynamic(() => import("./zk-auth"), { ssr: false });
+const ZkAuthExample = dynamic(() => import("./zk-auth-example"), { ssr: false });
 
 export default function HomePage() {
   return (

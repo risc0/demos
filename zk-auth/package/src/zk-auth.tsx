@@ -34,15 +34,18 @@ export function ZkAuth({ address, onStarkComplete, onSnarkComplete }: ZkAuthProp
   return (
     <div className="relative flex min-h-[320px] w-[320px] flex-col items-center justify-between font-sans">
       {snarkResults && starkResults ? (
-        <button
-          type="button"
-          onClick={() => {
-            localStorage.clear();
-            window.location.reload();
-          }}
-        >
-          wipe local storage
-        </button>
+        <>
+          <p>proving complete -- check console for results</p>
+          <button
+            type="button"
+            onClick={() => {
+              localStorage.clear();
+              window.location.reload();
+            }}
+          >
+            wipe local storage
+          </button>
+        </>
       ) : googleUserInfos || twitchUserInfos || facebookUserInfos ? (
         <ProveButton address={address} />
       ) : (
