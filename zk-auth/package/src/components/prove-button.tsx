@@ -69,18 +69,24 @@ export function ProveButton({ address }: { address: `0x${string}` }) {
           {isLoading ? (
             <Loader
               loadingSrc="https://zkauth.vercel.app/loading.gif"
-              loadingText="☕️ This process will take a couple of minutes… Do not close your browser…"
+              loadingText={
+                <span className="block text-center">
+                  This process will take a couple of minutes…
+                  <br />
+                  Do not close your browser.
+                </span>
+              }
             />
           ) : (
             <>
-              <p className="mb-3 w-full break-words text-xs">
+              <p className="mb-3 w-full break-words text-center text-xs">
                 You are about to prove that address
                 <br />
                 <strong className="w-full" title={address}>
                   {address}
                 </strong>
                 <br />
-                owns the following social account:
+                is owned by the following social account:
               </p>
 
               {googleUserInfos && <GoogleUserInfos userInfos={googleUserInfos} />}
