@@ -2,7 +2,7 @@
 
 ## In order to implement this flow you need to:
 
-1. Ask us to add your domain to the list of allowed redirects (Google, Twitch, etc)
+1. Ask us to add your domain to the list of allowed redirects (Google, Twitch, Facebook,etc)
 2. Integrate the following code to your project:
 
 ##### React Example:
@@ -48,7 +48,7 @@ function App() {
 
 ### Unsupported providers
 
-* LinkedIm (no way to pass a nonce)
+* LinkedIn (no way to pass a nonce)
 * PayPal (no way to pass a nonce)
 * Discord (doesn't support OIDC)
 * Twitter/X (doesn't support OIDC)
