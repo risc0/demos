@@ -8,7 +8,7 @@ To learn more about RISC Zero visit our [website] and developer [docs].
 Demo applications are provided as-is and have NOT BEEN AUDITED and the following demos contain KNOWN security findings:
 * bonsai-pay
 
-This code is provided as-is as a benefit to the public good, however should not be used with out a comprehensive security analyis.
+This code is provided as-is as a benefit to the public good, however should not be used without a comprehensive security analysis.
 
 [website]: https://risczero.com
 [docs]: https://dev.risczero.com
