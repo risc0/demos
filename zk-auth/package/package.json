@@ -1,6 +1,6 @@
 {
   "name": "@risc0/zkauth",
-  "version": "0.0.28",
+  "version": "0.0.29",
   "private": false,
   "author": "RISC Zero",
   "keywords": ["zk", "auth", "zero-knowledge", "authentication", "web3", "risczero"],

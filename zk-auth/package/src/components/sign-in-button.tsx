@@ -84,14 +84,14 @@ export function SignInButton({ address }: { address: `0x${string}` }) {
 
   return (
     <div className="flex w-full flex-col items-center gap-4">
-      <div className="group relative h-8 w-full">
+      <div className="group relative h-10 w-full">
         <div className="opacity-0">
           <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
             <GoogleLogin
               locale="en"
               logo_alignment="center"
               shape="square"
-              size="medium"
+              size="large"
               text="continue_with"
               theme="filled_blue"
               width="320px"
@@ -108,15 +108,11 @@ export function SignInButton({ address }: { address: `0x${string}` }) {
         </div>
 
         <Button
-          size="sm"
-          style={{
-            fontFamily: "arial, sans-serif",
-            letterSpacing: "0.25px",
-          }}
-          className="pointer-events-none absolute top-0 left-0 flex h-8 w-full flex-row items-center justify-start gap-1.5 rounded-[4px] font-normal text-[14px] text-white tracking-wider transition-colors hover:text-white group-hover:bg-neutral-600"
+          size="lg"
+          className="pointer-events-none absolute top-0 left-0 w-full justify-start justify-start pl-14 group-hover:bg-neutral-600"
         >
-          <div className="flex items-center gap-[11px] pl-[45.5px]">
-            <div className="flex size-7 items-center justify-center rounded bg-white p-[0.35rem]">
+          <div className="flex items-center gap-3">
+            <div className="flex size-7 items-center justify-center rounded bg-white p-[0.35rem] shadow-sm">
               <img src="https://zkauth.vercel.app/google.svg" width={18} height={18} alt="Google" />
             </div>
             <span>Continue with Google</span>
@@ -125,16 +121,12 @@ export function SignInButton({ address }: { address: `0x${string}` }) {
       </div>
 
       <Button
-        size="sm"
         onClick={signInWithTwitch}
-        style={{
-          fontFamily: "arial, sans-serif",
-          letterSpacing: "0.25px",
-        }}
-        className="relative flex h-8 w-full flex-row items-center justify-start gap-1.5 rounded-[4px] bg-[#A970FF] font-normal text-[14px] text-white tracking-wider transition-colors hover:bg-[#BF94FF] hover:text-white"
+        size="lg"
+        className="w-full justify-start justify-start bg-[#A970FF] pl-14 hover:bg-[#BF94FF]"
       >
-        <div className="flex items-center gap-[11px] pl-[45.5px]">
-          <div className="flex size-7 items-center justify-center rounded bg-white p-[0.35rem]">
+        <div className="flex items-center gap-3">
+          <div className="flex size-7 items-center justify-center rounded bg-white p-[0.35rem] shadow-sm">
             <img src="https://zkauth.vercel.app/twitch.svg" width={17} height={17} alt="Twitch" />
           </div>
           <span>Continue with Twitch</span>
@@ -142,16 +134,12 @@ export function SignInButton({ address }: { address: `0x${string}` }) {
       </Button>
 
       <Button
-        size="sm"
         onClick={signInWithFacebook}
-        style={{
-          fontFamily: "arial, sans-serif",
-          letterSpacing: "0.25px",
-        }}
-        className="relative flex h-8 w-full flex-row items-center justify-start gap-1.5 rounded-[4px] bg-[#0866FF] font-normal text-[14px] text-white tracking-wider transition-colors hover:bg-[#2f7eff] hover:text-white"
+        size="lg"
+        className="w-full justify-start bg-[#0866FF] pl-14 hover:bg-[#2f7eff]"
       >
-        <div className="flex items-center gap-[11px] pl-[45.5px]">
-          <div className="flex size-7 items-center justify-center rounded bg-white p-[0.25rem]">
+        <div className="flex items-center gap-3">
+          <div className="flex size-7 items-center justify-center rounded bg-white p-[0.25rem] shadow-sm">
             <img src="https://zkauth.vercel.app/facebook.svg" width={22} height={22} alt="Facebook" />
           </div>
           <span>Continue with Facebook</span>
