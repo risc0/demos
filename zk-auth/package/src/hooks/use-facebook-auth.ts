@@ -71,7 +71,12 @@ export function useFacebookAuth({ address }: { address: `0x${string}` }) {
 
         const { jwt } = await response.json();
 
-        const { name, email, picture } = jwtDecode(jwt) as any;
+        console.log("jwt", jwt);
+
+        const decodedJwt = jwtDecode(jwt) as any;
+
+        console.log("decodedJwt", decodedJwt);
+        const { name, email, picture } = decodedJwt;
 
         setFacebookUserInfos({
           name,

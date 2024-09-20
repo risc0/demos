@@ -4,8 +4,8 @@ export function FacebookUserInfos({
   userInfos,
 }: {
   userInfos: {
-    display_name: string;
-    profile_image_url?: string;
+    name: string;
+    picture?: string;
     email: string;
   };
 }) {
@@ -13,16 +13,16 @@ export function FacebookUserInfos({
     <Alert className="flex flex-row items-center gap-6 border-neutral-100 bg-neutral-50 px-4 py-3">
       <div className="flex min-h-[64px] min-w-[64px] items-center justify-center">
         <img
-          src={userInfos.profile_image_url}
-          alt={userInfos.display_name}
+          src={userInfos.picture}
+          alt={userInfos.name}
           width={64}
           height={64}
           className="pointer-events-none rounded-sm shadow-xs"
         />
       </div>
       <AlertDescription className="grid w-full">
-        <p title={userInfos.display_name} className="truncate font-bold text-xl">
-          {userInfos.display_name}
+        <p title={userInfos.name} className="truncate font-bold text-xl">
+          {userInfos.name}
         </p>
         <p title={userInfos.email} className="truncate text-muted-foreground text-sm">
           {userInfos.email}

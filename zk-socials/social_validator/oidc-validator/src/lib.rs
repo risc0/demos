@@ -29,7 +29,7 @@ struct Extra {
 pub enum IdentityProvider {
     Google,
     Twitch,
-    LinkedIn,
+    Facebook,
     Test,
 }
 
@@ -54,12 +54,12 @@ impl IdentityProvider {
                 let pref_user = decoded.preferred_username.to_string();
                 Ok((pref_user, nonce, exp, iat, jwk_str.to_string()))
             }
-            Self::LinkedIn => {
-              let (decoded, exp, iat) = decode_token::<LinkedInClaims>(token, &jwk).unwrap();
+            Self::Facebook => {
+              let (decoded, exp, iat) = decode_token::<FacebookClaims>(token, &jwk).unwrap();
               let email = decoded.email.to_string();
               let nonce = decoded.nonce.to_string();
               Ok((email, nonce, exp, iat, jwk_str.to_string()))
-          }
+            }
             Self::Test => {
                 let (decoded, exp, iat) = decode_token::<TestClaims>(token, &jwk).unwrap();
                 let email = decoded.email.to_string();
@@ -75,7 +75,7 @@ impl From<String> for IdentityProvider {
         match value.to_lowercase().as_str() {
             "google" => Self::Google,
             "twitch" => Self::Twitch,
-            "linkedin" => Self::LinkedIn,
+            "facebook" => Self::Facebook,
             "test" => Self::Test,
             _ => panic!("invalid identity provider"),
         }
@@ -83,17 +83,16 @@ impl From<String> for IdentityProvider {
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
-pub struct LinkedInClaims {
+pub struct FacebookClaims {
     pub aud: String,
     pub iss: String,
     pub sub: String,
     pub nonce: String, // I require this one.
     pub email: String, // And this one too.
-    pub email_verified: Option<bool>,
-    pub name: Option<String>,
-    pub family_name: Option<String>,
+    pub jti: Option<String>,
+    pub at_hash: Option<String>,
     pub given_name: Option<String>,
-    pub locale: Option<String>,
+    pub family_name: Option<String>,
     pub name: Option<String>,
     pub picture: Option<String>,
 }
