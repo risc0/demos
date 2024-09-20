@@ -1,18 +1,18 @@
 "use client";
 
 import jwtDecode from "jwt-decode";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useSocialsLocalStorage } from "./use-socials";
 
 const PAYPAL_CLIENT_ID = "AZgjTPHfBSZL8INkF_gO08RkC3ae9-RMlc74QpKiVsv5nzizQtahg8UEkngU0X43ZZLUTJO3y6h8qkLf";
 const PAYPAL_REDIRECT_URI = window.location.origin;
 
-export function usePayPalAuth({ address }: { address: `0x${string}` }) {
+export function usePaypalAuth({ address }: { address: `0x${string}` }) {
   const { setPaypalUserToken, setPaypalUserInfos } = useSocialsLocalStorage({ address });
   const [error, setError] = useState<string | null>(null);
 
-  function signInWithPayPal() {
-    const authUrl = new URL("https://www.paypal.com/connect");
+  function signInWithPaypal() {
+    const authUrl = new URL("https://www.sandbox.paypal.com/connect");
     authUrl.searchParams.append("response_type", "code");
     authUrl.searchParams.append("client_id", PAYPAL_CLIENT_ID);
     authUrl.searchParams.append("redirect_uri", PAYPAL_REDIRECT_URI);
@@ -23,8 +23,8 @@ export function usePayPalAuth({ address }: { address: `0x${string}` }) {
     window.location.href = authUrl.toString();
   }
 
-  function handlePayPalAuthCallback(code: string) {
-    return async () => {
+  const handlePaypalAuthCallback = useCallback(
+    async (code: string) => {
       try {
         const response = await fetch("https://zkauth.vercel.app/api/paypal/get-token", {
           method: "POST",
@@ -53,12 +53,13 @@ export function usePayPalAuth({ address }: { address: `0x${string}` }) {
         setError("Failed to authenticate with PayPal");
         console.error(err);
       }
-    };
-  }
+    },
+    [setPaypalUserInfos, setPaypalUserToken],
+  );
 
   return {
     error,
-    signInWithPayPal,
-    handlePayPalAuthCallback,
+    signInWithPaypal,
+    handlePaypalAuthCallback,
   };
 }

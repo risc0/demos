@@ -6,14 +6,22 @@ import jwtDecode from "jwt-decode";
 import { Loader2Icon } from "lucide-react";
 import { useEffect } from "react";
 import { useLinkedInAuth } from "../hooks/use-linkedin-auth";
+import { usePaypalAuth } from "../hooks/use-paypal-auth";
 import { useSocialsLocalStorage } from "../hooks/use-socials";
 import { useTwitchAuth } from "../hooks/use-twitch-auth";
 import { cleanUrl } from "../utils/clean-url";
 
 export function SignInButton({ address }: { address: `0x${string}` }) {
-  const { twitchUserToken, googleUserToken, linkedInUserToken, setGoogleUserInfos, setGoogleUserToken } =
-    useSocialsLocalStorage({ address });
+  const {
+    twitchUserToken,
+    googleUserToken,
+    paypalUserToken,
+    linkedInUserToken,
+    setGoogleUserInfos,
+    setGoogleUserToken,
+  } = useSocialsLocalStorage({ address });
   const { handleTwitchAuthCallback, signInWithTwitch } = useTwitchAuth({ address });
+  const { handlePaypalAuthCallback, signInWithPaypal } = usePaypalAuth({ address });
   const { handleLinkedInAuthCallback, signInWithLinkedIn } = useLinkedInAuth({ address });
   const code = new URLSearchParams(window.location.search).get("code");
   const urlState = new URLSearchParams(window.location.search).get("state");
@@ -53,6 +61,27 @@ export function SignInButton({ address }: { address: `0x${string}` }) {
 
     handleLinkedInAuth();
   }, [handleLinkedInAuthCallback, linkedInUserToken, code, urlState]);
+
+  // paypal auth callback
+  useEffect(() => {
+    if (paypalUserToken) {
+      return;
+    }
+
+    async function handlePaypalAuth() {
+      if (urlState === "paypal" && code) {
+        try {
+          await handlePaypalAuthCallback(code);
+
+          cleanUrl();
+        } catch (error) {
+          console.error("Paypal Auth error:", error);
+        }
+      }
+    }
+
+    handlePaypalAuth();
+  }, [handlePaypalAuthCallback, paypalUserToken, code, urlState]);
 
   // twitch auth callback
   useEffect(() => {
@@ -131,6 +160,21 @@ export function SignInButton({ address }: { address: `0x${string}` }) {
           <img src="https://zkauth.vercel.app/linkedin.svg" width={12} height={12} alt="LinkedIn" />
         </div>
         Continue with LinkedIn
+      </Button>
+
+      <Button
+        size="sm"
+        onClick={signInWithPaypal}
+        style={{
+          fontFamily: "arial, sans-serif",
+          letterSpacing: "0.25px",
+        }}
+        className="relative flex h-8 w-full transition-colors max-w-[197px] flex-row items-center gap-1.5 rounded-full bg-[#0070E0] pl-9 font-normal text-[14px] text-white tracking-wider hover:bg-[#0070E0] hover:text-white"
+      >
+        <div className="absolute left-[2px] flex size-7 items-center justify-center rounded-full bg-white p-[0.35rem]">
+          <img src="https://zkauth.vercel.app/paypal.svg" width={12} height={12} alt="PayPal" />
+        </div>
+        Continue with PayPal
       </Button>
     </div>
   );
