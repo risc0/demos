@@ -36,9 +36,11 @@ export function useFacebookAuth({ address }: { address: `0x${string}` }) {
 
     localStorage.setItem("codeVerifier", codeVerifier);
 
-    const authUrl = new URL("https://www.facebook.com/v11.0/dialog/oauth");
+    console.log("aaa", `${window.location.origin}/facebook/callback/`);
+
+    const authUrl = new URL("https://www.facebook.com/v20.0/dialog/oauth");
     authUrl.searchParams.append("client_id", FACEBOOK_APP_ID);
-    authUrl.searchParams.append("redirect_uri", window.location.origin);
+    authUrl.searchParams.append("redirect_uri", `${window.location.origin}/facebook/callback/`);
     authUrl.searchParams.append("response_type", "code");
     authUrl.searchParams.append("scope", "openid email");
     authUrl.searchParams.append("state", "facebook");

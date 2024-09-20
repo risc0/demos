@@ -3,11 +3,15 @@ import env from "~/env";
 
 async function getFacebookTokensAndUserInfo(code: string, codeVerifier: string, origin: string) {
   try {
-    // Exchange code for access token and id_token
-    const tokenResponse = await fetch(
-      `https://graph.facebook.com/v12.0/oauth/access_token?client_id=${env.FACEBOOK_APP_ID}&redirect_uri=${encodeURIComponent(origin)}&code_verifier=${codeVerifier}&code=${code}`,
-      { method: "GET" },
-    );
+    const tokenUrl = new URL("https://graph.facebook.com/v15.0/oauth/access_token");
+    tokenUrl.searchParams.append("client_id", env.FACEBOOK_APP_ID);
+    tokenUrl.searchParams.append("redirect_uri", `${origin}/facebook/callback/`);
+    tokenUrl.searchParams.append("code_verifier", codeVerifier);
+    tokenUrl.searchParams.append("code", code);
+
+    console.log("URLLL", `${origin}/facebook/callback/`);
+
+    const tokenResponse = await fetch(tokenUrl.toString(), { method: "GET" });
 
     console.log("tokenResponse", tokenResponse);
 
