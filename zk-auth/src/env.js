@@ -13,6 +13,10 @@ const env = createEnv({
     TWITCH_CLIENT_ID: z.string(),
     TWITCH_CLIENT_SECRET: z.string(),
 
+    // facebook
+    FACEBOOK_APP_ID: z.string(),
+    FACEBOOK_APP_SECRET: z.string(),
+
     // bonsai
     BONSAI_VERSION: z.string(),
     BONSAI_API_KEY: z.string(),
@@ -35,6 +39,8 @@ const env = createEnv({
     // Server-side environment variables
     TWITCH_CLIENT_ID: process.env.TWITCH_CLIENT_ID,
     TWITCH_CLIENT_SECRET: process.env.TWITCH_CLIENT_SECRET,
+    FACEBOOK_APP_ID: process.env.FACEBOOK_APP_ID,
+    FACEBOOK_APP_SECRET: process.env.FACEBOOK_APP_SECRET,
     BONSAI_VERSION: process.env.BONSAI_VERSION,
     BONSAI_API_KEY: process.env.BONSAI_API_KEY,
     BONSAI_URL: process.env.BONSAI_URL,

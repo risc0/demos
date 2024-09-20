@@ -41,3 +41,14 @@ function App() {
 ```
 
 *Note: if you are using Next.js, you need to mark the page as a client component with `"use client"`.*
+
+
+
+---
+
+### Unsupported providers
+
+* LinkedIm (no way to pass a nonce)
+* PayPal (no way to pass a nonce)
+* Discord (doesn't support OIDC)
+* Twitter/X (doesn't support OIDC)

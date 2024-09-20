@@ -1,1 +1,1 @@
-export type SupportedProviders = "google" | "twitch" | "test";
+export type SupportedProviders = "google" | "twitch" | "facebook" | "test";

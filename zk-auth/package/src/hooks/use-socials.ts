@@ -22,6 +22,16 @@ export function useSocialsLocalStorage({
     undefined,
   );
 
+  // facebook
+  const [facebookUserInfos, setFacebookUserInfos] = useLocalStorage<any>(
+    generateLocalStorageKey("facebook", "infos", address),
+    undefined,
+  );
+  const [facebookUserToken, setFacebookUserToken] = useLocalStorage<string | undefined>(
+    generateLocalStorageKey("facebook", "token", address),
+    undefined,
+  );
+
   // twitch
   const [twitchUserInfos, setTwitchUserInfos] = useLocalStorage<any>(
     generateLocalStorageKey("twitch", "infos", address),
@@ -41,5 +51,9 @@ export function useSocialsLocalStorage({
     setTwitchUserToken,
     twitchUserInfos,
     twitchUserToken,
+    facebookUserInfos,
+    facebookUserToken,
+    setFacebookUserInfos,
+    setFacebookUserToken,
   };
 }
