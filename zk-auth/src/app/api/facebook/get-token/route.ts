@@ -9,44 +9,20 @@ async function getFacebookTokensAndUserInfo(code: string, codeVerifier: string, 
     tokenUrl.searchParams.append("code_verifier", codeVerifier);
     tokenUrl.searchParams.append("code", code);
 
-    console.log("URLLL", `${origin}/facebook/callback/`);
-
     const tokenResponse = await fetch(tokenUrl.toString(), { method: "GET" });
-
-    console.log("tokenResponse", tokenResponse);
 
     if (!tokenResponse.ok) {
       throw new Error(`HTTP error! status: ${tokenResponse.status}`);
     }
 
     const tokenData = await tokenResponse.json();
-    console.log("tokenData", tokenData);
 
     if (!tokenData.access_token || !tokenData.id_token) {
       throw new Error("No access_token or id_token in Facebook response");
     }
 
-    // Get user info using the access token
-    const userInfoResponse = await fetch(
-      `https://graph.facebook.com/me?fields=id,name,email,picture&access_token=${tokenData.access_token}`,
-    );
-
-    console.log("userInfoResponse", userInfoResponse);
-
-    if (!userInfoResponse.ok) {
-      throw new Error(`HTTP error! status: ${userInfoResponse.status}`);
-    }
-
-    const userData = await userInfoResponse.json();
-
-    console.log("userData", userData);
-
     return {
-      access_token: tokenData.access_token,
-      id_token: tokenData.id_token,
-      email: userData.email,
-      profile_image_url: userData.picture?.data?.url,
-      display_name: userData.name,
+      jwt: tokenData.id_token,
     };
   } catch (error) {
     console.error("Error getting Facebook tokens and user info:", error);
@@ -57,22 +33,10 @@ async function getFacebookTokensAndUserInfo(code: string, codeVerifier: string, 
 export async function POST(request: Request) {
   try {
     const { code, codeVerifier, origin } = await request.json();
-    console.log("code", code);
-    console.log("codeVerifier", codeVerifier);
-    console.log("origin", origin);
-    const { access_token, id_token, email, profile_image_url, display_name } = await getFacebookTokensAndUserInfo(
-      code,
-      codeVerifier,
-      origin,
-    );
+    const { jwt } = await getFacebookTokensAndUserInfo(code, codeVerifier, origin);
 
     return NextResponse.json({
-      jwt: id_token,
-      access_token,
-      id_token,
-      display_name,
-      email,
-      profile_image_url,
+      jwt,
     });
   } catch (error) {
     console.error("Failed to get tokens and user info:", error);

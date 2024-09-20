@@ -1,5 +1,6 @@
 "use client";
 
+import jwtDecode from "jwt-decode";
 import { useCallback, useState } from "react";
 import { useSocialsLocalStorage } from "./use-socials";
 
@@ -36,8 +37,6 @@ export function useFacebookAuth({ address }: { address: `0x${string}` }) {
 
     localStorage.setItem("codeVerifier", codeVerifier);
 
-    console.log("aaa", `${window.location.origin}/facebook/callback/`);
-
     const authUrl = new URL("https://www.facebook.com/v20.0/dialog/oauth");
     authUrl.searchParams.append("client_id", FACEBOOK_APP_ID);
     authUrl.searchParams.append("redirect_uri", `${window.location.origin}/facebook/callback/`);
@@ -66,18 +65,22 @@ export function useFacebookAuth({ address }: { address: `0x${string}` }) {
           body: JSON.stringify({ code, codeVerifier, origin: window.location.origin }),
         });
 
-        console.log("response", response);
-
         if (!response.ok) {
           throw new Error("Failed to authenticate with Facebook");
         }
 
-        const { access_token, id_token, email, picture, name } = await response.json();
+        const { jwt } = await response.json();
 
-        setFacebookUserInfos({ email, profile_image_url: picture, display_name: name });
+        const { name, email, picture } = jwtDecode(jwt) as any;
 
-        if (id_token) {
-          setFacebookUserToken(id_token);
+        setFacebookUserInfos({
+          name,
+          email,
+          picture,
+        });
+
+        if (jwt) {
+          setFacebookUserToken(jwt);
         }
 
         localStorage.removeItem("codeVerifier");

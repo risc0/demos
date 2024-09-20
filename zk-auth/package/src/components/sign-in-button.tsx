@@ -112,7 +112,7 @@ export function SignInButton({ address }: { address: `0x${string}` }) {
           fontFamily: "arial, sans-serif",
           letterSpacing: "0.25px",
         }}
-        className="relative flex h-8 w-full max-w-[197px] transition-colors flex-row items-center gap-1.5 rounded-full bg-[#A970FF] pl-6 font-normal text-[14px] text-white tracking-wider hover:bg-[#BF94FF] hover:text-white"
+        className="relative flex h-8 w-full max-w-[197px] flex-row items-center gap-1.5 rounded-full bg-[#A970FF] pl-6 font-normal text-[14px] text-white tracking-wider transition-colors hover:bg-[#BF94FF] hover:text-white"
       >
         <div className="absolute left-[2px] flex size-7 items-center justify-center rounded-full bg-white p-[0.35rem]">
           <img src="https://zkauth.vercel.app/twitch.svg" width={16} height={16} alt="Twitch" />
@@ -127,7 +127,7 @@ export function SignInButton({ address }: { address: `0x${string}` }) {
           fontFamily: "arial, sans-serif",
           letterSpacing: "0.25px",
         }}
-        className="relative flex h-8 w-full max-w-[197px] transition-colors flex-row items-center gap-1.5 rounded-full bg-[#A970FF] pl-6 font-normal text-[14px] text-white tracking-wider hover:bg-[#BF94FF] hover:text-white"
+        className="relative flex h-8 w-full max-w-[197px] flex-row items-center gap-1.5 rounded-full bg-[#A970FF] pl-6 font-normal text-[14px] text-white tracking-wider transition-colors hover:bg-[#BF94FF] hover:text-white"
       >
         <div className="absolute left-[2px] flex size-7 items-center justify-center rounded-full bg-white p-[0.35rem]">
           <img src="https://zkauth.vercel.app/facebook.svg" width={16} height={16} alt="Facebook" />
