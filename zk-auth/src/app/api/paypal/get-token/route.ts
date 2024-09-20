@@ -3,10 +3,11 @@ import env from "~/env";
 
 async function getPayPalTokensAndUserInfo(code: string, origin: string) {
   try {
+    console.log("code", code);
+    console.log("origin", origin);
     const params = new URLSearchParams();
     params.append("grant_type", "authorization_code");
     params.append("code", code);
-    params.append("redirect_uri", origin);
 
     const response = await fetch("https://api-m.sandbox.paypal.com/v1/oauth2/token", {
       method: "POST",
@@ -16,6 +17,8 @@ async function getPayPalTokensAndUserInfo(code: string, origin: string) {
       },
       body: params,
     });
+
+    console.log("response-----", response);
 
     if (!response.ok) {
       const errorText = await response.text();

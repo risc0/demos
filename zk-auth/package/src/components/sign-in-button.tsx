@@ -149,6 +149,7 @@ export function SignInButton({ address }: { address: `0x${string}` }) {
 
       <Button
         size="sm"
+        disabled
         onClick={signInWithLinkedIn}
         style={{
           fontFamily: "arial, sans-serif",

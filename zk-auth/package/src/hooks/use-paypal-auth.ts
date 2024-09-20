@@ -32,12 +32,15 @@ export function usePaypalAuth({ address }: { address: `0x${string}` }) {
           body: JSON.stringify({ code, origin: window.location.origin }),
         });
 
+        console.log("response", response);
+
         if (!response.ok) {
           setError("Failed to authenticate with PayPal");
           return;
         }
 
         const { jwt } = await response.json();
+        console.log("jwt", jwt);
         const { name, email, picture } = jwtDecode(jwt) as any;
 
         setPaypalUserInfos({
