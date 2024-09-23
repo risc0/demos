@@ -1,0 +1,58 @@
+@import "@risc0/ui/styles/globals.css";
+
+@font-face {
+  /* includes font-weights 900 */
+  font-family: "Europa";
+  src: url("https://zkauth.vercel.app/fonts/EuropaGroteskSH-Bold.otf") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: fallback;
+}
+
+@font-face {
+  /* includes font-weights from 600-800 */
+  font-family: "Europa";
+  src: url("https://zkauth.vercel.app/fonts/EuropaGroteskSH-Med.otf") format("opentype");
+  font-weight: 600 800;
+  font-style: normal;
+  font-display: fallback;
+}
+
+@font-face {
+  /* includes font-weights from 100-500 */
+  font-family: "Europa";
+  src: url("https://zkauth.vercel.app/fonts/EuropaGroteskSH-Reg.otf") format("opentype");
+  font-weight: 100 500;
+  font-style: normal;
+  font-display: fallback;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-europa-sans: "Europa", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --removed-body-scroll-bar-size: 0px;
+
+  /* tailwind/shadcn overrides */
+  --radius: 0.75rem;
+}
+
+* {
+  /* apply letter-spacing to all html elements */
+  @apply tracking-wide;
+}
+
+table {
+  width: 100%;
+}
+
+.lucide {
+  stroke-width: 1.5px!important;
+}

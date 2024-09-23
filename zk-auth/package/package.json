@@ -1,0 +1,46 @@
+{
+  "name": "@risc0/zkauth",
+  "version": "0.0.30",
+  "private": false,
+  "author": "RISC Zero",
+  "keywords": ["zk", "auth", "zero-knowledge", "authentication", "web3", "risczero"],
+  "sideEffects": false,
+  "type": "module",
+  "main": "./dist/zk-auth.js",
+  "module": "./dist/zk-auth.js",
+  "files": ["dist"],
+  "exports": {
+    ".": {
+      "import": "./dist/zk-auth.js",
+      "require": "./dist/zk-auth.js"
+    },
+    "./style.css": "./dist/style.css"
+  },
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite --port 3000",
+    "package": "bun run build && npm pack",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@vitejs/plugin-react-swc": "3.7.0",
+    "typescript": "5.6.2",
+    "vite": "5.4.6",
+    "vite-plugin-dts": "4.2.1"
+  },
+  "dependencies": {
+    "@react-oauth/google": "0.12.1",
+    "@risc0/ui": "0.0.170",
+    "react": "^18",
+    "react-dom": "^18"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0 || ^19.0.0",
+    "react-dom": "^18.2.0 || ^19.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
