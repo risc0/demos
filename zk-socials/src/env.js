@@ -12,7 +12,7 @@ const env = createEnv({
     BONSAI_API_KEY: z.string(),
     IMAGE_ID: z.string(),
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
-    PASSWORD: z.string(),
+    PASSWORD: z.string().optional(),
   },
 
   /**
