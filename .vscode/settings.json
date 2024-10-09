@@ -1,0 +1,9 @@
+{
+    "rust-analyzer.linkedProjects": [
+        "./methods/guest/Cargo.toml",
+        "./host/Cargo.toml",
+    ],
+    "rust-analyzer.check.extraEnv": {
+        "RISC0_SKIP_BUILD": "1",
+    }
+}

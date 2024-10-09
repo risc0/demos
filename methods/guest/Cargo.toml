@@ -7,3 +7,11 @@ edition = "2021"
 
 [dependencies]
 risc0-zkvm = { version = "1.1.2", default-features = false, features = ['std'] }
+arrayvec = { version = "0.7", features = ["serde"] }
+alloy-trie = "0.6.0"
+alloy-primitives = "0.8.7"
+alloy-consensus = "0.4.2"
+alloy-rlp = "0.3"
+alloy-rpc-types = { version = "0.4.2", features = ["eth"] }
+postcard = "1.0.10"
+
