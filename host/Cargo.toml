@@ -10,3 +10,7 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 serde = "1.0"
 alloy-trie = "0.6.0"
 anyhow = "1.0.89"
+alloy = { version = "0.4.2", features = ["full"] }
+tokio = { version = "1.40.0", features = ["rt", "macros", "rt-multi-thread"] }
+alloy-rlp = "0.3.8"
+alloy-eips = "0.4.2"
