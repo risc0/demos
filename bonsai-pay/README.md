@@ -162,7 +162,7 @@ Below are the primary files in the project directory
     └── ...                         // React frontend UI for Bonsai Pay
 ```
 
-[Bonsai]: https://dev.bonsai.xyz/
+[Bonsai]: http://dev.risczero.com/bonsai/
 [Foundry]: https://getfoundry.sh/
 [Groth16 SNARK proof]: https://www.risczero.com/news/on-chain-verification
 [RISC Zero Verifier]: https://github.com/risc0/risc0/blob/release-0.21/bonsai/ethereum/contracts/IRiscZeroVerifier.sol
