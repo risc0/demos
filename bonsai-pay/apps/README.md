@@ -47,5 +47,5 @@ curl -H "X-Auth-Token: <JWT_TOKEN>" http://localhost:8080/auth
 A small rust [library] containing utility functions to help with sending off-chain proof requests to the Bonsai proving service and publish the received proofs directly to a deployed app contract on Ethereum.
 
 [pubsub]: ./src/bin/pubsub.rs
-[Bonsai]: https://dev.bonsai.xyz/
+[Bonsai]: http://dev.risczero.com/bonsai/
 [library]: ./src/lib.rs
