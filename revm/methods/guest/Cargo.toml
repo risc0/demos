@@ -1,0 +1,12 @@
+[package]
+name = "revm-guest"
+version = "0.12.0"
+edition = "2021"
+
+[workspace]
+
+[dependencies]
+risc0-zkvm = { version = "3.0", default-features = false, features = ["std"] }
+revm = { version = "14", default-features = false, features = ["std", "optimism"] }
+sha3 = "0.10"
+serde = { version = "1.0", default-features = false, features = ["derive"] }
