@@ -1,0 +1,18 @@
+[package]
+name = "browser-verify"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+borsh = { version = "1.5.7", default-features = false }
+guest = { path = "guest" }
+risc0-zkvm = { version = "3.0.3", features = ["prove"] }
+serde = "1.0"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+[workspace]
+resolver = "2"
+members = ["guest", "verifier"]
+
+[features]
+cuda = ["risc0-zkvm/cuda"]
